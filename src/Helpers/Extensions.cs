@@ -1,12 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace AgileDotNetHtml.Extensions
 {
     internal static class StringExtensions
     {
-        public static bool IsEqualIgnoreCase(this string str, string copareString) => str.Equals(copareString, StringComparison.InvariantCultureIgnoreCase);
+        public static bool IsEqualIgnoreCase(this string str, string compareString) => str.Equals(compareString, StringComparison.InvariantCultureIgnoreCase);
+        public static bool IsNullOrEmpty(this string str) => str == null || str.Trim() == String.Empty;
+        public static bool IsNotNullNorEmpty(this string str) => str != null && str.Trim() != String.Empty;
+        public static bool NotStarstWith(this string str, string value) => !str.StartsWith(value);
+        public static bool NotEndstWith(this string str, string value) => !str.EndsWith(value);          
+        public static bool StarstWithPattern(this string str, string pattern) => Regex.Match(str.TrimStart(), pattern).Index == 0;
+        public static bool EndstWithPattern(this string str, string pattern) => str.TrimEnd().Length - (Regex.Match(str.TrimEnd(), pattern, RegexOptions.RightToLeft).Index + Regex.Match(str.TrimEnd(), pattern, RegexOptions.RightToLeft).Value.Length) == 0;
+        public static bool NotStarstWithPattern(this string str, string pattern) => !str.StarstWithPattern(pattern);
+        public static bool NotEndstWithPattern(this string str, string pattern) => !str.EndstWithPattern(pattern);
     }
     internal static class ArrayExtensions
     {

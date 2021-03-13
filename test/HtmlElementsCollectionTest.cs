@@ -1,5 +1,4 @@
 ﻿using AgileDotNetHtml.Interfaces;
-using AgileDotNetHtml.Models;
 using Moq;
 using System;
 using System.Collections.Generic;

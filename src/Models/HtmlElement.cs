@@ -1,4 +1,5 @@
-﻿using AgileDotNetHtml.Interfaces;
+﻿using AgileDotNetHtml.HtmlAttributes;
+using AgileDotNetHtml.Interfaces;
 using Microsoft.AspNetCore.Html;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Xml;
 
-namespace AgileDotNetHtml.Models
+namespace AgileDotNetHtml
 {
    public class HtmlElement : IHtmlElement
     {
@@ -113,6 +114,16 @@ namespace AgileDotNetHtml.Models
         public void Prepend(IHtmlElement element)
         {
             Children.Prepend(element);
+        }
+        public void Text(string html)
+        {
+            _text = new HtmlString(html);
+            _textIndex = 0;
+        }
+        public void Text(string html, int index)
+        {
+            _text = new HtmlString(html);
+            _textIndex = index;
         }
         public void Text(HtmlString html)
         {

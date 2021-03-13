@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AgileDotNetHtml.Models
+namespace AgileDotNetHtml
 {
     public class HtmlElementsCollection : IHtmlElementsCollection
     {

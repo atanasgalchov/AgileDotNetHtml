@@ -1,5 +1,4 @@
-﻿using AgileDotNetHtml.Models;
-using Microsoft.AspNetCore.Html;
+﻿using Microsoft.AspNetCore.Html;
 using System;
 
 namespace AgileDotNetHtml.Interfaces
