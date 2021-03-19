@@ -31,5 +31,18 @@ namespace AgileDotNetHtml.Abstratcion
         public bool IsValidHtmlAttributeForTag(string attributeName, string tagName)
             => attributeName.StartsWith("data") || (_htmlStandarts.AttributeTags.ContainsKey(attributeName) &&
             (_htmlStandarts.AttributeTags[attributeName].IsNullOrEmpty() || _htmlStandarts.AttributeTags[attributeName].Any(x => TrimHtmlTag(x).IsEqualIgnoreCase(tagName))));
+
+        /// <summary>
+        /// Get tag name.
+        /// </summary>
+        /// <param name="startTag">Html start tag string. Example <span>, <div class="div">, ect. </param>
+        /// <returns>Name of given startTag.</returns>
+        public string GetTagNameFromStartTag(string startTag)
+        {
+            // remove start char
+            startTag = startTag.Trim().TrimStart('<');
+            // get tag name
+            return startTag.Split(new char[] { ' ', '/', '>' }).FirstOrDefault();
+        }
     }
 }

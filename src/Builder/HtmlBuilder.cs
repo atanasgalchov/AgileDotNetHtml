@@ -21,9 +21,17 @@ namespace AgileDotNetHtml
         }
 
         /// <summary>
+        /// Create standart HTML content from IHtmlElementsCollection.
+        /// </summary>
+        /// <param name="htmlElements">Collection of type IHtmlElement, for convert to standart HTML content.</param>
+        /// <returns>Standart HTML content repsresent specified elements collection.</returns>
+        public IHtmlContent CreateElement(IHtmlElementsCollection htmlElements)
+            => new HtmlString(String.Join("", htmlElements.Select(element =>  _CreateElement(element))));
+
+        /// <summary>
         /// Create standart HTML content from IHtmlTag object.
         /// </summary>
-        /// <param name="htmlElement">Object of type IHtmlTag, for convert to standart HTML content.</param>
+        /// <param name="htmlElement">Object of type IHtmlElement, for convert to standart HTML content.</param>
         /// <returns>Standart HTML content repsresent specified tag.</returns>
         public IHtmlContent CreateElement(IHtmlElement htmlElement) => _CreateElement(htmlElement);
 

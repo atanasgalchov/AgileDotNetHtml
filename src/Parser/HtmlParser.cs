@@ -105,13 +105,14 @@ namespace AgileDotNetHtml.Parser
 					// add text if text is after children tags
 					Match lastEndTagBeforeCurrent = endTagMatches?.LastOrDefault(x => x.Index < endTagMatch.Index);
 					int stringBetweenLastEndTagBeforeCurrentAndCurrent = 0;
+					string elementText = null;
 					if (lastEndTagBeforeCurrent != null) 
 					{
 						stringBetweenLastEndTagBeforeCurrentAndCurrent = endTagMatch.Index - (lastEndTagBeforeCurrent.Index + lastEndTagBeforeCurrent.Value.Length);
 						if (stringBetweenLastEndTagBeforeCurrentAndCurrent > 0)
 						{
 							// add text in element
-							element.Text(html.Substring(lastEndTagBeforeCurrent.Index + lastEndTagBeforeCurrent.Value.Length, stringBetweenLastEndTagBeforeCurrentAndCurrent));
+							elementText = html.Substring(lastEndTagBeforeCurrent.Index + lastEndTagBeforeCurrent.Value.Length, stringBetweenLastEndTagBeforeCurrentAndCurrent);
 							// remove text from html string
 							html = html.Remove(lastEndTagBeforeCurrent.Index + lastEndTagBeforeCurrent.Value.Length, stringBetweenLastEndTagBeforeCurrentAndCurrent);							
 						}
@@ -119,9 +120,26 @@ namespace AgileDotNetHtml.Parser
 
 					// add children
 					element.Children = _ParseString(html.Substring(0, endTagMatch.Index - stringBetweenLastEndTagBeforeCurrentAndCurrent));
-
+					
+					// set text
+					if(elementText.IsNotNullNorEmpty())
+						element.Text(elementText, element.Children.Count);
+					
 					// remove children part and closing tag from html string
 					html = html.Substring((endTagMatch.Index + endTagMatch.Value.Length) - stringBetweenLastEndTagBeforeCurrentAndCurrent);
+
+					// match next start tag
+					nextStartTagMatch = new Regex(_startTagRegex).Match(html);
+					
+					// add text if text is between children tags
+					if (nextStartTagMatch.Index > 0)
+					{
+						// add text in element
+						// TODO add text idex
+						element.Text(html.Substring(0, nextStartTagMatch.Index));
+						// remove text from html string
+						html = html.Remove(0, nextStartTagMatch.Index);
+					}
 				}
 			}
 
@@ -164,19 +182,6 @@ namespace AgileDotNetHtml.Parser
 			//	element.AddAttribute(new HtmlAttribute(attribute));
 			
 			return element;
-		}
-
-		/// <summary>
-		/// Get tag name.
-		/// </summary>
-		/// <param name="startTag">Html start tag string. Example <span>, <div class="div">, ect. </param>
-		/// <returns>Name of given startTag.</returns>
-		private string GetTagNameFromStartTag(string startTag) 
-		{
-			// remove start char
-			startTag = startTag.Trim().TrimStart('<');
-			// get tag name
-			return startTag.Split(new char[] { ' ', '/', '>' }).FirstOrDefault();
 		}
 	}
 }
