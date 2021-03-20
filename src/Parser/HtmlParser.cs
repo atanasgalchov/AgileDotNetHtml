@@ -104,29 +104,29 @@ namespace AgileDotNetHtml.Parser
 
 					// add text if text is after children tags
 					Match lastEndTagBeforeCurrent = endTagMatches?.LastOrDefault(x => x.Index < endTagMatch.Index);
-					int stringBetweenLastEndTagBeforeCurrentAndCurrent = 0;
+					int stringBetweenLastEndTagBeforeCurrentAndCurrentTagIndex = 0;
 					string elementText = null;
 					if (lastEndTagBeforeCurrent != null) 
 					{
-						stringBetweenLastEndTagBeforeCurrentAndCurrent = endTagMatch.Index - (lastEndTagBeforeCurrent.Index + lastEndTagBeforeCurrent.Value.Length);
-						if (stringBetweenLastEndTagBeforeCurrentAndCurrent > 0)
+						stringBetweenLastEndTagBeforeCurrentAndCurrentTagIndex = endTagMatch.Index - (lastEndTagBeforeCurrent.Index + lastEndTagBeforeCurrent.Value.Length);
+						if (stringBetweenLastEndTagBeforeCurrentAndCurrentTagIndex > 0)
 						{
 							// add text in element
-							elementText = html.Substring(lastEndTagBeforeCurrent.Index + lastEndTagBeforeCurrent.Value.Length, stringBetweenLastEndTagBeforeCurrentAndCurrent);
+							elementText = html.Substring(lastEndTagBeforeCurrent.Index + lastEndTagBeforeCurrent.Value.Length, stringBetweenLastEndTagBeforeCurrentAndCurrentTagIndex);
 							// remove text from html string
-							html = html.Remove(lastEndTagBeforeCurrent.Index + lastEndTagBeforeCurrent.Value.Length, stringBetweenLastEndTagBeforeCurrentAndCurrent);							
+							html = html.Remove(lastEndTagBeforeCurrent.Index + lastEndTagBeforeCurrent.Value.Length, stringBetweenLastEndTagBeforeCurrentAndCurrentTagIndex);							
 						}
 					}
 
 					// add children
-					element.Children = _ParseString(html.Substring(0, endTagMatch.Index - stringBetweenLastEndTagBeforeCurrentAndCurrent));
+					element.Children = _ParseString(html.Substring(0, endTagMatch.Index - stringBetweenLastEndTagBeforeCurrentAndCurrentTagIndex));
 					
 					// set text
 					if(elementText.IsNotNullNorEmpty())
 						element.Text(elementText, element.Children.Count);
 					
 					// remove children part and closing tag from html string
-					html = html.Substring((endTagMatch.Index + endTagMatch.Value.Length) - stringBetweenLastEndTagBeforeCurrentAndCurrent);
+					html = html.Substring((endTagMatch.Index + endTagMatch.Value.Length) - stringBetweenLastEndTagBeforeCurrentAndCurrentTagIndex);
 
 					// match next start tag
 					nextStartTagMatch = new Regex(_startTagRegex).Match(html);

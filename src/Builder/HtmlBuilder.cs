@@ -50,7 +50,7 @@ namespace AgileDotNetHtml
             var childContents = new List<IHtmlContent>();
             foreach (var child in htmlElement.Children)
                 childContents.Add(_CreateElement(child));
-
+            // TODO Refactor, element Text may be more than one
             return new HtmlString(
                     $"{GetStartHtmlTag(htmlElement.TagName)}{String.Join("", childContents.Where((x, i) => i < htmlElement.TextIndex).Select(x => x.ToString()).ToArray())}{htmlElement.Text()}{String.Join("", childContents.Where((x, i) => i >= htmlElement.TextIndex).Select(x => x.ToString()).ToArray())}{GetEndHtmlTag(htmlElement.TagName)}"
                         .Insert((htmlElement.TagName.Length + 1), $" {GetAttributesAsString(htmlElement)}"));
