@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace AgileDotNetHtml.HtmlAttributes
+namespace AgileDotNetHtml.Models
 {
 	public class HtmlAttributesCollection : IEnumerable<IHtmlAttribute>
 	{
@@ -38,8 +38,7 @@ namespace AgileDotNetHtml.HtmlAttributes
         public void AddRange(IEnumerable<IHtmlAttribute> enumerable)
         {
             _list.AddRange(enumerable);
-        }
-        
+        }     
         public void Remove(IHtmlAttribute attribute)
         {
             _list.Remove(attribute);
@@ -48,7 +47,6 @@ namespace AgileDotNetHtml.HtmlAttributes
         {
             _list.RemoveAll(math);
         }
-
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
@@ -60,7 +58,6 @@ namespace AgileDotNetHtml.HtmlAttributes
                 yield return element;
             }
         }
-
         public Dictionary<string, string> ToDictionary() 
         {
             var result = new Dictionary<string, string>();
@@ -76,6 +73,7 @@ namespace AgileDotNetHtml.HtmlAttributes
 
             return result;
         }
+
 
         public static implicit operator IHtmlAttribute[](HtmlAttributesCollection collection)
         {

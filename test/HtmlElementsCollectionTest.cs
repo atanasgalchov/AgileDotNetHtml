@@ -1,15 +1,11 @@
 ﻿using AgileDotNetHtml.Interfaces;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using AgileDotNetHtml.Models;
 using Xunit;
 
 namespace AgileDotNetHtml.Test
 {
-    public class HtmlElementsCollectionTest
+	public class HtmlElementsCollectionTest
     {
-        Mock<IHtmlStandarts> htmlStandartsMock;
         HtmlElementsCollection htmlElementsCollection;
 
         // -- Get --------------------------------------------------------------------------------------------------------------------------------
@@ -19,8 +15,6 @@ namespace AgileDotNetHtml.Test
         {
 
             // Arrange          
-            htmlStandartsMock = new Mock<IHtmlStandarts>();
-            htmlStandartsMock.Setup(x => x.AllTags).Returns(new string[] { "<div>" });
 
             htmlElementsCollection = new HtmlElementsCollection();
 
@@ -30,14 +24,11 @@ namespace AgileDotNetHtml.Test
             // Assert
             Assert.Null(result);
         }
-
         [Fact]
         public void Get_ReturnNull_WhenCollectionIsNotEmptyAndElementNotExist()
         {
 
             // Arrange          
-            htmlStandartsMock = new Mock<IHtmlStandarts>();
-            htmlStandartsMock.Setup(x => x.AllTags).Returns(new string[] { "<div>" });
 
             htmlElementsCollection = new HtmlElementsCollection() { new HtmlElement("div"), new HtmlElement("div") };
 
@@ -47,14 +38,11 @@ namespace AgileDotNetHtml.Test
             // Assert
             Assert.Null(result);
         }
-
         [Fact]
         public void Get_ReturnNull_WhenCollectionIsNotEmptyAndElementsHaveChildrenAndElementNotExist()
         {
 
             // Arrange          
-            htmlStandartsMock = new Mock<IHtmlStandarts>();
-            htmlStandartsMock.Setup(x => x.AllTags).Returns(new string[] { "<div>" });
 
             htmlElementsCollection = new HtmlElementsCollection() {
                 new HtmlElement("div") {  Children = new HtmlElementsCollection { new HtmlElement("span") } },
@@ -67,14 +55,11 @@ namespace AgileDotNetHtml.Test
             // Assert
             Assert.Null(result);
         }
-
         [Fact]
         public void Get_ReturnElement_WhenCollectionIsNotEmptyAndAndElementExist()
         {
 
-            // Arrange          
-            htmlStandartsMock = new Mock<IHtmlStandarts>();
-            htmlStandartsMock.Setup(x => x.AllTags).Returns(new string[] { "<div>" });
+            // Arrange
 
             var searchedElement = new HtmlElement("div") { Children = new HtmlElementsCollection { new HtmlElement("span") } };
             htmlElementsCollection = new HtmlElementsCollection() {
@@ -92,8 +77,6 @@ namespace AgileDotNetHtml.Test
         public void Get_ReturnElement_WhenCollectionIsNotEmptyAndAndElementExistDeep()
         {
             // Arrange          
-            htmlStandartsMock = new Mock<IHtmlStandarts>();
-            htmlStandartsMock.Setup(x => x.AllTags).Returns(new string[] { "<div>" });
 
             var searchedElement = new HtmlElement("div") { Children = new HtmlElementsCollection { new HtmlElement("span") } };
             htmlElementsCollection = new HtmlElementsCollection() {

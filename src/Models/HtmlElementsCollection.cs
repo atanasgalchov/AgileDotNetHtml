@@ -4,15 +4,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AgileDotNetHtml
+namespace AgileDotNetHtml.Models
 {
     public class HtmlElementsCollection : IHtmlElementsCollection
     {
         private List<IHtmlElement> _list = new List<IHtmlElement>();
         protected List<IHtmlElement> List { get { return _list; } }
-
 		public int Count =>_list.Count;
-
 		public bool IsReadOnly => throw new NotImplementedException();
 
 		public HtmlElementsCollection()
@@ -24,6 +22,7 @@ namespace AgileDotNetHtml
             _list.AddRange(elements);
 
         }
+
         public IHtmlElement this[int index]
         {
             get
@@ -124,7 +123,6 @@ namespace AgileDotNetHtml
 		{
             return _list.IndexOf(item);
 		}
-
 		public void Insert(int index, IHtmlElement item)
 		{
             _list.Insert(index, item);
@@ -133,17 +131,14 @@ namespace AgileDotNetHtml
 		{
             _list.Clear();
         }
-
 		public bool Contains(IHtmlElement item)
 		{
             return _list.Contains(item);
         }
-
 		public void CopyTo(IHtmlElement[] array, int arrayIndex)
 		{
             _list.CopyTo(array, arrayIndex);
         }
-
         public List<IHtmlElement> ToList()
         {
             return _list.ToList();
@@ -159,7 +154,5 @@ namespace AgileDotNetHtml
                 yield return element;
             }
         }
-
-
 	}
 }

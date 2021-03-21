@@ -1,16 +1,12 @@
-﻿using AgileDotNetHtml.HtmlAttributes;
-using AgileDotNetHtml.Interfaces;
+﻿using AgileDotNetHtml.Interfaces;
 using Microsoft.AspNetCore.Html;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.Encodings.Web;
-using System.Xml;
 
-namespace AgileDotNetHtml
+namespace AgileDotNetHtml.Models
 {
-   public class HtmlElement : IHtmlElement
+	public class HtmlElement : IHtmlElement
     {
         private string _uid;
         private string _tagName;
@@ -18,6 +14,7 @@ namespace AgileDotNetHtml
         private int _textIndex;
         private List<IHtmlAttribute> _attributes { get; set; } = new List<IHtmlAttribute>();
         private IHtmlElementsCollection _children { get; set; } = new HtmlElementsCollection();
+       
         public HtmlElement(string tagName)
         {
             _uid = Guid.NewGuid().ToString().Replace("-","");
@@ -27,10 +24,10 @@ namespace AgileDotNetHtml
 		{
             _text = new HtmlString(text);
         }
+      
         public string UId => _uid;
         public string TagName => _tagName;
-        public int TextIndex => _textIndex;
-       
+        public int TextIndex => _textIndex;      
         public IHtmlElementsCollection Children 
         {
             get { return _children; } 
@@ -72,7 +69,6 @@ namespace AgileDotNetHtml
 
             return htmlElement;
         }
-
         public void AddAttribute(IHtmlAttribute attribute)
         {
             if (attribute != null) 
@@ -101,12 +97,10 @@ namespace AgileDotNetHtml
         {
             return _attributes.FirstOrDefault(x => x.Name == Name);
         }
-
         public bool HasAttribute(string Name)
         {
             return _attributes.Any(x => x.Name == Name);
         }
-
         public void Append(IHtmlElement element)
         {
             Children.Add(element);
@@ -135,7 +129,6 @@ namespace AgileDotNetHtml
             _text = html;
             _textIndex = index;
         }
-
         public HtmlString Text()
         {
             return _text;
@@ -148,12 +141,10 @@ namespace AgileDotNetHtml
         {
             throw new NotImplementedException();
         }
-
         public void ReplaceAttributeValue(string Name, string Value)
         {
             throw new NotImplementedException();
         }
-
         private void SetChildrenParent(IEnumerable<IHtmlElement> parents, IHtmlElementsCollection children) 
         {
 			foreach (var item in children)
@@ -163,19 +154,6 @@ namespace AgileDotNetHtml
                 childParents.Insert(0, item);
                 SetChildrenParent(childParents, item.Children);
             }
-        }
-
-
-
-        // TODO Implemnet
-        public static IHtmlElement Parse(string htmlString)
-        {
-            if (htmlString == null)
-                throw new ArgumentException("htmlString");
-
-
-
-            throw new NotImplementedException("");
         }
     }
 }
