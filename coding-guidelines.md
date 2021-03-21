@@ -37,16 +37,17 @@ These guidelines used are the same ones in Framework Design Guideline by Microso
 CONSIDER: This document’s conventions and guidelines are only as effective as its adoption rate by developers.
 CONSIDER: It is highly recommended that you use this developer document in conjunction with the official Framework Design Guidelines, Conventions, Idioms, and Patterns for Reusable .NET libraries, and Code Complete 2, A practical handbook of software construction, both of which are high quality resources for engineering great software.
 
-
 # Class Structure
 
 By structuring your code in this manner your code serves as a sort of index that can be easily read and navigated. For optimal class layout and maintainability, use the following structure.
 
 ```C#
+// Using directives 
+// Global Delegates 
+	
 // Copyright information 
-namespace CompanyName.Technology.Feature
+namespace (<CompanyName>|<ProjectName>).Technology.Feature
 { 
-    // Global Delegates
     class ClassName 
     { 
         // 1. Fields, Constants
@@ -66,6 +67,7 @@ namespace CompanyName.Technology.Feature
 ```
 
 * ✔️ DO: Use this class structure consistently in all classes you write.
+* ✔️ DO: Declare using directives in alphabetical order. Use the Organize Usings > Remove and Sort command in Visual Studio to easily maintain using directives.
 * ✔️ DO: Write copyright comments or important informational notices about the current source code file.
 * ✔️ DO: Declare fields, readonly fields, static fields, or constants at the beginning of the class definition by group, and ordered by protection level (start with private) then by alphabetical.
 * ✔️ DO: Declare constructors in order of complexity (number of parameters), beginning with the least complex to the most complex.
@@ -79,3 +81,33 @@ namespace CompanyName.Technology.Feature
 * ❌ DO NOT: Leave empty rows more than one.
 
 :information_source: *Why: Using the same class structure allows you to find easy, things which you looking for regardless of when and who is wrote the code.*
+
+```C#
+using System;
+
+namespace MyOrganization.Models
+{ 
+	class Employee 
+    { 
+    	private double _salary;
+
+		public Employee(string name)
+        {
+            this.name = name;
+        }
+		public Employee(string name, double salary)
+        {
+			this._salary = salary;
+        }
+
+		public int Email { get; set; }
+		public Department Department { get; set; }
+		public string Name { get; set; }
+
+		public string GetDepartmentName()
+		{
+			return Department.Name;
+		}
+	}
+}
+```
