@@ -69,12 +69,12 @@ namespace (<CompanyName>|<ProjectName>).Technology.Feature
 * ✔️ DO: Use this class structure consistently in all classes you write.
 * ✔️ DO: Declare using directives in alphabetical order. Use the Organize Usings > Remove and Sort command in Visual Studio to easily maintain using directives.
 * ✔️ DO: Write copyright comments or important informational notices about the current source code file.
-* ✔️ DO: Declare fields, readonly fields, static fields, or constants at the beginning of the class definition by group, and ordered by protection level (start with private) then by alphabetical.
+* ✔️ DO: Declare fields, readonly fields, static fields, or constants at the beginning of the class definition by group, and ordered by protection level (beginning with private).
 * ✔️ DO: Declare constructors in order of complexity (number of parameters), beginning with the least complex to the most complex.
-* ✔️ DO: Declare events ordered by protection level then by alphabetical.
-* ✔️ DO: Declare properties ordered by protection level (start with private) then by alphabetical.
-* ✔️ DO: Declare methods ordered by protection level (start with private) then by alphabetical. When declaring polymorphic methods, declare them in order of complexity (number of parameters), beginning with the least complex to the most complex.
-* ✔️ DO: Declare nested types ordered by protection level (start with private) then by alphabetical.
+* ✔️ DO: Declare events ordered by protection level.
+* ✔️ DO: Declare properties ordered by protection level (beginning with private).
+* ✔️ DO: Declare methods ordered by protection level (beginning with private). When declaring polymorphic methods, declare them in order of complexity (number of parameters), beginning with the least complex to the most complex.
+* ✔️ DO: Declare nested types ordered by protection level (beginning with private).
 * ✔️ DO: Separate diferent member types fields, properties, methods, events, delegates and other with one empty row.
 * ✔️ DO: Declare only one type per file, and name the file after the type. When declaring type ClassName also rename the source code file to ClassName.cs.
 * ❌ DO NOT: Leave empty rows inside members type group.
