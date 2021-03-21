@@ -1,4 +1,5 @@
-#### The Developer Guidelines are like a railing that helps you to prevent falls in the precipice. Imagine that you walk by the precipice and you made wrong step, if don't have a railing you will fall in the precipice, but if have a railing you can catch and still walk. Here have a stable railing to help us to walk save, namely write clean, readable, and maintainable code.
+#### "Even in the grand architectural literature we find saws that hark back to these sup-posed details. Think of mies van der Rohe’s doorknobs. That’s seiri. That’s being attentive to every variable name. You should name a variable using the same care with which you name a first-born child."
+Robert C. Martin
 
 ---
 
@@ -25,6 +26,7 @@ C# Developer Guidelines (C# Coding Conventions)
 	
 # Introduction
 
+The Developer Guidelines are like a railing that helps you to prevent falls in the precipice. Imagine that you walk by the precipice and you made wrong step, if don't have a railing you will fall in the precipice, but if have a railing you can catch and still walk. Here have a stable railing to help us to walk save, namely write clean, readable, and maintainable code.
 The objective of this document is to outline a set of language-level programming conventions and development guidelines to add developers to writing high-quality code. The rules below are some of the best practices approved by a lot of experienced developers. Choosing these rules is a result of years of education and professional experience with software development. Keeping the rules below is a warranty for write-on readable and easy maintenance code, and warranty to avoid confusion in the future.
 These guidelines used are the same ones in Framework Design Guideline by Microsoft and are:
 
