@@ -82,4 +82,11 @@ namespace (<CompanyName>|<ProjectName>).Technology.Feature
 
 :information_source: *Why: Using the same class structure allows you to find easy, things which you looking for regardless of when and who is wrote the code.*
 
+# Naming Conventions
+
+Be forewarned, there is extreme bias that lies in the coming text, but its bias that is correct and that’s all you need to know. Now that we have that settled; naming conventions are one of the most large and controversial discussions to have among developers, but to put it simple terms: there are far too many just plain bad conventions out there. I have seen conventions that are awkward, decent, or just completely horrid. If there is one thing that I do know from all that experience, it’s that Microsoft has it right.
+
+Writing code is an art in of itself, and it’s pretty much identical to writing any kind of document. The analogy I like to use is that it is like writing a high quality essay. You either write a quality essay or you don’t. If you don’t, you get a D for a grade, or worse, an F. If you have read or written C++, you know just how cryptic some of the names for things are, and C++ and its vast libraries aren’t even the worst culprits out there. Unfortunately for some languages like C++ they are just dated (but don’t confuse that with deprecated) and they carry a lot of baggage, including poor naming conventions. C++ has improved and keeps improving though, but other languages, libraries and frameworks have carried that bad baggage and kept it.
+
+This section will be similar to the previous section on documentation, because the way you name things will greatly affect how your code is both read and interpreted not just by you, but by others. In addition, when there is no documentation, all you have is code for your documentation, so it better be good, and that’s the goal. High quality code. I’m going to break naming conventions up into logical groups. We will start with namespaces, then move to classes and their implementation including fields, properties, events, methods, and member variables within methods.
 
