@@ -1,4 +1,4 @@
-#### "Even in the grand architectural literature we find saws that hark back to these sup-posed details. Think of mies van der Rohe’s doorknobs. That’s seiri. That’s being attentive to every variable name. You should name a variable using the same care with which you name a first-born child."
+#### "You should name a variable using the same care with which you name a first-born child."
 Robert C. Martin
 
 ---
