@@ -82,32 +82,4 @@ namespace (<CompanyName>|<ProjectName>).Technology.Feature
 
 :information_source: *Why: Using the same class structure allows you to find easy, things which you looking for regardless of when and who is wrote the code.*
 
-```C#
-using System;
 
-namespace MyOrganization.Models
-{ 
-	class Employee 
-    { 
-    	private double _salary;
-
-		public Employee(string name)
-        {
-            this.name = name;
-        }
-		public Employee(string name, double salary)
-        {
-			this._salary = salary;
-        }
-
-		public int Email { get; set; }
-		public Department Department { get; set; }
-		public string Name { get; set; }
-
-		public string GetDepartmentName()
-		{
-			return Department.Name;
-		}
-	}
-}
-```
