@@ -21,14 +21,16 @@ C# Developer Guidelines (C# Coding Conventions)
 	* Methods
 	* Fields and Constants
 	* Events
+
 	
 # Introduction
 
-The objective of this document is to outline a set of language-level programming conventions and development guidelines to aid developers in writing high quality code using a consistent set of idioms. The patterns and practices that are discussed in this document are a result of years of education, research, and industry experience by qualified software engineers around the world. These guidelines cover how to write readable and well organized code, but should not be confused with software design, which focuses more on implementing well written solutions to a specific problem.
-To use the conventions effectively there will be sections describing each idiom followed by a set of guidelines. The guidelines used are the same ones used in Framework Design Guidelines by Microsoft and are:
-•	DO: Do follow this guideline and don’t stray from it
-•	DO NOT: Do not violate this guideline
-•	AVOID: Avoid a situation at all costs unless there is no other alternative
-•	CONSIDER: Consider this guideline and use it when possible, but otherwise it is not strictly necessaary
+The objective of this document is to outline a set of language-level programing conventions and development guidelines to add developers in writing hight quality code.The patterns below are ones of the best practices approved from lot of expiriaced developers.Chosing of this patternt is result of years education and profesional expiriance with software development.Keeping the ruls below is wrantly for write on readable and easy maintenanbale code, and warantly to avoid confusing in the future.
+This guidelines used are the same ones in Frameword Design Guideline by Microsoft and are:
+
+* DO: Do follow this guideline and don’t stray from it
+* DO NOT: Do not violate this guideline
+* AVOID: Avoid a situation at all costs unless there is no other alternative
+* CONSIDER: Consider this guideline and use it when possible, but otherwise it is not strictly necessaary
 CONSIDER: This document’s conventions and guidelines are only as effective as its adoption rate by developers.
 CONSIDER: It is highly recommended that you use this developer document in conjunction with the official Framework Design Guidelines, Conventions, Idioms, and Patterns for Reusable .NET libraries, and Code Complete 2, A practical handbook of software construction, both of which are high quality resources for engineering great software.
