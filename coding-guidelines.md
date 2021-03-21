@@ -1,4 +1,5 @@
-#### "You should name a variable using the same care with which you name a first-born child."
+> ***"You should name a variable using the same care with which you name a first-born child."***
+
 Robert C. Martin
 
 ---
@@ -6,7 +7,7 @@ Robert C. Martin
 C# Developer Guidelines (C# Coding Conventions)
 
 * Introduction
-* Class Layout
+* Class Structure
 * Naming Conventions
 	* Naming Conventions
 	* Classes
@@ -22,7 +23,6 @@ C# Developer Guidelines (C# Coding Conventions)
 	* Methods
 	* Fields and Constants
 	* Events
-
 	
 # Introduction
 
@@ -36,3 +36,46 @@ These guidelines used are the same ones in Framework Design Guideline by Microso
 * ❓ CONSIDER: Consider this guideline and use it when possible, but otherwise it is not strictly necessaary
 CONSIDER: This document’s conventions and guidelines are only as effective as its adoption rate by developers.
 CONSIDER: It is highly recommended that you use this developer document in conjunction with the official Framework Design Guidelines, Conventions, Idioms, and Patterns for Reusable .NET libraries, and Code Complete 2, A practical handbook of software construction, both of which are high quality resources for engineering great software.
+
+
+# Class Structure
+
+By structuring your code in this manner your code serves as a sort of index that can be easily read and navigated. For optimal class layout and maintainability, use the following structure.
+
+```C#
+// Copyright information 
+namespace CompanyName.Technology.Feature
+{ 
+    // Global Delegates
+    class ClassName 
+    { 
+        // 1. Fields, Constants
+        //    - private
+        //    - private protected
+        //    - protected internal
+        //    - protected        
+        //    - internal
+        //    - public
+        // 2. Constructors
+        // 3. Events
+        // 4. Properties
+        // 5. Methods
+        // 6. Nested Types
+    } 
+}
+```
+
+* ✔️ DO: Use this class structure consistently in all classes you write.
+* ✔️ DO: Write copyright comments or important informational notices about the current source code file.
+* ✔️ DO: Declare fields, readonly fields, static fields, or constants at the beginning of the class definition by group, and ordered by protection level (start with private) then by alphabetical.
+* ✔️ DO: Declare constructors in order of complexity (number of parameters), beginning with the least complex to the most complex.
+* ✔️ DO: Declare events ordered by protection level then by alphabetical.
+* ✔️ DO: Declare properties ordered by protection level (start with private) then by alphabetical.
+* ✔️ DO: Declare methods ordered by protection level (start with private) then by alphabetical. When declaring polymorphic methods, declare them in order of complexity (number of parameters), beginning with the least complex to the most complex.
+* ✔️ DO: Declare nested types ordered by protection level (start with private) then by alphabetical.
+* ✔️ DO: Separate diferent member types fields, properties, methods, events, delegates and other with one empty row.
+* ✔️ DO: Declare only one type per file, and name the file after the type. When declaring type ClassName also rename the source code file to ClassName.cs.
+* ❌ DO NOT: Leave empty rows inside members type group.
+* ❌ DO NOT: Leave empty rows more than one.
+
+:information_source: *Why: Using the same class structure allows you to find easy, things which you looking for regardless of when and who is wrote the code.*
