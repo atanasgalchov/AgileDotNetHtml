@@ -1,5 +1,6 @@
 ﻿using AgileDotNetHtml.Extensions;
 using AgileDotNetHtml.Interfaces;
+using AgileDotNetHtml.Models;
 using Microsoft.AspNetCore.Html;
 using System;
 using System.Collections.Generic;
@@ -83,12 +84,19 @@ namespace AgileDotNetHtml
                     $"{CreateStartTag(htmlElement.TagName)}{htmlElement.Text()}{CreateEndTag(htmlElement.TagName)}"
                         .Insert((htmlElement.TagName.Length + 1), htmlElement.Attributes.IsNullOrEmpty() ? "" : $" {String.Join(" ", htmlElement.Attributes.Select(x=> CreateAtribute(x)))}"));
 
-            var childContents = new List<IHtmlContent>();
-            foreach (var child in htmlElement.Children)
-                childContents.Add(_CreateHtmlContent(child));
-            // TODO Refactor, element Text may be more than one
+            List<IHtmlContent> childContents = new List<IHtmlContent>();
+            HtmlElementText[] elementTexts = htmlElement.Texts();
+
+            for (int i = 0; i < (htmlElement.Children.Count + elementTexts.Length); i++)
+			{
+                if (elementTexts.Any(x => x.Index == i))
+                    childContents.Add(elementTexts.FirstOrDefault(x => x.Index == i).HtmlString);
+                else
+                    childContents.Add(_CreateHtmlContent(htmlElement.Children[i]));
+            }
+
             return new HtmlString(
-                    $"{CreateStartTag(htmlElement.TagName)}{String.Join("", childContents.Where((x, i) => i < htmlElement.TextIndex).Select(x => x.ToString()).ToArray())}{htmlElement.Text()}{String.Join("", childContents.Where((x, i) => i >= htmlElement.TextIndex).Select(x => x.ToString()).ToArray())}{CreateEndTag(htmlElement.TagName)}"
+                    $"{CreateStartTag(htmlElement.TagName)}{String.Join("", childContents.Select(x => x.ToString()).ToArray())}{CreateEndTag(htmlElement.TagName)}"
                         .Insert((htmlElement.TagName.Length + 1), $" {String.Join(" ", htmlElement.Attributes.Select(x => CreateAtribute(x)))}"));
         }      
     }

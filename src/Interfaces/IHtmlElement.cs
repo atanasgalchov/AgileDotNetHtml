@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Html;
+﻿using AgileDotNetHtml.Models;
+using Microsoft.AspNetCore.Html;
 using System;
 
 namespace AgileDotNetHtml.Interfaces
@@ -7,11 +8,11 @@ namespace AgileDotNetHtml.Interfaces
     {
         string UId { get; }
         string TagName { get; }
-        int TextIndex { get; }
         IHtmlElementsCollection Children { get; }
         IHtmlElementsCollection Parents { get; }
         void Text(HtmlString html);
         HtmlString Text();
+        HtmlElementText[] Texts();
         IHtmlElement Find(Func<IHtmlElement, bool> predicate);
         void Append(IHtmlElement element);
         void Prepend(IHtmlElement element);

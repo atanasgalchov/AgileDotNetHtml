@@ -10,8 +10,7 @@ namespace AgileDotNetHtml.Models
     {
         private string _uid;
         private string _tagName;
-        private HtmlString _text = HtmlString.Empty;
-        private int _textIndex;
+        private List<HtmlElementText> _texts = new List<HtmlElementText>();
         private List<IHtmlAttribute> _attributes { get; set; } = new List<IHtmlAttribute>();
         private IHtmlElementsCollection _children { get; set; } = new HtmlElementsCollection();
        
@@ -22,12 +21,11 @@ namespace AgileDotNetHtml.Models
         }
 		public HtmlElement(string tagName, string text): this (tagName)
 		{
-            _text = new HtmlString(text);
+            Text(text);
         }
       
         public string UId => _uid;
-        public string TagName => _tagName;
-        public int TextIndex => _textIndex;      
+        public string TagName => _tagName;  
         public IHtmlElementsCollection Children 
         {
             get { return _children; } 
@@ -109,29 +107,35 @@ namespace AgileDotNetHtml.Models
         {
             Children.Prepend(element);
         }
+        public HtmlString Text()
+        {
+            return new HtmlString(String.Join("", Texts().Select(x => x.HtmlString)));
+        }
+        public HtmlElementText[] Texts()
+        {
+            return _texts.ToArray();
+        }
         public void Text(string html)
         {
-            _text = new HtmlString(html);
-            _textIndex = 0;
-        }
-        public void Text(string html, int index)
-        {
-            _text = new HtmlString(html);
-            _textIndex = index;
+            Text(new HtmlString(html));
         }
         public void Text(HtmlString html)
         {
-            _text = html;
-            _textIndex = 0;
+            Text(html, 0);
+        }
+        public void Text(string html, int index)
+        {
+            Text(new HtmlString(html), index);
         }
         public void Text(HtmlString html, int index)
         {
-            _text = html;
-            _textIndex = index;
-        }
-        public HtmlString Text()
-        {
-            return _text;
+            if (index > Children.Count)
+                index = Children.Count;
+
+            if (index < 0)
+                index = 0;
+
+            _texts.Add(new HtmlElementText(html, index));
         }
         public void MergeAttributes(IHtmlAttribute[] Attributes)
         {
