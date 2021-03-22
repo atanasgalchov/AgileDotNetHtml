@@ -112,7 +112,7 @@ namespace AgileDotNetHtml
 				Match nextStartTagMatch = new Regex(_startTagRegex).Match(html);
 				
 				// break if not exist tags
-				if (endTagMatch.Index == 0 && startTagMatch.Index == 0)
+				if (endTagMatch.Index == 0 && startTagMatch.NextMatch().Index == 0)
 					break;
 
 				// if tag not contain tags inside. (eg <div>Text</div>)
@@ -151,13 +151,13 @@ namespace AgileDotNetHtml
 						throw new ArgumentException($"The given html is not valid.Close tag on {startTagMatch.Value} start tag did not found. {html}");
 
 					// get all end root tags
-					IEnumerable<Match> rootEndTagsMatch = endTagMatches
+					List<Match> rootEndTagsMatch = endTagMatches
 						.Where(endTag => 
 							startTagMatches.Count(startTag => startTag.Index < endTag.Index) == endTagMatches.Count(endTag2 => endTag2.Index <= endTag.Index)
-						);
+						).ToList();
 
 					// try find text between root tags
-					List<string> elementTexts = new List<string>();
+					List<Tuple<string, int>> elementTextsIndexes = new List<Tuple<string, int>>();
 					List<Tuple<int, int>> textsIndexLength = new List<Tuple<int, int>>();
 					foreach (var rootEndTag in rootEndTagsMatch)
 					{
@@ -167,8 +167,12 @@ namespace AgileDotNetHtml
 						int textStringEndIndex = startTagAfterEndTag != null ? startTagAfterEndTag.Index : endTagMatch.Index;
 						if (textStringEndIndex - textStringStartIndex > 0) 
 						{
-							// add text in element
-							elementTexts.Add(html.Substring(rootEndTag.Index + rootEndTag.Value.Length, textStringEndIndex - textStringStartIndex));
+							// add text and him index
+							elementTextsIndexes.Add(
+								new Tuple<string, int>(
+									html.Substring(rootEndTag.Index + rootEndTag.Value.Length, textStringEndIndex - textStringStartIndex), rootEndTagsMatch.IndexOf(rootEndTag) + 1
+								)
+							);
 
 							textsIndexLength.Add(
 								new Tuple<int, int>(rootEndTag.Index + rootEndTag.Value.Length, textStringEndIndex - textStringStartIndex)
@@ -184,18 +188,14 @@ namespace AgileDotNetHtml
 					}									
 											
 					// add children
-					element.Children = _ParseString(html.Substring(0, endTagMatch.Index - elementTexts.Sum(x => x.Length)));
+					element.Children = _ParseString(html.Substring(0, endTagMatch.Index - elementTextsIndexes.Sum(x => x.Item1.Length)));
 
 					// set text
-					foreach (var elementText in elementTexts)
-					{
-						// TODO add proper index
-						element.Text(elementText, element.Children.Count);
-					}
+					foreach (var textIndex in elementTextsIndexes)					
+						element.Text(textIndex.Item1, textIndex.Item2);
 					
-
 					// remove children part and closing tag from html string
-					html = html.Substring((endTagMatch.Index - elementTexts.Sum(x => x.Length)) + endTagMatch.Value.Length);
+					html = html.Substring((endTagMatch.Index - elementTextsIndexes.Sum(x => x.Item1.Length)) + endTagMatch.Value.Length);
 				}
 			}
 

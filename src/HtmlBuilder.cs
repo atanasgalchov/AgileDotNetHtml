@@ -82,7 +82,7 @@ namespace AgileDotNetHtml
             if (htmlElement.Children.IsNullOrEmpty())
                 return new HtmlString(
                     $"{CreateStartTag(htmlElement.TagName)}{htmlElement.Text()}{CreateEndTag(htmlElement.TagName)}"
-                        .Insert((htmlElement.TagName.Length + 1), htmlElement.Attributes.IsNullOrEmpty() ? "" : $" {String.Join(" ", htmlElement.Attributes.Select(x=> CreateAtribute(x)))}"));
+                        .Insert((htmlElement.TagName.Length + 1), htmlElement.Attributes.IsNullOrEmpty() ? "" : $" {String.Join(" ", htmlElement.Attributes.Select(x => CreateAtribute(x)))}"));
 
             List<IHtmlContent> childContents = new List<IHtmlContent>();
             HtmlElementText[] elementTexts = htmlElement.Texts();
@@ -97,7 +97,7 @@ namespace AgileDotNetHtml
 
             return new HtmlString(
                     $"{CreateStartTag(htmlElement.TagName)}{String.Join("", childContents.Select(x => x.ToString()).ToArray())}{CreateEndTag(htmlElement.TagName)}"
-                        .Insert((htmlElement.TagName.Length + 1), $" {String.Join(" ", htmlElement.Attributes.Select(x => CreateAtribute(x)))}"));
+                        .Insert((htmlElement.TagName.Length + 1), htmlElement.Attributes.IsNullOrEmpty() ? "" :  $" {String.Join(" ", htmlElement.Attributes.Select(x => CreateAtribute(x)))}"));
         }      
     }
 }

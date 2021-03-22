@@ -129,8 +129,8 @@ namespace AgileDotNetHtml.Models
         }
         public void Text(HtmlString html, int index)
         {
-            if (index > Children.Count)
-                index = Children.Count;
+            if (index > (Children.Count + 1))
+                index = Children.Count + 1;
 
             if (index < 0)
                 index = 0;

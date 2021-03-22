@@ -64,12 +64,12 @@ namespace AgileDotNetHtml.Test
             IHtmlElement element = htmlParser.ParseString(html).FirstOrDefault();
 
             // Assert
-            Assert.NotEmpty(element.Texts());
+            Assert.Single(element.Texts());
             Assert.Equal("Text", element.Texts()[0].HtmlString.Value);
             Assert.Equal(6, element.Texts()[0].Index);
         }
         [Theory]
-        [InlineData("<div>Text<span></span>Text<span>1</span>Text</div>")]
+        [InlineData("<div>Text<span><p>1</p></span>Text1<span>1</span>Text2</div>")]
         public void ParseString_ReturnElementWithText_WhenHaveTextBetweenChildren(string html)
         {
             // Arrange          
@@ -78,9 +78,10 @@ namespace AgileDotNetHtml.Test
             IHtmlElement element = htmlParser.ParseString(html).FirstOrDefault();
 
             // Assert
-            Assert.NotEmpty(element.Texts());
+            Assert.Equal(3, element.Texts().Length);
             Assert.Equal("Text", element.Texts()[0].HtmlString.Value);
-            Assert.Equal(1, element.Texts()[0].Index);
+            Assert.Equal("Text1", element.Texts()[1].HtmlString.Value);
+            Assert.Equal("Text2", element.Texts()[2].HtmlString.Value);
         }
     }
 }
