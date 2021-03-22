@@ -69,7 +69,7 @@ namespace AgileDotNetHtml.Test
             Assert.Equal(6, element.Texts()[0].Index);
         }
         [Theory]
-        [InlineData("<div><span></span>Text<span></span></div>")]
+        [InlineData("<div>Text<span></span>Text<span>1</span>Text</div>")]
         public void ParseString_ReturnElementWithText_WhenHaveTextBetweenChildren(string html)
         {
             // Arrange          

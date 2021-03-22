@@ -2,6 +2,7 @@
 using AgileDotNetHtml.Interfaces;
 using AgileDotNetHtml.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -109,6 +110,10 @@ namespace AgileDotNetHtml
 				Match endTagMatch = new Regex(_endTagRegex).Match(html);
 				// match next start tag
 				Match nextStartTagMatch = new Regex(_startTagRegex).Match(html);
+				
+				// break if not exist tags
+				if (endTagMatch.Index == 0 && startTagMatch.Index == 0)
+					break;
 
 				// if tag not contain tags inside. (eg <div>Text</div>)
 				if (nextStartTagMatch.Length == 0 || endTagMatch.Index == 0 || endTagMatch.Index < nextStartTagMatch.Index)
@@ -122,7 +127,7 @@ namespace AgileDotNetHtml
 				}
 				else
 				{
-					// add text if text is before children tags
+					// add text if have text before children tags
 					if (nextStartTagMatch.Index > 0)
 					{
 						// add text in element
@@ -131,56 +136,66 @@ namespace AgileDotNetHtml
 						html = html.Remove(0, nextStartTagMatch.Index);
 					}
 
-					// find end tag and add in children all tags before end tag
+					// match all start tags ignoring self closing tags
 					var startTagMatches = new Regex(_startTagRegex)
 						.Matches(html)
 						.Where(x => !_htmlHelper.IsSelfClosingHtmlTag(GetTagNameFromStartTag(x.Value)));
 
+					// match all end tags
 					MatchCollection endTagMatches = new Regex(_endTagRegex).Matches(html);
+					// find end tang on current tag
 					endTagMatch = endTagMatches
 						.FirstOrDefault(endTag => startTagMatches.Count(x => x.Index < endTag.Index) == endTagMatches.Count(x => x.Index < endTag.Index));
 
 					if (endTagMatch == null)
 						throw new ArgumentException($"The given html is not valid.Close tag on {startTagMatch.Value} start tag did not found. {html}");
 
-					// add text if text is after children tags
-					Match lastEndTagBeforeCurrent = endTagMatches?.LastOrDefault(x => x.Index < endTagMatch.Index);
-					int stringBetweenLastEndTagBeforeCurrentAndCurrentTagIndex = 0;
-					string elementText = null;
-					if (lastEndTagBeforeCurrent != null)
+					// get all end root tags
+					IEnumerable<Match> rootEndTagsMatch = endTagMatches
+						.Where(endTag => 
+							startTagMatches.Count(startTag => startTag.Index < endTag.Index) == endTagMatches.Count(endTag2 => endTag2.Index <= endTag.Index)
+						);
+
+					// try find text between root tags
+					List<string> elementTexts = new List<string>();
+					List<Tuple<int, int>> textsIndexLength = new List<Tuple<int, int>>();
+					foreach (var rootEndTag in rootEndTagsMatch)
 					{
-						stringBetweenLastEndTagBeforeCurrentAndCurrentTagIndex = endTagMatch.Index - (lastEndTagBeforeCurrent.Index + lastEndTagBeforeCurrent.Value.Length);
-						if (stringBetweenLastEndTagBeforeCurrentAndCurrentTagIndex > 0)
+						Match startTagAfterEndTag = startTagMatches.FirstOrDefault(x => x.Index > rootEndTag.Index && x.Index < endTagMatch.Index);
+						
+						int textStringStartIndex = (rootEndTag.Index + rootEndTag.Value.Length);
+						int textStringEndIndex = startTagAfterEndTag != null ? startTagAfterEndTag.Index : endTagMatch.Index;
+						if (textStringEndIndex - textStringStartIndex > 0) 
 						{
 							// add text in element
-							elementText = html.Substring(lastEndTagBeforeCurrent.Index + lastEndTagBeforeCurrent.Value.Length, stringBetweenLastEndTagBeforeCurrentAndCurrentTagIndex);
-							// remove text from html string
-							html = html.Remove(lastEndTagBeforeCurrent.Index + lastEndTagBeforeCurrent.Value.Length, stringBetweenLastEndTagBeforeCurrentAndCurrentTagIndex);
+							elementTexts.Add(html.Substring(rootEndTag.Index + rootEndTag.Value.Length, textStringEndIndex - textStringStartIndex));
+
+							textsIndexLength.Add(
+								new Tuple<int, int>(rootEndTag.Index + rootEndTag.Value.Length, textStringEndIndex - textStringStartIndex)
+							);
 						}
 					}
 
+					// remove text from html string
+					foreach (var textIndexLength in textsIndexLength)
+					{						
+						int previousTextsLengthSum = textsIndexLength.Where((x, i) => i < textsIndexLength.IndexOf(textIndexLength)).Select(x => x.Item2).Sum();
+						html = html.Remove((textIndexLength.Item1 - previousTextsLengthSum), textIndexLength.Item2);
+					}									
+											
 					// add children
-					element.Children = _ParseString(html.Substring(0, endTagMatch.Index - stringBetweenLastEndTagBeforeCurrentAndCurrentTagIndex));
+					element.Children = _ParseString(html.Substring(0, endTagMatch.Index - elementTexts.Sum(x => x.Length)));
 
 					// set text
-					if (elementText.IsNotNullNorEmpty())
+					foreach (var elementText in elementTexts)
+					{
+						// TODO add proper index
 						element.Text(elementText, element.Children.Count);
+					}
+					
 
 					// remove children part and closing tag from html string
-					html = html.Substring((endTagMatch.Index + endTagMatch.Value.Length) - stringBetweenLastEndTagBeforeCurrentAndCurrentTagIndex);
-
-					// match next start tag
-					nextStartTagMatch = new Regex(_startTagRegex).Match(html);
-
-					// add text if text is between children tags
-					if (nextStartTagMatch.Index > 0)
-					{
-						// add text in element
-						// TODO add text idex
-						element.Text(html.Substring(0, nextStartTagMatch.Index));
-						// remove text from html string
-						html = html.Remove(0, nextStartTagMatch.Index);
-					}
+					html = html.Substring((endTagMatch.Index - elementTexts.Sum(x => x.Length)) + endTagMatch.Value.Length);
 				}
 			}
 

@@ -92,7 +92,7 @@ namespace AgileDotNetHtml
                 if (elementTexts.Any(x => x.Index == i))
                     childContents.Add(elementTexts.FirstOrDefault(x => x.Index == i).HtmlString);
                 else
-                    childContents.Add(_CreateHtmlContent(htmlElement.Children[i]));
+                    childContents.Add(_CreateHtmlContent(htmlElement.Children[i - elementTexts.Count(x => x.Index < i)]));
             }
 
             return new HtmlString(
