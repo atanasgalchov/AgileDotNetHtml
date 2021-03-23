@@ -14,8 +14,6 @@ namespace AgileDotNetHtml.Interfaces
         HtmlString Text();
         HtmlElementText[] Texts();
         IHtmlElement Find(Func<IHtmlElement, bool> predicate);
-        void Append(IHtmlElement element);
-        void Prepend(IHtmlElement element);
         IHtmlAttribute[] Attributes { get; set; }
         void AddAttribute(IHtmlAttribute attribute);
         void AddAttributeValue(string Name, string Value);

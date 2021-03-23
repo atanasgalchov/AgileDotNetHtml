@@ -25,7 +25,7 @@ namespace AgileDotNetHtml.Models
         }
       
         public string UId => _uid;
-        public string TagName => _tagName;  
+        public string TagName => _tagName;
         public IHtmlElementsCollection Children 
         {
             get { return _children; } 
@@ -50,7 +50,7 @@ namespace AgileDotNetHtml.Models
             {        
                  _attributes = new List<IHtmlAttribute>(value != null ? value : new HtmlAttribute[] { });
             } 
-        }
+        } 
 
         public IHtmlElement Find(Func<IHtmlElement, bool> predicate)
         {
@@ -99,13 +99,17 @@ namespace AgileDotNetHtml.Models
         {
             return _attributes.Any(x => x.Name == Name);
         }
-        public void Append(IHtmlElement element)
+        public void MergeAttributes(IHtmlAttribute[] Attributes)
         {
-            Children.Add(element);
+            throw new NotImplementedException();
         }
-        public void Prepend(IHtmlElement element)
+        public void RemoveAttribute(string Name)
         {
-            Children.Prepend(element);
+            throw new NotImplementedException();
+        }
+        public void ReplaceAttributeValue(string Name, string Value)
+        {
+            throw new NotImplementedException();
         }
         public HtmlString Text()
         {
@@ -121,33 +125,15 @@ namespace AgileDotNetHtml.Models
         }
         public void Text(HtmlString html)
         {
-            Text(html, 0);
+            Text(html, null);
         }
-        public void Text(string html, int index)
+        public void Text(string html, string afterElementUId)
         {
-            Text(new HtmlString(html), index);
+            Text(new HtmlString(html), afterElementUId);
         }
-        public void Text(HtmlString html, int index)
+        public void Text(HtmlString html, string afterElementUId)
         {
-            if (index > (Children.Count + 1))
-                index = Children.Count + 1;
-
-            if (index < 0)
-                index = 0;
-
-            _texts.Add(new HtmlElementText(html, index));
-        }
-        public void MergeAttributes(IHtmlAttribute[] Attributes)
-        {
-            throw new NotImplementedException();
-        }
-        public void RemoveAttribute(string Name)
-        {
-            throw new NotImplementedException();
-        }
-        public void ReplaceAttributeValue(string Name, string Value)
-        {
-            throw new NotImplementedException();
+            _texts.Add(new HtmlElementText(html, afterElementUId));
         }
         private void SetChildrenParent(IEnumerable<IHtmlElement> parents, IHtmlElementsCollection children) 
         {

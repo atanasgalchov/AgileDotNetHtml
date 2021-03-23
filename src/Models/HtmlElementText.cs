@@ -4,22 +4,17 @@ namespace AgileDotNetHtml.Models
 {
 	public class HtmlElementText
 	{
-		public int Index { get; set; }
-		public HtmlString HtmlString { get; set; }
-		
 		public HtmlElementText(HtmlString htmlString)
 		{
 			HtmlString = htmlString;
 		}
-		public HtmlElementText(HtmlString htmlString, int index)
+		public HtmlElementText(HtmlString htmlString, string afterElementUId)
 		{
 			HtmlString = htmlString;
-			Index = index;
+			AfterElementUId = afterElementUId;
 		}
 
-		public static implicit operator HtmlString(HtmlElementText text)
-		{
-			return text.HtmlString;
-		}
+		public HtmlString HtmlString { get; set; }
+		public string AfterElementUId { get; set; }
 	}
 }

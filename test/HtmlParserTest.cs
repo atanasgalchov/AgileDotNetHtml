@@ -38,7 +38,7 @@ namespace AgileDotNetHtml.Test
             // Assert
             Assert.NotEmpty(element.Texts());
             Assert.Equal("Text", element.Texts()[0].HtmlString.Value);
-            Assert.Equal(0, element.Texts()[0].Index);
+            Assert.Null(element.Texts()[0].AfterElementUId);
         }
         [Theory]
         [InlineData("<div>Text<span><span></span></span><span></span></div>")]
@@ -52,7 +52,7 @@ namespace AgileDotNetHtml.Test
             // Assert
             Assert.NotEmpty(element.Texts());
             Assert.Equal("Text", element.Texts()[0].HtmlString.Value);
-            Assert.Equal(0, element.Texts()[0].Index);
+            Assert.Null(element.Texts()[0].AfterElementUId);
         }
         [Theory]
         [InlineData("<div><span></span><div></div><span></span><div></div><span></span><div></div>Text</div>")]
@@ -66,7 +66,7 @@ namespace AgileDotNetHtml.Test
             // Assert
             Assert.Single(element.Texts());
             Assert.Equal("Text", element.Texts()[0].HtmlString.Value);
-            Assert.Equal(6, element.Texts()[0].Index);
+            Assert.Equal(element.Children.LastOrDefault().UId, element.Texts()[0].AfterElementUId);
         }
         [Theory]
         [InlineData("<div>Text<span><p>1</p></span>Text1<span>1</span>Text2</div>")]

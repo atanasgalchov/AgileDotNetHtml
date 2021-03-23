@@ -12,8 +12,8 @@ namespace AgileDotNetHtml
 	{
 		private HtmlHelper _htmlHelper;
 		private string _startTagRegex = "<[!]?[a-zA-Z]+(>|.*?[^?]>)";
-		private string _endTagRegex = "((<[\\s]*\\/)[\\s]*\\w+([\\s]*>))";
-		private string _keyValueAttributeRegex = "(\\S+)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|[>\"']))+.)[\"']?";
+		private string _endTagRegex = "((<[\\s]*\\/)[\\s]*\\w+([\\s]*>))";		
+		private string _keyValueAttributeRegex = "(\\S+)=[\"']?";
 
 		/// <summary>
 		/// Initialize a new instance of AgileDotNetHtml.HtmlParser class.
@@ -49,19 +49,50 @@ namespace AgileDotNetHtml
 
 			// add all key value attributes
 			Match keyValueAttributesMatch = new Regex(_keyValueAttributeRegex).Match(startTag);
-			while (keyValueAttributesMatch.Value.IsNotNullNorEmpty())
-			{
-				// add key value attribute to element
-				string name = Regex.Unescape(keyValueAttributesMatch.Value.Split("=")[0].Replace("\"", ""));
-				string value = Regex.Unescape(keyValueAttributesMatch.Value.Split("=")[1].Replace("\"", ""));
+			while (keyValueAttributesMatch.Index > 0)
+			{				
+				string name = keyValueAttributesMatch.Value.Split("=")[0];
+				string value = String.Empty;
+
+				// find start attribute value index
+				int startValueIndex = 0;
+				char startValueQuoteSymbol = '"';
+				// skip space and escaping chars
+				for (int i = keyValueAttributesMatch.Index + name.Length; i < startTag.Length; i++)
+				{
+					// when find first quote char, set start value index and break loop
+					if (startTag[i] == '\'' || startTag[i] == '"')
+					{
+						startValueIndex = i;
+						startValueQuoteSymbol = startTag[i];
+						break;
+					}
+				}
+
+				
+				if (startValueIndex != 0)
+				{
+					// TODO add check for non value attribute
+					// start from point after attribute and go back while find same quote char as start to find endAttribute index
+					int endValueIndex = keyValueAttributesMatch.NextMatch().Index > 0 ? keyValueAttributesMatch.NextMatch().Index : startTag.Length - 1;
+					for (int i = endValueIndex; i > startValueIndex; i--)
+					{
+						if (startTag[i] == startValueQuoteSymbol)
+						{
+							endValueIndex = i;
+							break;
+						}
+					}
+
+					value = startTag.Substring(startValueIndex, (endValueIndex - startValueIndex) + 1)
+						.TrimEnd(new char[] { '"', })
+						.TrimStart(new char[] { '"', });
+				}
 
 				element.AddAttribute(new HtmlAttribute(name, value));
 
-				// remove key value attribute from start tag string
-				startTag = startTag.Remove(keyValueAttributesMatch.Index, keyValueAttributesMatch.Value.Length);
-
 				// match next attribute
-				keyValueAttributesMatch = new Regex(_keyValueAttributeRegex).Match(startTag);
+				keyValueAttributesMatch = keyValueAttributesMatch.NextMatch();
 			}
 			// TODO Find Regex for such kind attributes
 			// add all attributes whitout value
@@ -192,7 +223,7 @@ namespace AgileDotNetHtml
 
 					// set text
 					foreach (var textIndex in elementTextsIndexes)					
-						element.Text(textIndex.Item1, textIndex.Item2);
+						element.Text(textIndex.Item1, textIndex.Item2 > 0 ? element.Children[textIndex.Item2 - 1].UId : null);
 					
 					// remove children part and closing tag from html string
 					html = html.Substring((endTagMatch.Index - elementTextsIndexes.Sum(x => x.Item1.Length)) + endTagMatch.Value.Length);

@@ -68,10 +68,17 @@ namespace AgileDotNetHtml
         {
             string attributesString = String.Empty;
             if (attribute.Value == null)
+            {
                 attributesString += $"{attribute.Name} ";
-            else
-                attributesString += $"{attribute.Name}=\"{attribute.Value}\" ";
-
+            }
+            else 
+            {
+                if ((attribute.Value.StartsWith("'") && attribute.Value.EndsWith("'")) || (attribute.Value.StartsWith("\"") && attribute.Value.EndsWith("\"")))
+                    attributesString += $"{attribute.Name}={attribute.Value} ";
+                else
+                    attributesString += $"{attribute.Name}=\"{attribute.Value}\" ";
+            }
+                
             return attributesString.TrimEnd().TrimStart();
         }
         /// <summary>
@@ -85,14 +92,20 @@ namespace AgileDotNetHtml
                         .Insert((htmlElement.TagName.Length + 1), htmlElement.Attributes.IsNullOrEmpty() ? "" : $" {String.Join(" ", htmlElement.Attributes.Select(x => CreateAtribute(x)))}"));
 
             List<IHtmlContent> childContents = new List<IHtmlContent>();
-            HtmlElementText[] elementTexts = htmlElement.Texts();
-
-            for (int i = 0; i < (htmlElement.Children.Count + elementTexts.Length); i++)
+            List<HtmlElementText> knownPossitionedTexts = new List<HtmlElementText>();
+			foreach (var text in htmlElement.Texts())
 			{
-                if (elementTexts.Any(x => x.Index == i))
-                    childContents.Add(elementTexts.FirstOrDefault(x => x.Index == i).HtmlString);
-                else
-                    childContents.Add(_CreateHtmlContent(htmlElement.Children[i - elementTexts.Count(x => x.Index < i)]));
+                if (text.AfterElementUId == null || !htmlElement.Children.Any(x => x.UId == text.AfterElementUId))
+                    childContents.Add(text.HtmlString);           
+                else 
+                    knownPossitionedTexts.Add(text);
+			}
+
+			foreach (var child in htmlElement.Children)
+			{
+                childContents.Add(_CreateHtmlContent(child));
+                if (knownPossitionedTexts.Any(x => x.AfterElementUId == child.UId))
+                    childContents.Add(knownPossitionedTexts.FirstOrDefault(x => x.AfterElementUId == child.UId).HtmlString);
             }
 
             return new HtmlString(
