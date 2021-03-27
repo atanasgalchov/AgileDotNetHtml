@@ -83,5 +83,76 @@ namespace AgileDotNetHtml.Test
             Assert.Equal("Text1", element.Texts()[1].HtmlString.Value);
             Assert.Equal("Text2", element.Texts()[2].HtmlString.Value);
         }
+
+        [Theory]
+        [InlineData("<script>function myFunction() { var $template = \"<button type=\"button\" onclick=\"myFunction()\">Try it</button>\" var $div = $(<div>); $div.append('<span />');  document.getElementById(\"demo\").innerHTML = \"Paragraph changed.\"; }</script>")]
+        public void ParseString_ReturnScriptElement_WhenHaveJavaScript(string html)
+        {
+            // Arrange          
+
+            // Act
+            IHtmlElement element = htmlParser.ParseString(html).FirstOrDefault();
+
+            // Assert
+            Assert.NotNull(element);
+            Assert.Equal("function myFunction() { var $template = \"<button type=\"button\" onclick=\"myFunction()\">Try it</button>\" var $div = $(<div>); $div.append('<span />');  document.getElementById(\"demo\").innerHTML = \"Paragraph changed.\"; }", element.Text().ToString());
+        }
+        [Theory]
+        [InlineData("<div id=\"1234\" class=\"test\"></div>")]
+        public void ParseString_ReturnOneElementWhitSimpleKeyValueAttributes(string html)
+        {
+            // Arrange          
+
+            // Act
+            IHtmlElement element = htmlParser.ParseString(html).FirstOrDefault();
+
+            // Assert
+            Assert.Equal(2, element.Attributes.Length);
+            Assert.Equal("id", element.Attributes[0].Name);
+            Assert.Equal("1234", element.Attributes[0].Value);
+            Assert.Equal("class", element.Attributes[1].Name);
+            Assert.Equal("test", element.Attributes[1].Value);
+
+        }
+        [Theory]
+        [InlineData("<input checked disabled hidden />")]
+        public void ParseBuild_ParseAndReturnOneElementWhitKeyWhitoutValueAttributes(string html)
+        {
+            // Arrange          
+
+            // Act
+            IHtmlElement element = htmlParser.ParseString(html).FirstOrDefault();
+
+            // Assert
+            Assert.Equal(3, element.Attributes.Length);
+            Assert.Equal("checked", element.Attributes[0].Name);
+            Assert.Null(element.Attributes[0].Value);
+            Assert.Equal("disabled", element.Attributes[1].Name);
+            Assert.Null(element.Attributes[1].Value);
+            Assert.Equal("hidden", element.Attributes[2].Name);
+            Assert.Null(element.Attributes[2].Value);
+        }
+        [Theory]
+        [InlineData("<div id='1234' hidden class=\"test test t-test test-t\" checked type = ' text '></div>")]
+        public void ParseBuild_ParseAndReturnOneElementWhitKeyValueAndKeyWhitoutValueAttributes(string html)
+        {
+            // Arrange          
+
+            // Act
+            IHtmlElement element = htmlParser.ParseString(html).FirstOrDefault();
+
+            // Assert
+            Assert.Equal(5, element.Attributes.Length);
+            Assert.Equal("id", element.Attributes[0].Name);
+            Assert.Equal("1234", element.Attributes[0].Value);
+            Assert.Equal("hidden", element.Attributes[1].Name);
+            Assert.Null(element.Attributes[1].Value);
+            Assert.Equal("class", element.Attributes[2].Name);
+            Assert.Equal("test test t-test test-t", element.Attributes[2].Value);           
+            Assert.Equal("checked", element.Attributes[3].Name);
+            Assert.Null(element.Attributes[3].Value);
+            Assert.Equal("type", element.Attributes[4].Name);
+            Assert.Equal("text", element.Attributes[4].Value);
+        }
     }
 }

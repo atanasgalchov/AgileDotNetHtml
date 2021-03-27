@@ -16,28 +16,47 @@ namespace AgileDotNetHtml.Models
 		public string Name { get; set; }
 		public string Value { get; set; }
 	}
-	public class Class : HtmlAttribute
+	public class ClassHtmlAttribute : HtmlAttribute
 	{
-		public Class(string value): base("class", value)
+		public ClassHtmlAttribute(string value): base("class", value)
 		{
 		}
 	}
-	public class Name : HtmlAttribute
+	public class StyleHtmlAttribute : HtmlAttribute
 	{
-		public Name(string value) : base("name", value)
+		public StyleHtmlAttribute(string value) : base("style", value)
 		{
 		}
 	}
-	public class Id : HtmlAttribute
+	public class NameHtmlAttribute : HtmlAttribute
 	{
-		public Id(string value) : base("id", value)
+		public NameHtmlAttribute(string value) : base("name", value)
 		{
 		}
 	}
-	public class Type : HtmlAttribute
+	public class IdHtmlAttribute : HtmlAttribute
 	{
-		public Type(string value) : base("type", value)
+		public IdHtmlAttribute(string value) : base("id", value)
 		{
 		}
 	}
+	public class TypeHtmlAttribute : HtmlAttribute
+	{
+		public TypeHtmlAttribute(string value) : base("type", value)
+		{
+		}
+	}
+	public class DisabledHtmlAttribute : HtmlAttribute
+	{
+		public DisabledHtmlAttribute(string value) : base("disabled", value)
+		{
+		}
+	}
+	public class CheckedHtmlAttribute : HtmlAttribute
+	{
+		public CheckedHtmlAttribute(string value) : base("checked", value)
+		{
+		}
+	}
+
 }

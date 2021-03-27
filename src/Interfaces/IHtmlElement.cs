@@ -9,9 +9,12 @@ namespace AgileDotNetHtml.Interfaces
         string UId { get; }
         string TagName { get; }
         IHtmlElementsCollection Children { get; }
-        IHtmlElementsCollection Parents { get; }
-        void Text(HtmlString html);
+        IHtmlElementsCollection Parents { get; }      
         HtmlString Text();
+        public void Text(string html);
+        void Text(HtmlString html);
+        public void Text(string html, string afterElementUId);
+        public void Text(HtmlString html, string afterElementUId);
         HtmlElementText[] Texts();
         IHtmlElement Find(Func<IHtmlElement, bool> predicate);
         IHtmlAttribute[] Attributes { get; set; }
