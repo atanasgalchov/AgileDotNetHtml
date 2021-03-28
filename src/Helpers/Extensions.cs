@@ -16,6 +16,11 @@ namespace AgileDotNetHtml.Extensions
         public static bool EndstWithPattern(this string str, string pattern) => str.TrimEnd().Length - (Regex.Match(str.TrimEnd(), pattern, RegexOptions.RightToLeft).Index + Regex.Match(str.TrimEnd(), pattern, RegexOptions.RightToLeft).Value.Length) == 0;
         public static bool NotStarstWithPattern(this string str, string pattern) => !str.StarstWithPattern(pattern);
         public static bool NotEndstWithPattern(this string str, string pattern) => !str.EndstWithPattern(pattern);
+        public static string SubStringToIndex(this string str, int startIndex, int endIndex) 
+        {
+            int length = endIndex - startIndex + 1;
+            return str.Substring(startIndex, length);
+        }
     }
     internal static class ArrayExtensions
     {

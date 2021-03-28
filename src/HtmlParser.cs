@@ -37,7 +37,9 @@ namespace AgileDotNetHtml
 
 			// encode all tags whit potantial tags inside which is not part of html tree sctrucure
 			html = _htmlHelper.EncodeTagsContent("script", html);
-			
+			html = _htmlHelper.EncodeCommentsContent(html);
+			html = _htmlHelper.EncodeAttributesValue(html);
+
 			return _ParseString(html);
 		}
 		/// <summary>
@@ -72,7 +74,10 @@ namespace AgileDotNetHtml
 		public HtmlAttributesCollection CreateAttributesCollectionFromStartTagString(string startTag)
 		{
 			HtmlAttributesCollection attributes = new HtmlAttributesCollection();
-			
+
+			// decode
+			startTag = HttpUtility.HtmlDecode(startTag);
+
 			// replace spacing between name-value
 			startTag = Regex.Replace(startTag, HtmlHelper.keyValueAttributeEqualSymbolSpacingRegex, "=");
 			
@@ -167,21 +172,21 @@ namespace AgileDotNetHtml
 				{
 					// add text in element
 					if (endTagMatch.Index > 0)
-						element.Text(html.Substring(0, html.Length - endTagMatch.Value.Length));
+						element.Text(html.Substring(0, endTagMatch.Index));
 
 					// remove text and closing tag on current tag from html string
-					html = html.Remove(0, html.Length - endTagMatch.Value.Length);
+					html = html.Remove(0, endTagMatch.Index + endTagMatch.Value.Length);
 					continue;
 				}
-				// if tag is script
-				if (element.TagName == "script")
+				// if tag is script/noscript
+				if (element.TagName == "script" || element.TagName == "noscript")
 				{
 					// add text in element
 					if (endTagMatch.Index > 0)
-						element.Text(HttpUtility.HtmlDecode(html.Substring(0, html.Length - endTagMatch.Value.Length)));
+						element.Text(HttpUtility.HtmlDecode(html.Substring(0, endTagMatch.Index)));
 
 					// remove text and closing tag on current tag from html string
-					html = html.Remove(0, html.Length - endTagMatch.Value.Length);
+					html = html.Remove(0, endTagMatch.Index + endTagMatch.Value.Length);
 					continue;
 				}
 
@@ -197,7 +202,7 @@ namespace AgileDotNetHtml
 				{
 					// add text in element
 					if (endTagMatch.Index > 0)
-						element.Text(html.Substring(0, endTagMatch.Index));
+						element.Text(HttpUtility.HtmlDecode(html.Substring(0, endTagMatch.Index)));
 
 					// remove text and closing tag on current tag from html string
 					html = html.Remove(0, endTagMatch.Index + endTagMatch.Value.Length);
@@ -208,7 +213,7 @@ namespace AgileDotNetHtml
 					if (nextStartTagMatch.Index > 0)
 					{
 						// add text in element
-						element.Text(html.Substring(0, nextStartTagMatch.Index));
+						element.Text(HttpUtility.HtmlDecode(html.Substring(0, nextStartTagMatch.Index)));
 						// remove text from html string
 						html = html.Remove(0, nextStartTagMatch.Index);
 					}
@@ -234,14 +239,14 @@ namespace AgileDotNetHtml
 						.ToList();
 
 					// add all root selfclosing tags
-					var selfClosingTagMatches = new Regex(HtmlHelper.startTagRegex)
+					var rootSelfClosingTagMatches = new Regex(HtmlHelper.startTagRegex)
 						.Matches(html)
 						.Where(selfClosingTag => 
 							_htmlHelper.IsSelfClosingHtmlTag(ExtractTagNameFromStartTagString(selfClosingTag.Value))
 							&& selfClosingTag.Index < endTagMatch.Index
 							&&  startTagMatches.Count(startTag => startTag.Index < selfClosingTag.Index) == endTagMatches.Count(endTag2 => endTag2.Index <= selfClosingTag.Index)
 						);				
-					rootEndTagsMatch.AddRange(selfClosingTagMatches);
+					rootEndTagsMatch.AddRange(rootSelfClosingTagMatches);
 					// order by index
 					rootEndTagsMatch = rootEndTagsMatch.OrderBy(x => x.Index).ToList();
 
@@ -250,7 +255,11 @@ namespace AgileDotNetHtml
 					List<Tuple<int, int>> textsIndexLength = new List<Tuple<int, int>>();
 					foreach (var rootEndTag in rootEndTagsMatch)
 					{
-						Match startTagAfterEndTag = startTagMatches.FirstOrDefault(x => x.Index > rootEndTag.Index && x.Index < endTagMatch.Index);
+						List<Match> rootStartTagMatches = startTagMatches.ToList();
+						rootStartTagMatches.AddRange(rootSelfClosingTagMatches);
+						rootStartTagMatches = rootStartTagMatches.OrderBy(x => x.Index).ToList();
+						
+						Match startTagAfterEndTag = rootStartTagMatches.FirstOrDefault(x => x.Index > rootEndTag.Index && x.Index < endTagMatch.Index);
 
 						int textStringStartIndex = (rootEndTag.Index + rootEndTag.Value.Length);
 						int textStringEndIndex = startTagAfterEndTag != null ? startTagAfterEndTag.Index : endTagMatch.Index;
@@ -281,10 +290,10 @@ namespace AgileDotNetHtml
 
 					// set text
 					foreach (var textIndex in elementTextsIndexes)
-						element.Text(textIndex.Item1, textIndex.Item2 > 0 ? element.Children[textIndex.Item2 - 1].UId : null);
+						element.Text(HttpUtility.HtmlDecode(textIndex.Item1), textIndex.Item2 > 0 ? element.Children[textIndex.Item2 - 1].UId : null);
 
 					// remove children part and closing tag from html string
-					html = html.Substring((endTagMatch.Index - elementTextsIndexes.Sum(x => x.Item1.Length)) + endTagMatch.Value.Length);
+					html = html.Substring((endTagMatch.Index - elementTextsIndexes.Sum(x => x.Item1.Length)) + endTagMatch.Value.Length).TrimStart().TrimEnd();
 				}
 			}
 

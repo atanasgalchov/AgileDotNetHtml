@@ -28,11 +28,11 @@ namespace AgileDotNetHtml.ClassFactory
 			return new HtmlAttribute(_name, value);
 		}
 
-		private string GetNameValueAttributeRegex() 
+		protected string GetNameValueAttributeRegex() 
 		{
 			return "(" + _name + "[\\s]*=[\\s]*)(['\"])";
 		}
-		private string GetEmptyValueAttributeRegex() 
+		protected string GetEmptyValueAttributeRegex() 
 		{
 			return "(" + _name + "[\\s]*=[\\s]*)(['\"][\\s]*['\"])";
 		}

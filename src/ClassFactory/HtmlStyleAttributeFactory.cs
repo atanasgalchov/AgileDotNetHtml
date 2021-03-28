@@ -5,12 +5,15 @@ using System.Web;
 
 namespace AgileDotNetHtml.ClassFactory
 {
-	public class HtmlStyleAttributeFactory : IHtmlAttributeFactory
+	public class HtmlStyleAttributeFactory : HtmlAttributeFactory
 	{
-		public IHtmlAttribute Create(string nameValueAttributeString)
+		public HtmlStyleAttributeFactory() : base("style")
 		{
-			
-			throw new NotImplementedException();
+
+		}
+		public override IHtmlAttribute Create(string nameValueAttributeString)
+		{
+			return base.Create(nameValueAttributeString);
 		}
 	}
 }
