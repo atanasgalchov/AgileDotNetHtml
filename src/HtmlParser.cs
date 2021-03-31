@@ -1,5 +1,6 @@
 ﻿using AgileDotNetHtml.ClassFactory;
-using AgileDotNetHtml.Extensions;
+using AgileDotNetHtml.Helpers.Extensions;
+using AgileDotNetHtml.Helpers;
 using AgileDotNetHtml.Interfaces;
 using AgileDotNetHtml.Models;
 using System;
@@ -23,7 +24,26 @@ namespace AgileDotNetHtml
 		}
 
 		/// <summary>
-		/// Parse html string to IHtmlElementsCollection.
+		/// Try convert html string to IHtmlElementsCollection.
+		/// </summary>
+		/// <param name="html">Valid html string.</param>
+		/// <param name="htmlElements">When the given string is parsed successfully, IHtmlElementsCollection instance represent given html string, otherwise null.</param>
+		/// <returns>True, if the given string is parsed successfully, otherwise false.</returns>
+		public bool TryParseString(string html, out IHtmlElementsCollection htmlElements) 
+		{
+			try
+			{
+				htmlElements = ParseString(html);
+				return true;
+			}
+			catch
+			{
+				htmlElements = null;
+				return false;
+			}
+		}
+		/// <summary>
+		/// Convert html string to IHtmlElementsCollection.
 		/// </summary>
 		/// <param name="html">Valid html string.</param>
 		/// <returns cref="IHtmlElementsCollection">IHtmlElementsCollection instance represent given html string.</returns>
@@ -71,7 +91,7 @@ namespace AgileDotNetHtml
 		/// </summary>
 		/// <param name="startTag">Html start tag string. Example <span id="1">, <div class="div">, ect. </param>
 		/// <returns cref="HtmlAttributesCollection">HtmlAttributesCollection whit all found attributes in given start tag.</returns>
-		public HtmlAttributesCollection CreateAttributesCollectionFromStartTagString(string startTag)
+		public HtmlAttributesCollection ExtractAttributesFromStartTagString(string startTag)
 		{
 			HtmlAttributesCollection attributes = new HtmlAttributesCollection();
 
@@ -154,7 +174,7 @@ namespace AgileDotNetHtml
 
 				// create element
 				IHtmlElement element = CreateHtmlElementFromStartTag(startTagMatch.Value);
-				element.Attributes = CreateAttributesCollectionFromStartTagString(startTagMatch.Value);
+				element.Attributes = ExtractAttributesFromStartTagString(startTagMatch.Value);
 				htmlElements.Add(element);
 
 				// remove start tag from html string

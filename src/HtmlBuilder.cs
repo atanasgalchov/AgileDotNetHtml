@@ -1,4 +1,5 @@
-﻿using AgileDotNetHtml.Extensions;
+﻿using AgileDotNetHtml.Helpers.Extensions;
+using AgileDotNetHtml.Helpers;
 using AgileDotNetHtml.Interfaces;
 using AgileDotNetHtml.Models;
 using Microsoft.AspNetCore.Html;

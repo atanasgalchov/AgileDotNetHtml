@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace AgileDotNetHtml.Extensions
+namespace AgileDotNetHtml.Helpers.Extensions
 {
     internal static class StringExtensions
     {

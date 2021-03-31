@@ -1,9 +1,9 @@
-﻿using AgileDotNetHtml.Extensions;
+﻿using AgileDotNetHtml.Helpers.Extensions;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace AgileDotNetHtml
+namespace AgileDotNetHtml.Helpers
 {
 	internal class HtmlHelper
 	{
@@ -34,7 +34,6 @@ namespace AgileDotNetHtml
 		
 		internal HtmlHelper()
 		{
-
 		}
 		internal HtmlHelper(string[] selfClosingTagNames)
 		{

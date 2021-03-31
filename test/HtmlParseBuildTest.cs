@@ -78,6 +78,5 @@ namespace AgileDotNetHtml.Test
 			// Assert
 			Assert.Equal(html, result.ToString());
 		}
-
 	}
 }
