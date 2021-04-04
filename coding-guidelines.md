@@ -90,3 +90,19 @@ Writing code is an art in of itself, and it’s pretty much identical to writing
 
 This section will be similar to the previous section on documentation, because the way you name things will greatly affect how your code is both read and interpreted not just by you, but by others. In addition, when there is no documentation, all you have is code for your documentation, so it better be good, and that’s the goal. High quality code. I’m going to break naming conventions up into logical groups. We will start with namespaces, then move to classes and their implementation including fields, properties, events, methods, and member variables within methods.
 
+# Naming Namespaces
+
+The following rules outline the guidelines for naming namespaces.
+* ✔️ DO: Use Pascal case.
+* ✔️ DO: Use a noun or noun phrase to name a namespace.
+* ✔️ DO: Use a well-established company or brand name for the root namespace.
+* ✔️ DO: Use a well-established technology name for the second level hierarchical namespace.
+* ✔️ DO: Use plural names if it is semantically appropriate.
+* ❌ DO NOT: Use the same name for a namespace and a class.
+* ❌ DO NOT: Use the underscore character
+
+```C#
+namespace DCOMEngineering.Windows.Deployment
+{
+}
+```
