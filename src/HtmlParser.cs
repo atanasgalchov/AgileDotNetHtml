@@ -8,21 +8,59 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace AgileDotNetHtml
 {
 	public class HtmlParser : IHtmlParser
 	{
 		private HtmlHelper _htmlHelper;
-
+		private HttpClient _httpClient;
 		/// <summary>
 		/// Initialize a new instance of AgileDotNetHtml.HtmlParser class.
 		/// </summary>
 		public HtmlParser()
 		{
 			_htmlHelper = new HtmlHelper();
+			_httpClient = HttpClientFactory.Create();
 		}
+		/// <summary>
+		/// Initialize a new instance of AgileDotNetHtml.HtmlParser class.
+		/// </summary>
+		/// <param name="httpClientFactory">Instance of IHttpClientFactory for create http client.</param>
+		public HtmlParser(IHttpClientFactory httpClientFactory)
+		{
+			_htmlHelper = new HtmlHelper();
+			_httpClient = httpClientFactory.CreateClient();
+		}
+		public HtmlDocument ParsePageFromUrl(string url) 
+		{
+			if (url.IsNullOrEmpty())
+				throw new ArgumentNullException("url");
 
+			Task<HttpResponseMessage> responseTask = _httpClient.GetAsync(url);
+			HttpResponseMessage response = responseTask.Result;
+			string content = response.Content.ReadAsStringAsync().Result;
+
+			return ParsePage(content);
+		}
+		/// <summary>
+		/// Convert html document string to HtmlDocument.
+		/// </summary>
+		/// <param name="html">Valid html document string.</param>
+		/// <returns cref="HtmlDocument">HtmlDocument instance represent given html string.</returns>
+		public HtmlDocument ParsePage(string html)
+		{
+			if (html.IsNullOrEmpty())
+				throw new ArgumentNullException("html");
+
+			IHtmlElementsCollection elements = ParseString(html);
+			HtmlDocument document = (HtmlDocument)elements.FirstOrDefault(x => x.TagName == "html");
+			document.Doctype = (HtmlDoctypeElement)elements.FirstOrDefault(x => x.TagName.IsEqualIgnoreCase("!DOCTYPE"));
+					
+			return document;
+		}
 		/// <summary>
 		/// Try convert html string to IHtmlElementsCollection.
 		/// </summary>
@@ -56,9 +94,11 @@ namespace AgileDotNetHtml
 			html = html.TrimStart().TrimEnd();
 
 			// encode all tags whit potantial tags inside which is not part of html tree sctrucure
-			html = _htmlHelper.EncodeTagsContent("script", html);
+			html = _htmlHelper.EncodeTagsContent(_htmlHelper.TagsWhitPotentialInvalidHtmlInside, html);
 			html = _htmlHelper.EncodeCommentsContent(html);
 			html = _htmlHelper.EncodeAttributesValue(html);
+			// ensure tags which is can be self closing and can have closing tag
+			html = _htmlHelper.EnsurSelfClosingTags(html);
 
 			return _ParseString(html);
 		}
@@ -74,8 +114,14 @@ namespace AgileDotNetHtml
 
 			// create elements factory
 			IHtmlElementFactory htmlElementsFactory;
-			switch (tagName)
+			switch (tagName.ToLower())
 			{
+				case "!doctype":
+					htmlElementsFactory = new HtmlDoctypeElementFactory();
+					break;
+				case "html":
+					htmlElementsFactory = new HtmlDocumentElementFactory();
+					break;
 				default:
 					htmlElementsFactory = new HtmlElementFactory(tagName);
 					break;
@@ -100,7 +146,7 @@ namespace AgileDotNetHtml
 
 			// replace spacing between name-value
 			startTag = Regex.Replace(startTag, HtmlHelper.keyValueAttributeEqualSymbolSpacingRegex, "=");
-			
+
 			// match tag name
 			Match startTagMatch = new Regex(HtmlHelper.startTagRegex).Match(startTag);
 			// remove tag name from string
@@ -139,6 +185,8 @@ namespace AgileDotNetHtml
 				var endAttributeIndex = startTag.IndexOf(attribute.Name) + attribute.Name.Length;
 				if (attribute.Value.IsNotNullNorEmpty())
 					endAttributeIndex = startTag.IndexOf(attribute.Value, endAttributeIndex) + attribute.Value.Length;
+				else if (startTag.TrimStart().StarstWithPattern(_htmlHelper.GetEmptyValueAttributeRegex(attribute.Name)))
+					endAttributeIndex += 3;
 
 				startTag = startTag.Remove(0, endAttributeIndex);
 				startTag = startTag.TrimStart().TrimStart(new char[] { '"', '\'' });
@@ -168,10 +216,13 @@ namespace AgileDotNetHtml
 			
 			// fill html collection, on loop step add one element in collection
 			while (html.IsNotNullNorEmpty())
-			{
+			{				
 				// match start tag
 				Match startTagMatch = new Regex(HtmlHelper.startTagRegex).Match(html);
 
+				// ensure string start whit start tag
+				html = html.Remove(0, startTagMatch.Index);
+				
 				// create element
 				IHtmlElement element = CreateHtmlElementFromStartTag(startTagMatch.Value);
 				element.Attributes = ExtractAttributesFromStartTagString(startTagMatch.Value);
@@ -181,9 +232,9 @@ namespace AgileDotNetHtml
 				html = html.Remove(0, startTagMatch.Value.Length);
 
 				// continue if tag is self closing
-				if (_htmlHelper.IsSelfClosingHtmlTag(element.TagName))
+				if (_htmlHelper.IsSelfClosingHtmlTag(element.TagName)) 
 					continue;
-
+								
 				// match first end tag
 				Match endTagMatch = new Regex(_htmlHelper.GetRegexForEndTag(element.TagName)).Match(html);
 

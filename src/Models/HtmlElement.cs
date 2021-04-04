@@ -13,7 +13,7 @@ namespace AgileDotNetHtml.Models
         private List<HtmlElementText> _texts = new List<HtmlElementText>();
         private List<IHtmlAttribute> _attributes { get; set; } = new List<IHtmlAttribute>();
         private IHtmlElementsCollection _children { get; set; } = new HtmlElementsCollection();
-       
+
         public HtmlElement(string tagName)
         {
             _uid = Guid.NewGuid().ToString().Replace("-","");
@@ -28,14 +28,15 @@ namespace AgileDotNetHtml.Models
         public string TagName => _tagName;
         public IHtmlElementsCollection Children 
         {
-            get { return _children; } 
+            get 
+            {
+                return _children;
+            } 
             set 
             { 
-                if (value != null) 
-                {
-                    SetChildrenParent(new List<IHtmlElement> { this }, value);
-                }
-
+                if (value != null)
+                    SetChildrenParent(value);
+                
                 _children = value;
             } 
         }
@@ -50,8 +51,12 @@ namespace AgileDotNetHtml.Models
             {        
                  _attributes = new List<IHtmlAttribute>(value != null ? value : new HtmlAttribute[] { });
             } 
-        } 
+        }
 
+        public virtual HtmlElement Clone() 
+        {
+            return (HtmlElement)this.MemberwiseClone();
+        }
         public IHtmlElement Find(Func<IHtmlElement, bool> predicate)
         {
             IHtmlElement htmlElement = Children.FirstOrDefault(predicate);
@@ -60,12 +65,75 @@ namespace AgileDotNetHtml.Models
 
             foreach (var element in Children)
             {
-                htmlElement = element.Children?.FirstOrDefault(predicate);
+                htmlElement = element.Find(predicate);
                 if (htmlElement != null)
                     break;
             }
 
             return htmlElement;
+        }
+        public void Append(IHtmlElement element) 
+        {
+            SetElementParent(element);
+            _children = (HtmlElementsCollection)_children.Append(element).ToList();
+        }
+        public void AppendRange(IHtmlElementsCollection elements)
+        {
+			foreach (var item in elements)
+                Append(item);
+        }
+        public void Preppend(IHtmlElement element)
+        {
+            SetElementParent(element);
+            _children.Prepend(element);
+        }
+        public void PreppendRange(IHtmlElementsCollection elements)
+        {
+            foreach (var item in elements)
+                Preppend(item);
+        }
+        public void ClearChildren()
+        {
+            _children.Clear();
+        }
+        public void Insert(int index, IHtmlElement element)
+        {
+            SetElementParent(element);
+            _children.Insert(index, element);
+        }
+        public void InsertRange(int startIndex, IHtmlElementsCollection elements)
+        {
+            foreach (var item in elements)
+                Insert(startIndex++, item);
+        }
+        public void AddAfter(string uid, IHtmlElement element)
+        {
+            int index = _children.IndexOf(_children.Get(uid)) + 1;
+            _children.Insert(index, element);
+        }
+        public void AddBefore(string uid, IHtmlElement element)
+        {
+            int index = _children.IndexOf(_children.Get(uid)) - 1;
+            _children.Insert(index, element);
+        }
+        public void RemoveChild(string uid)
+        {
+            IHtmlElement element = _children.FirstOrDefault(x => x.UId == uid);
+            _children.Remove(element);
+        }
+        public void RemoveAllChildren(string name)
+        {
+			foreach (var item in _children.Where(x => x.TagName == name))			
+                _children.Remove(item);
+        }
+        public void RemoveChildAt(int index)
+        {
+            _children.RemoveAt(index);
+
+        }
+        public bool RemoveChild(IHtmlElement item)
+        {
+            return _children.Remove(item);
         }
         public void AddAttribute(IHtmlAttribute attribute)
         {
@@ -135,14 +203,18 @@ namespace AgileDotNetHtml.Models
         {
             _texts.Add(new HtmlElementText(html, afterElementUId));
         }
-        private void SetChildrenParent(IEnumerable<IHtmlElement> parents, IHtmlElementsCollection children) 
+        private void SetElementParent(IHtmlElement element)
+        {
+            element.Parents.Add(this);
+            SetChildrenParent(element.Children);
+        }
+        private void SetChildrenParent(IHtmlElementsCollection children)
         {
 			foreach (var item in children)
 			{
-                item.Parents.AddRange(parents);
-                var childParents = parents.ToList();
-                childParents.Insert(0, item);
-                SetChildrenParent(childParents, item.Children);
+                item.Parents.Add(this);
+                if(item.Children.Count() > 0)                
+                    SetChildrenParent(item.Children);
             }
         }
     }

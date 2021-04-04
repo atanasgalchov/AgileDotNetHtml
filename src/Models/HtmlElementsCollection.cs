@@ -154,5 +154,20 @@ namespace AgileDotNetHtml.Models
                 yield return element;
             }
         }
-	}
+
+        public static implicit operator HtmlElementsCollection(List<IHtmlElement> htmlElements) 
+        {
+            HtmlElementsCollection result = new HtmlElementsCollection();
+            result.AddRange(htmlElements);
+
+            return result;
+        }
+        public static implicit operator List<IHtmlElement>(HtmlElementsCollection htmlElements)
+        {
+            List<IHtmlElement> result = new List<IHtmlElement>();
+            result.AddRange(htmlElements.ToList());
+
+            return result;
+        }
+    }
 }

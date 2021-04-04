@@ -40,7 +40,7 @@ namespace AgileDotNetHtml
         /// </summary>
         /// <param name="tagName">The name of html tag.</param>
         /// <returns>String represet given html tag.</returns>
-        public string CreateStartSelfClosingTag(string tagName) => $"<{_htmlHelper.TrimHtmlTag(tagName)} />";
+        public string CreateStartSelfClosingTag(string tagName) => $"<{_htmlHelper.TrimHtmlTag(tagName)}>";
         /// <summary>
         /// Create html end tag string.
         /// </summary>
@@ -60,6 +60,18 @@ namespace AgileDotNetHtml
         /// <param name="htmlElement">Object of type IHtmlElement, for convert to standart HTML content.</param>
         /// <returns>Html content repsresent specified tag.</returns>
         public IHtmlContent CreateHtmlContent(IHtmlElement htmlElement) => _CreateHtmlContent(htmlElement);
+        /// <summary>
+        /// Create html content.
+        /// </summary>
+        /// <param name="htmlDocument">Object of type HtmlDocument, for convert to standart HTML document content.</param>
+        /// <returns>Html content repsresent specified document.</returns>
+        public IHtmlContent CreateHtmlContent(HtmlDocument htmlDocument) 
+        {
+            IHtmlContent doctype = CreateHtmlContent(htmlDocument.Doctype);
+            IHtmlContent html = CreateHtmlContent((IHtmlElement)htmlDocument);
+         
+            return new HtmlString($"{doctype}\r\n{html}");
+        }
         /// <summary>
         /// Create html attribute string.
         /// </summary>
@@ -112,6 +124,6 @@ namespace AgileDotNetHtml
             return new HtmlString(
                     $"{CreateStartTag(htmlElement.TagName)}{String.Join("", childContents.Select(x => x.ToString()).ToArray())}{CreateEndTag(htmlElement.TagName)}"
                         .Insert((htmlElement.TagName.Length + 1), htmlElement.Attributes.IsNullOrEmpty() ? "" :  $" {String.Join(" ", htmlElement.Attributes.Select(x => CreateAtribute(x)))}"));
-        }      
+        }    
     }
 }

@@ -11,8 +11,8 @@ namespace AgileDotNetHtml.Helpers.Extensions
         public static bool IsNullOrEmpty(this string str) => str == null || str.Trim() == String.Empty;
         public static bool IsNotNullNorEmpty(this string str) => str != null && str.Trim() != String.Empty;
         public static bool NotStarstWith(this string str, string value) => !str.StartsWith(value);
-        public static bool NotEndstWith(this string str, string value) => !str.EndsWith(value);          
-        public static bool StarstWithPattern(this string str, string pattern) => Regex.Match(str.TrimStart(), pattern).Index == 0;
+        public static bool NotEndstWith(this string str, string value) => !str.EndsWith(value);
+        public static bool StarstWithPattern(this string str, string pattern) => Regex.IsMatch(str.TrimStart(), pattern);
         public static bool EndstWithPattern(this string str, string pattern) => str.TrimEnd().Length - (Regex.Match(str.TrimEnd(), pattern, RegexOptions.RightToLeft).Index + Regex.Match(str.TrimEnd(), pattern, RegexOptions.RightToLeft).Value.Length) == 0;
         public static bool NotStarstWithPattern(this string str, string pattern) => !str.StarstWithPattern(pattern);
         public static bool NotEndstWithPattern(this string str, string pattern) => !str.EndstWithPattern(pattern);

@@ -1,4 +1,14 @@
 ﻿using AgileDotNetHtml.Interfaces;
+using AgileDotNetHtml.Models;
+using Moq;
+using Moq.Protected;
+using System;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace AgileDotNetHtml.Test
@@ -6,6 +16,63 @@ namespace AgileDotNetHtml.Test
 	public class HtmlParserTest
 	{
         HtmlParser htmlParser = new HtmlParser();
+
+        // -- ParsePage --------------------------------------------------------------------------------------------------------------------------------
+
+        [Fact]
+        public void ParsePage_ReturnEmptyDocument_WhenLoadSuccessfullyAndResponseContentIsEmpty()
+        {
+            // Arrange          
+            var mockFactory = new Mock<IHttpClientFactory>();
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            mockHttpMessageHandler.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent("<!DOCTYPE><html></html>"),
+                });
+
+            var client = new HttpClient(mockHttpMessageHandler.Object);
+            mockFactory.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(client);
+           
+            htmlParser = new HtmlParser(mockFactory.Object);
+
+            // Act
+            HtmlDocument document = htmlParser.ParsePageFromUrl("http://test/test");
+
+            // Assert
+            Assert.NotNull(document);
+        }
+        [Theory]
+        [InlineData("<!DOCTYPE html><html><head><title></title></head><body></body></html>")]
+        public void ParsePage_ReturnEmptyDocument_WhenLoadSuccessfullyAndResponseHaveSimpleHtmlSctructure(string html)
+        {
+            // Arrange          
+            var mockFactory = new Mock<IHttpClientFactory>();
+            var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+            mockHttpMessageHandler.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Content = new StringContent(html),
+                });
+
+            var client = new HttpClient(mockHttpMessageHandler.Object);
+            mockFactory.Setup(x => x.CreateClient(It.IsAny<string>())).Returns(client);
+
+            htmlParser = new HtmlParser(mockFactory.Object);
+
+            // Act
+            HtmlDocument document = htmlParser.ParsePageFromUrl("http://test/test");
+
+            // Assert
+            Assert.NotNull(document);
+            Assert.NotNull(document.Head);
+            Assert.NotNull(document.Title);
+            Assert.NotNull(document.Body);
+        }
 
         // -- ParseString --------------------------------------------------------------------------------------------------------------------------------
 

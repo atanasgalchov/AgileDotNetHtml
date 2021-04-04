@@ -11,7 +11,7 @@ namespace AgileDotNetHtml.ClassFactory
 			_name = name;
 		}
 
-		public IHtmlElement Create()
+		public virtual IHtmlElement Create()
 		{
 			HtmlElement element = new HtmlElement(_name);
 			return element;

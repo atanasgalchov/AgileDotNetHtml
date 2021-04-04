@@ -7,7 +7,8 @@ namespace AgileDotNetHtml.Helpers
 {
 	internal class HtmlHelper
 	{
-		internal const string startTagRegex = "(<[!]?[a-zA-Z]+)(>|.*?[^?]>)";
+		internal const string startTagRegex = "(<[!]?[a-zA-Z\\d]+)(>|.*?[^?]>)";
+		internal const string selfClosingTagEnds = "[/][\\s]*>";
 		internal const string endTagRegex = "((<[\\s]*\\/)[\\s]*\\w+([\\s]*>))";
 		internal const string wholeTagRegex = "(<[!]?[a-zA-Z]+)(>|.*?[^?]>).*((<[\\s]*/)[\\s]*\\w+([\\s]*>))";
 		internal const string keyValueAttributeEqualSymbolSpacingRegex = "[\\s]+=[\\s]+";
@@ -16,22 +17,29 @@ namespace AgileDotNetHtml.Helpers
 
 		private string[] _selfClosingTagNames = new string[] 
 		{
-			"area",
 			"!doctype",
+			"area",		
 			"base",
 			"br",
+			"col",
 			"embed",
 			"hr",
-			"iframe",
 			"img",
 			"input",
 			"link",
 			"meta",
 			"param",
+			"rb",
+			"rt",
 			"source",
-			"track"
+			"track",
+			"wbr"
 		};
-		
+		private string[] _tagsWhitPotentialInvalidHtmlInside = new string[]
+		{
+			"script",
+			"code"
+		};
 		internal HtmlHelper()
 		{
 		}
@@ -45,7 +53,11 @@ namespace AgileDotNetHtml.Helpers
 			get { return _selfClosingTagNames; } 
 			set { _selfClosingTagNames = value;  } 
 		}
-		
+		internal string[] TagsWhitPotentialInvalidHtmlInside
+		{
+			get { return _tagsWhitPotentialInvalidHtmlInside; }
+			set { _tagsWhitPotentialInvalidHtmlInside = value; }
+		}
 		internal bool IsSelfClosingHtmlTag(string tagName) => SelfClosingTagNames.Any(x => TrimHtmlTag(x).IsEqualIgnoreCase(tagName));
 		internal string TrimHtmlTag(string tagName) => Regex.Replace(tagName, @"\s+|/+", "").TrimStart('<').TrimEnd('>');
 		/// <summary>
@@ -60,33 +72,36 @@ namespace AgileDotNetHtml.Helpers
 			// get tag name
 			return startTag.Split(new char[] { ' ', '/', '>' }).FirstOrDefault();
 		}
-		internal string EncodeTagsContent(string tagName, string html)
+		internal string EncodeTagsContent(string[] tagNames, string html)
 		{
-			if (Regex.IsMatch(html, GetRegexForStartTag(tagName)))
+			foreach (var tagName in tagNames)
 			{
-				int offset = 0;
-				Match startScriptTag = Regex.Match(html, GetRegexForStartTag(tagName));
-				Match endScriptTag = Regex.Match(html, GetRegexForEndTag(tagName));
-				while (startScriptTag.Value.IsNotNullNorEmpty())
+				if (Regex.IsMatch(html, GetRegexForStartTag(tagName)))
 				{
-					int startScriptContentIndex = (startScriptTag.Index + startScriptTag.Value.Length) + offset;
-					int endScriptContentIndex = endScriptTag.Index + offset;
-					
-					string content = html.SubStringToIndex(startScriptContentIndex, endScriptContentIndex - 1);
-					string encodedContent = HttpUtility.HtmlEncode(content);
+					int offset = 0;
+					Match startScriptTag = Regex.Match(html, GetRegexForStartTag(tagName));
+					Match endScriptTag = Regex.Match(html, GetRegexForEndTag(tagName));
+					while (startScriptTag.Value.IsNotNullNorEmpty())
+					{
+						int startScriptContentIndex = (startScriptTag.Index + startScriptTag.Value.Length) + offset;
+						int endScriptContentIndex = endScriptTag.Index + offset;
 
-					int noEncodedLength = html.Length;
+						string content = html.SubStringToIndex(startScriptContentIndex, endScriptContentIndex - 1);
+						string encodedContent = HttpUtility.HtmlEncode(content);
 
-					html = html.Remove(startScriptContentIndex, endScriptContentIndex - startScriptContentIndex);
-					html = html.Insert(startScriptContentIndex, encodedContent);
-					
-					offset = html.Length - noEncodedLength;
-					
-					startScriptTag = startScriptTag.NextMatch();
-					endScriptTag = endScriptTag.NextMatch();
+						int noEncodedLength = html.Length;
+
+						html = html.Remove(startScriptContentIndex, endScriptContentIndex - startScriptContentIndex);
+						html = html.Insert(startScriptContentIndex, encodedContent);
+
+						offset = html.Length - noEncodedLength;
+
+						startScriptTag = startScriptTag.NextMatch();
+						endScriptTag = endScriptTag.NextMatch();
+					}
 				}
 			}
-
+		
 			return html;
 		}
 		internal string EncodeCommentsContent(string html)
@@ -162,6 +177,29 @@ namespace AgileDotNetHtml.Helpers
 
 			return html;
 		}
+		internal string EnsurSelfClosingTags(string html)
+		{
+			if (Regex.IsMatch(html, startTagRegex))
+			{
+				int offset = 0;
+				Match startTagMatch = Regex.Match(html, startTagRegex);
+				while (startTagMatch.Value.IsNotNullNorEmpty())
+				{
+					string tagName = ExtractTagNameFromStartTag(startTagMatch.Value);
+					if (!IsSelfClosingHtmlTag(tagName) && startTagMatch.Value.EndstWithPattern(HtmlHelper.selfClosingTagEnds)) 
+					{
+						string endTag = $"</{tagName}>";
+						int lengthBeforeInsert = html.Length;
+						html = html.Insert(startTagMatch.Index + startTagMatch.Value.Length + offset, endTag);
+						offset = html.Length - lengthBeforeInsert;
+					}
+
+					startTagMatch = startTagMatch.NextMatch();
+				}
+			}
+
+			return html;
+		}
 		internal string GetRegexForEndTag(string tagName)
 		{
 			return "((<[\\s]*\\/)[\\s]*(" + tagName + "){1}([\\s]*>))";
@@ -169,6 +207,14 @@ namespace AgileDotNetHtml.Helpers
 		internal string GetRegexForStartTag(string tagName)
 		{
 			return "(<[!]?(" + tagName + "){1})(>|.*?[^?]>)";
+		}
+		internal string GetNameValueAttributeRegex(string name)
+		{
+			return "(" + name + "[\\s]*=[\\s]*)(['\"])";
+		}
+		internal string GetEmptyValueAttributeRegex(string name)
+		{
+			return "(" + name + "[\\s]*=[\\s]*)(['\"][\\s]*['\"])";
 		}
 	}
 }
