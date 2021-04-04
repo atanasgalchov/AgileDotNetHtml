@@ -80,7 +80,7 @@ namespace (<CompanyName>|<ProjectName>).Technology.Feature
 * ❌ DO NOT: Leave empty rows inside members type group.
 * ❌ DO NOT: Leave empty rows more than one.
 
-:information_source: *Why: Using the same class structure allows you to find easy, things which you looking for regardless of when and who is wrote the code.*
+:information_source: *Hint: Using the same class structure allows you to find easy, things which you looking for regardless of when and who is wrote the code.*
 
 # Naming Conventions
 
@@ -106,3 +106,4 @@ namespace DCOMEngineering.Windows.Deployment
 {
 }
 ```
+:information_source: Hint: Most of the time when naming a namespace I tend to use a brand name for the root instead of my company name. This allows me to reserve my company name for the future of any absolutely critical namespaces. In return I don’t have to do any major refactoring due to namespace collisions because of poor decision making early on. I think it is very important to give your namespace names some serious short-term and long-term thought before you call it set in stone.
