@@ -18,7 +18,7 @@ namespace AgileDotNetHtml
 		private HtmlHelper _htmlHelper;
 		private HttpClient _httpClient;
 		/// <summary>
-		/// Initialize a new instance of AgileDotNetHtml.HtmlParser class.
+		/// Initialize a new instance of the AgileDotNetHtml.HtmlParser class.
 		/// </summary>
 		public HtmlParser()
 		{
@@ -26,7 +26,7 @@ namespace AgileDotNetHtml
 			_httpClient = HttpClientFactory.Create();
 		}
 		/// <summary>
-		/// Initialize a new instance of AgileDotNetHtml.HtmlParser class.
+		/// Initialize a new instance of the AgileDotNetHtml.HtmlParser class.
 		/// </summary>
 		/// <param name="httpClientFactory">Instance of IHttpClientFactory for create http client.</param>
 		public HtmlParser(IHttpClientFactory httpClientFactory)
@@ -34,6 +34,12 @@ namespace AgileDotNetHtml
 			_htmlHelper = new HtmlHelper();
 			_httpClient = httpClientFactory.CreateClient();
 		}
+		
+		/// <summary>
+		/// Load and convert html document string to HtmlDocument.
+		/// </summary>
+		/// <param name="html">Valid html document string.</param>
+		/// <returns cref="HtmlDocument">HtmlDocument instance represent given html string.</returns>
 		public HtmlDocument ParsePageFromUrl(string url) 
 		{
 			if (url.IsNullOrEmpty())
@@ -97,7 +103,7 @@ namespace AgileDotNetHtml
 			html = _htmlHelper.EncodeTagsContent(_htmlHelper.TagsWhitPotentialInvalidHtmlInside, html);
 			html = _htmlHelper.EncodeCommentsContent(html);
 			html = _htmlHelper.EncodeAttributesValue(html);
-			// ensure tags which is can be self closing and can have closing tag
+			// ensure tags which is can be declared as self closed, but they can have closing tag also
 			html = _htmlHelper.EnsurSelfClosingTags(html);
 
 			return _ParseString(html);
@@ -112,7 +118,7 @@ namespace AgileDotNetHtml
 			// get tag name
 			string tagName = ExtractTagNameFromStartTagString(startTag);
 
-			// create elements factory
+			// create element factory
 			IHtmlElementFactory htmlElementsFactory;
 			switch (tagName.ToLower())
 			{
