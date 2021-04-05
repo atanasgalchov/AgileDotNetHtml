@@ -163,10 +163,8 @@ public class OperationsManager : Manager
 }
 ```
 
-# Naming Constructor Parameters
+# Naming Events
 
-See Method Parameters.
-Naming Events
 The following rules outline the guidelines for naming events.
 * ✔️ DO: Use Pascal case.
 * ✔️ DO: Use a verb in the event name to describe the action the event represents, such as Changed in ProgressChanged or Clicked.
@@ -207,6 +205,28 @@ public class OperationsManager : Manager
 ```
 
 :information_source: Hint: I don’t find methods particularly hard to name, but I do spend a lot of time naming them. Method names are one of the most important, if not the most important identifier to name. They are your implementation details of your class, and where you will spend the majority of your time in code. Name these well enough, and maintaining your code is a lot easier for everyone.
+
+# Naming Constructor Parameters
+
+The following rules outline the guidelines for naming parameters.
+* ✔️ DO: Use Camel case.
+* ✔️ DO: For parameters that are used for set on private fields use the same name as fields and skip underscore prefix.
+* ✔️ DO: Use descriptive parameter names preferring a noun or noun phrase. Parameter names should be descriptive enough that the name of the parameter and its type can be used to determine its meaning in most scenarios.
+* ❌ DO NOT: Use reserved parameters.
+* ❌ DO NOT: Use Hungarian notation.
+
+```C#
+public class Employee
+{ 
+    private string _name;
+    private string _age;
+    public Employee(string name, string age)
+    {
+    	_name = name;
+    	_age = age;
+    }
+} 
+```
 
 # Naming Method Parameters
 
