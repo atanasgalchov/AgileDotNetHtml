@@ -126,3 +126,190 @@ public class OperationsManager : Manager
 
 :information_source: Hint: Naming a class can be pretty difficult. Just like namespaces, give your classes some serious shortterm and long-term thought. Classes are more likely to encounter name collisions than namespaces, which in the event it does happen can be remedied by using namespaces and namespace aliases, but it’s best to avoid it, if at all possible. There are also exceptions to the conventions for naming a derived class, such as in the example of OperationsManager deriving from Manager. In the business world, both are an employee, so the convention is broken when your Manager class derives from the Employee class. In this situation, that’s okay, but don’t let this stray you from following convention.
 
+# Naming Fields
+
+The following rules outline the guidelines for naming fields.
+* ✔️ DO: Use Camel case.
+* ✔️ DO: Use descriptive field names preferring a noun or noun phrase. Field names should be descriptive enough that the name of the field and its type can be used to determine its meaning in most scenarios.
+* ✔️ DO: Use names that describe the fields meaning rather than names that describe the field’s type.
+* ✔️ DO: Use leading underscore for private fields.
+* ❌ DO NOT: Use reserved names as field names.
+* ❌ DO NOT: Use Hungarian type notation.
+* ❓ CONSIDER: Choosing a different name for a field if the current name is too long, and cannot be shortened without sacrificing the ability to easily identify the fields meaning.
+
+```C#
+public class OperationsManager : Manager 
+{ 
+    private Department _department;
+    private ICollection<Manager> _managers;
+    private decimal _salary;  
+    private SiteDirector _siteDirector; 
+}
+```
+
+# Naming Properties
+
+The following rules outline the guidelines for naming properties.
+* ✔️ DO: Use Pascal case.
+* ✔️ DO: Use a noun or noun phrase to name properties.
+* ❌ DO NOT: Use Hungarian notation.
+* ❓ CONSIDER: Naming the property the same as its underlying type when its meaning is literal. For example, if you declare a property named Color, the type of the property should likewise be Color.
+
+```C#
+public class OperationsManager : Manager 
+{ 
+    public String Email { get; set; }
+    public SiteDirector SiteDirector { get;set; } 
+}
+```
+
+# Naming Constructor Parameters
+
+See Method Parameters.
+Naming Events
+The following rules outline the guidelines for naming events.
+* ✔️ DO: Use Pascal case.
+* ✔️ DO: Use a verb in the event name to describe the action the event represents, such as Changed in ProgressChanged or Clicked.
+* ✔️ DO: Use a gerund (the “ing” form of a verb) if possible to create an event name that expresses the concept of pre and post-events such as in ProgressChanging and ProgressChanged.
+* ❌ DO NOT: Prefix an event with On or suffix an event with Event.
+
+```C#
+public class CustomerService 
+{
+     public event EventHandler CustomerCalling;
+     public event EventHandler CustomerCalled; 
+}
+```
+
+:information_source: Hint: Events are another construct that can be hard to name. I remember countless times when I was learning Windows Forms years ago where I would get confused about the order in which events fired. A case that comes to mind is a lot of the controls have both Resized and SizeChanged events. Without documentation it can be hard to deduce which one fires first without debugging it, and what if the order in which they fire could change? This is why it is important to name your events well and document them like we discussed in the previous sections.
+It’s also worth noting that it can be hard to name events with pre-event and post-event in mind. Take the example in Figure 4. CustomerCalling is not actually a pre-event, it’s a current event, because you can’t technically know the exact time before a customer calls, until they call. It is a pre-event in the sense that it is a notification you can handle before the action of calling is allowed to continue, but is definitely something to keep in mind when naming an event, because how you name the event may be drastically different depending on the action. You can have an action where you can control when it is invoked, like calling method you know when pre-event takes place, but when you have an event you don’t control like an incoming request, the pre-event isn’t exactly known. For situations like I just stated you need to make sure your events are well-documented on how and when they are triggered so they can be properly consumed by developers.
+
+# Naming Methods
+The following rules outline the guidelines for naming methods.
+* ✔️ DO: Use Pascal case.
+* ✔️ DO: Use verbs or verb phrases to name methods.
+* ✔️ DO: Use precise method names that easily describe the action the method performs.
+* ❓ CONSIDER: If a method is hard to name because it does more than one thing, it is usually a clear indication that your method needs refactored into multiple methods.
+
+```C#
+public class OperationsManager : Manager 
+{ 
+    public void FireEmployee(Employee employee) 
+    { 
+    }   
+    public Report GetEmployeeReport(Employee employee)
+    { 
+    }
+    public void HirePerson(Person person)
+    { 
+    } 
+}
+```
+
+:information_source: Hint: I don’t find methods particularly hard to name, but I do spend a lot of time naming them. Method names are one of the most important, if not the most important identifier to name. They are your implementation details of your class, and where you will spend the majority of your time in code. Name these well enough, and maintaining your code is a lot easier for everyone.
+
+# Naming Method Parameters
+
+The following rules outline the guidelines for naming parameters.
+* ✔️ DO: Use Camel case.
+* ✔️ DO: Use descriptive parameter names preferring a noun or noun phrase. Parameter names should be descriptive enough that the name of the parameter and its type can be used to determine its meaning in most scenarios.
+* ✔️ DO: Use names that describe the parameters meaning rather than names that describe the field’s type.
+* ❌ DO NOT: Use reserved parameters.
+* ❌ DO NOT: Use Hungarian notation.
+
+```C#
+public void SetPosition(int x, int y) 
+{ 
+} 
+public void CalculateProgress(int minimum, int maximum, int value) 
+{ 
+} 
+public void DownloadFile(Uri uri, String filePath) 
+{ 
+}
+```
+
+:information_source: Hint: Generally you should follow the same guidelines for parameters as you do fields. You can differentiate between a field and parameter by using the this keyword.
+
+# Documenting Code
+
+Someone wrote a class, and now you need to consume its implementation. Where do you start? How do you use this class? What does it even do? These are all very common questions from developers when they first discover a type, and the answer to all of these questions is documenting the code itself. Have you often wondered why Msdn has such great documentation? I can tell you that it’s not because there is a technical documentation team doing all the work. Yes, there is a documentation team that does a lot of work, but the majority of the documentation already exists because it was documented by the developers who wrote the code and took the time to do it, in the actual code.
+Visual Studio provides a rich means of documenting your code through Xml Documentation Comments. I also want to point out how incredibly easy this is to do, and how very little time it takes. Take the class I wrote in Class Structure, Figure 2; and in Visual Studio, place your cursor right above the class constructor and type /// (three forward slashes). You will notice that Visual Studio adds a bunch of stuff to your code.
+
+```C#
+/// <summary> 
+///  
+/// </summary> 
+/// <param name="name"></param> 
+public Employee(String name)
+{
+    this.name = name;
+}
+```
+
+Typing three forward slashes in Visual Studio automatically generates empty xml documentation comments for you to fill out. This is nice because no matter how many parameters you have, it will automatically provide you with ready to fill out comments for each one of them.
+David Anderson: You can use this on almost anything, but there are some things that it will not work for, such as using directives to import namespaces and namespaces directly. Furthermore, even though you can document almost anything, you shouldn’t and should you should avoid over-documenting. There are ways to document code, and ways not to. Then there is also what to document, and what not to document. Luckily, the rules I usually give to developers to follow on this are very simple.
+DO: Document a summary of all classes, regardless of their accessibility modifier.
+DO: Document all public, protected, internal, and protected internal classes, constructors, methods, properties, constants, readonly static fields, events, and delegates.
+DO NOT: Document items that have a private accessibility modifier, unless it is very useful to do so, either because its implementation is large, complicated, or follows some complicated business rule that is hard to remember.
+:information_source: Hint: If you’re wondering why you should use xml documentation comments rather than regular code comments, it’s because the xml comments are used by Visual Studio to provide information to Intellisense (the tooltip you get when you hover over an identifier in code). It’s a rich documentation set that allows you to even make bulleted lists in comments, and it’s even used to generate xml documentation comment files on disk that you can use to generate Msdn style documentation sites with. Let’s put these rules into practice and document our Employee class. I will demonstrate documenting the class itself, constructor, and its various properties.
+
+```C#
+namespace DCOMEngineering.DeveloperDocument.Demo
+{
+    using System;
+    using System.Linq; 
+  
+    /// <summary> 
+    /// Provides information about a company employee. 
+    /// </summary>     
+    public class Employee 
+    {
+        private string email;
+        private string name;
+        private decimal salary;
+ 
+        /// <summary> 
+        /// Initializes a new instance of the DCOMEngineering.DeveloperDocument.Demo.Employee class 
+        /// using the specified name. 
+        /// </summary> 
+        /// <param name="name">The name of the employee.</param>
+        public Employee(String name)
+        {
+            this.name = name; 
+        } 
+  
+        /// <summary> 
+        /// Gets or sets the employee's email address. 
+        /// </summary>
+        public String Email
+        {
+            get { return email; }
+            set { email = value; } 
+        } 
+  
+        /// <summary> 
+        /// Gets or sets the employee's name. 
+        /// </summary>
+        public String Name
+        {
+            get { return name; }
+            set { name = value; } 
+        } 
+  
+        /// <summary> 
+        /// Gets or sets the employee's salary. 
+        /// </summary>
+        public Decimal Salary
+        {
+            get { return salary; }
+            set { salary = value; } 
+        } 
+    }
+}
+```
+
+Documentation is absolutely critical to writing high quality code. I always advocate what I read in Code Complete 2 by Microsoft, because it is one of the most accurate statements I have ever read about documentation in code.
+Construction’s product, the source code, is often the only accurate description of the software.
+In many projects, the only documentation available to programmers is the source code itself. Requirements specifications and design documents can go out of date, but the source code is always up to date. Consequently, it’s imperative that the source code be of the highest possible quality. Consistent application of techniques for sourcecode improvement makes the difference between a Rube Goldberg contraption and a detailed, correct, and therefore informative program. Such techniques are most effectively applied during construction.
+
