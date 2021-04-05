@@ -319,3 +319,94 @@ Documentation is absolutely critical to writing high quality code. I always advo
 Construction’s product, the source code, is often the only accurate description of the software.
 In many projects, the only documentation available to programmers is the source code itself. Requirements specifications and design documents can go out of date, but the source code is always up to date. Consequently, it’s imperative that the source code be of the highest possible quality. Consistent application of techniques for sourcecode improvement makes the difference between a Rube Goldberg contraption and a detailed, correct, and therefore informative program. Such techniques are most effectively applied during construction.
 
+# Documenting Classes
+
+Document classes using a summary-description of what the class is, and preferably its overall purpose. Anyone reading the class summary should easily be able to deduce what the class’s purpose is.
+
+```C#
+/// <summary> 
+/// Provides information about a company employee. 
+/// </summary> 
+public class Employee 
+{ 
+    … 
+}
+```
+
+Documenting Constructors
+Document constructor’s using the following grammar: “Initializes a new instance of the
+Namespace(s).ClassName class”. This provides consistency with how .NET Framework classes are documented, which will be familiar to most developers.
+
+```C#
+/// <summary> 
+/// Initializes a new instance of the DCOMEngineering.DeveloperDocument.Demo.Employee class. 
+/// </summary>
+public Employee() 
+{ 
+}
+```
+
+# Documenting Properties
+
+Document properties first with “Gets or sets …”, “Gets …”, or “Sets …” following by its summary description. This clearly indicates to a developer whether the property is read-only, read-write, or write-only. This provides consistency with how .NET Framework properties are documented, which will be familiar to most developers.
+
+```C#
+/// <summary> 
+/// Gets or sets the employee's email address. 
+/// </summary> 
+public String Email 
+{
+     get { return _email; }
+     set { _email = value; } 
+} 
+  
+/// <summary> 
+/// Gets the employee's name. 
+/// </summary> 
+public String Name 
+{
+     get { return _name; } 
+}
+```
+
+# Documenting Methods
+
+Document methods using a summary description of what the method’s action is, being as precise as possible. Describing a method’s action is generally more difficult than describing a simple property or class, so make sure to give it the time and thought to produce the most clearly understandable description you can. Optionally, use the or tags to provide technical details that are more in-depth than a summary description.
+
+```C#
+/// <summary> 
+/// Calculates the employee's base salary. 
+/// </summary> 
+/// <param name="hourlyRate">The hourly rate the employee makes.</param> 
+/// <devdoc> 
+/// At our company, a salary is based on a 300-day work-year
+/// with 8 billable work hours per day. 
+/// </devdoc> 
+public decimal CalculateSalary(decimal hourlyRate) 
+{
+     return (hourlyRate * 8) * 300; 
+}
+```
+
+Method documentation is arguably the most critical documentation in your class, because methods generally contain almost all of your class’s behavior. In Figure 8, you see the summary description that describes what the method’s action is, but in addition you have documentation for the arguments it takes as parameters too. This is important because a developer needs to know what a parameter is, and what it expects as an argument so that they can use the method correctly.
+In addition to the standard documentation, you will note that there is also a tag that is not listed in the table I outlined earlier in this section. The tag is a little secret that I believe originated from the .NET Framework team at Microsoft to indicate that a comment was directly from the developer, and not the documentation team. This is very useful because you may not end up writing all the documentation, but still may need to provide your input to some degree.
+David Anderson: When a method’s implementation is too complicated to explain without forgetting a bunch of details, has unique business rules, or there is something else about it that warrants some detailed explanation, you should prefer to use the tag. The advantage of the tag is that it is generally included by documentation generators like Msdn where you see a remarks section. In most cases though, development teams do not generate documentation sites, and use the code itself as documentation. In these scenarios, favor the tag while still considering that you might use a documentation generator in the future.
+
+# Documenting Events
+
+Document events such as “Occurs when …”. This provides consistency with how .NET Framework events are documented, which will be familiar to most other developers.
+
+```C#
+/// <summary> 
+/// Occurs when the progress of the file download has been changed. 
+/// </summary> 
+public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
+```
+
+As you can clearly see, documentation can easily become quite a large subject to discuss. However, I have covered enough to give you a good foundation to start documenting your classes well, adding that extra layer of quality. You will find that other developers reading your code will not have a difficult time, and the even better news is that neither will you two weeks from now when you have to go back and read it again.
+
+* ✔️ DO: Use the tag to document private implementation details for other developers to understand.
+* ✔️ DO: Favor the tag over the tag if there is a good probability of using documentation generation in the future.
+* ✔️ DO: Be extremely consistent in your documentation while being as articulate and precise as possible.
+* ❌ DO NOT: Document private fields, unless there is a very good reason to do so.
+* ❌ DO NOT: Use normal code comments for documentation. These are included in compiled source code and create code bloat. Xml documentation comments are stripped from the source code when it is compiled, and are not included in the final output assembly.
