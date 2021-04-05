@@ -255,39 +255,26 @@ public void DownloadFile(Uri uri, String filePath)
 
 Someone wrote a class, and now you need to consume its implementation. Where do you start? How do you use this class? What does it even do? These are all very common questions from developers when they first discover a type, and the answer to all of these questions is documenting the code itself. Have you often wondered why Msdn has such great documentation? I can tell you that it’s not because there is a technical documentation team doing all the work. Yes, there is a documentation team that does a lot of work, but the majority of the documentation already exists because it was documented by the developers who wrote the code and took the time to do it, in the actual code.
 Visual Studio provides a rich means of documenting your code through Xml Documentation Comments. I also want to point out how incredibly easy this is to do, and how very little time it takes. Take the class I wrote in Class Structure, Figure 2; and in Visual Studio, place your cursor right above the class constructor and type /// (three forward slashes). You will notice that Visual Studio adds a bunch of stuff to your code.
-
-```C#
-/// <summary> 
-///  
-/// </summary> 
-/// <param name="name"></param> 
-public Employee(String name)
-{
-    this.name = name;
-}
-```
-
 Typing three forward slashes in Visual Studio automatically generates empty xml documentation comments for you to fill out. This is nice because no matter how many parameters you have, it will automatically provide you with ready to fill out comments for each one of them.
 David Anderson: You can use this on almost anything, but there are some things that it will not work for, such as using directives to import namespaces and namespaces directly. Furthermore, even though you can document almost anything, you shouldn’t and should you should avoid over-documenting. There are ways to document code, and ways not to. Then there is also what to document, and what not to document. Luckily, the rules I usually give to developers to follow on this are very simple.
-DO: Document a summary of all classes, regardless of their accessibility modifier.
-DO: Document all public, protected, internal, and protected internal classes, constructors, methods, properties, constants, readonly static fields, events, and delegates.
-DO NOT: Document items that have a private accessibility modifier, unless it is very useful to do so, either because its implementation is large, complicated, or follows some complicated business rule that is hard to remember.
-:information_source: Hint: If you’re wondering why you should use xml documentation comments rather than regular code comments, it’s because the xml comments are used by Visual Studio to provide information to Intellisense (the tooltip you get when you hover over an identifier in code). It’s a rich documentation set that allows you to even make bulleted lists in comments, and it’s even used to generate xml documentation comment files on disk that you can use to generate Msdn style documentation sites with. Let’s put these rules into practice and document our Employee class. I will demonstrate documenting the class itself, constructor, and its various properties.
+
+* ✔️ DO: Document a summary of all classes, regardless of their accessibility modifier.
+* ✔️ DO: Document all public, protected, internal, and protected internal classes, constructors, methods, properties, constants, readonly static fields, events, and delegates.
+* ❌ DO NOT: Document items that have a private accessibility modifier, unless it is very useful to do so, either because its implementation is large, complicated, or follows some complicated business rule that is hard to remember.
 
 ```C#
+using System;
+using System.Linq; 
 namespace DCOMEngineering.DeveloperDocument.Demo
 {
-    using System;
-    using System.Linq; 
-  
     /// <summary> 
     /// Provides information about a company employee. 
     /// </summary>     
     public class Employee 
     {
-        private string email;
-        private string name;
-        private decimal salary;
+        private string _email;
+        private string _name;
+        private decimal _salary;
  
         /// <summary> 
         /// Initializes a new instance of the DCOMEngineering.DeveloperDocument.Demo.Employee class 
@@ -296,7 +283,7 @@ namespace DCOMEngineering.DeveloperDocument.Demo
         /// <param name="name">The name of the employee.</param>
         public Employee(String name)
         {
-            this.name = name; 
+            this._name = name; 
         } 
   
         /// <summary> 
@@ -304,31 +291,30 @@ namespace DCOMEngineering.DeveloperDocument.Demo
         /// </summary>
         public String Email
         {
-            get { return email; }
-            set { email = value; } 
+            get { return _email; }
+            set { _email = value; } 
         } 
-  
         /// <summary> 
         /// Gets or sets the employee's name. 
         /// </summary>
         public String Name
         {
-            get { return name; }
-            set { name = value; } 
-        } 
-  
+            get { return _name; }
+            set { _name = value; } 
+        }  
         /// <summary> 
         /// Gets or sets the employee's salary. 
         /// </summary>
         public Decimal Salary
         {
-            get { return salary; }
-            set { salary = value; } 
+            get { return _salary; }
+            set { _salary = value; } 
         } 
     }
 }
 ```
 
+:information_source: Hint: If you’re wondering why you should use xml documentation comments rather than regular code comments, it’s because the xml comments are used by Visual Studio to provide information to Intellisense (the tooltip you get when you hover over an identifier in code). It’s a rich documentation set that allows you to even make bulleted lists in comments, and it’s even used to generate xml documentation comment files on disk that you can use to generate Msdn style documentation sites with. Let’s put these rules into practice and document our Employee class. I will demonstrate documenting the class itself, constructor, and its various properties.
 Documentation is absolutely critical to writing high quality code. I always advocate what I read in Code Complete 2 by Microsoft, because it is one of the most accurate statements I have ever read about documentation in code.
 Construction’s product, the source code, is often the only accurate description of the software.
 In many projects, the only documentation available to programmers is the source code itself. Requirements specifications and design documents can go out of date, but the source code is always up to date. Consequently, it’s imperative that the source code be of the highest possible quality. Consistent application of techniques for sourcecode improvement makes the difference between a Rube Goldberg contraption and a detailed, correct, and therefore informative program. Such techniques are most effectively applied during construction.
