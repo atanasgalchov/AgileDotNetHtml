@@ -107,3 +107,22 @@ namespace DCOMEngineering.Windows.Deployment
 }
 ```
 :information_source: Hint: Most of the time when naming a namespace I tend to use a brand name for the root instead of my company name. This allows me to reserve my company name for the future of any absolutely critical namespaces. In return I don’t have to do any major refactoring due to namespace collisions because of poor decision making early on. I think it is very important to give your namespace names some serious short-term and long-term thought before you call it set in stone.
+
+# Naming Classes
+
+The following rules outline the guidelines for naming classes.
+* ✔️ DO: Use Pascal case.
+* ✔️ DO: Use a noun or noun phrase to name a class.
+* ✔️ DO: Use a compound word to name a derived class. The second part of the derived class’s name should be the name of the base class, such as InvalidOperationException is an appropriate name for a class derived from Exception.
+* ❌ DO NOT: Use a prefix such as C or a suffix such as Class in the class name.
+* ❌ DO NOT: Use the prefix I unless the class is an interface.
+* ❌ DO NOT: Use the underscore character.
+
+```C#
+public class OperationsManager : Manager 
+{ 
+}
+```
+
+:information_source: Hint: Naming a class can be pretty difficult. Just like namespaces, give your classes some serious shortterm and long-term thought. Classes are more likely to encounter name collisions than namespaces, which in the event it does happen can be remedied by using namespaces and namespace aliases, but it’s best to avoid it, if at all possible. There are also exceptions to the conventions for naming a derived class, such as in the example of OperationsManager deriving from Manager. In the business world, both are an employee, so the convention is broken when your Manager class derives from the Employee class. In this situation, that’s okay, but don’t let this stray you from following convention.
+
