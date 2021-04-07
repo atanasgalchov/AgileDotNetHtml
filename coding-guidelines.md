@@ -9,19 +9,20 @@ C# Developer Guidelines (C# Coding Conventions)
 * [Introduction](#Introduction)
 * [Class Structure](#class-structure)
 * [Naming Conventions](#naming-conventions)
-	* [Classes](#Classes)
-	* [Fields](#Fields)
-	* [Constructor Parameters](#constructor-parameters)
-	* [Events](#Events)
-	* [Properties](#Properties)
-	* [Methods](#Methods)
-	* [Method Parameters](#method-parameters)
+	* [Naming Namespaces](#naming-namespaces)
+	* [Naming Classes](#naming-classes)
+	* [Naming Fields](#naming-fields)	
+	* [Naming Properties](#naming-properties)
+	* [Naming Events](#naming-events)
+	* [Naming Methods](#naming-methods)
+	* [Naming Constructor Parameters](#naming-constructor-parameters)
+	* [Naming Method Parameters](#naming-method-parameters)
 * [Documenting Code](#documenting-code)
-	* [Constructor](#Constructor)
-	* [Peroperties](#Peroperties)
-	* [Methods](#Methods)
-	* [Fields and Constants](#fields-and-constants)
-	* [Events](#Events)
+	* [Documenting Classes](#documenting-classes)
+	* [Documenting Constructor](#documenting-constructor)
+	* [Documenting Events](#documenting-events)
+	* [Documenting Peroperties](#documenting-peroperties)
+	* [Documenting Methods](#documenting-methods)
 	
 # Introduction
 
@@ -332,7 +333,8 @@ public class Employee
 }
 ```
 
-Documenting Constructors
+# Documenting Constructors
+
 Document constructor’s using the following grammar: “Initializes a new instance of the
 Namespace(s).ClassName class”. This provides consistency with how .NET Framework classes are documented, which will be familiar to most developers.
 
@@ -344,6 +346,25 @@ public Employee()
 { 
 }
 ```
+
+# Documenting Events
+
+Document events such as “Occurs when …”. This provides consistency with how .NET Framework events are documented, which will be familiar to most other developers.
+
+```C#
+/// <summary> 
+/// Occurs when the progress of the file download has been changed. 
+/// </summary> 
+public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
+```
+
+As you can clearly see, documentation can easily become quite a large subject to discuss. However, I have covered enough to give you a good foundation to start documenting your classes well, adding that extra layer of quality. You will find that other developers reading your code will not have a difficult time, and the even better news is that neither will you two weeks from now when you have to go back and read it again.
+
+* ✔️ DO: Use the tag to document private implementation details for other developers to understand.
+* ✔️ DO: Favor the tag over the tag if there is a good probability of using documentation generation in the future.
+* ✔️ DO: Be extremely consistent in your documentation while being as articulate and precise as possible.
+* ❌ DO NOT: Document private fields, unless there is a very good reason to do so.
+* ❌ DO NOT: Use normal code comments for documentation. These are included in compiled source code and create code bloat. Xml documentation comments are stripped from the source code when it is compiled, and are not included in the final output assembly.
 
 # Documenting Properties
 
@@ -390,22 +411,3 @@ public decimal CalculateSalary(decimal hourlyRate)
 Method documentation is arguably the most critical documentation in your class, because methods generally contain almost all of your class’s behavior. In Figure 8, you see the summary description that describes what the method’s action is, but in addition you have documentation for the arguments it takes as parameters too. This is important because a developer needs to know what a parameter is, and what it expects as an argument so that they can use the method correctly.
 In addition to the standard documentation, you will note that there is also a tag that is not listed in the table I outlined earlier in this section. The tag is a little secret that I believe originated from the .NET Framework team at Microsoft to indicate that a comment was directly from the developer, and not the documentation team. This is very useful because you may not end up writing all the documentation, but still may need to provide your input to some degree.
 David Anderson: When a method’s implementation is too complicated to explain without forgetting a bunch of details, has unique business rules, or there is something else about it that warrants some detailed explanation, you should prefer to use the tag. The advantage of the tag is that it is generally included by documentation generators like Msdn where you see a remarks section. In most cases though, development teams do not generate documentation sites, and use the code itself as documentation. In these scenarios, favor the tag while still considering that you might use a documentation generator in the future.
-
-# Documenting Events
-
-Document events such as “Occurs when …”. This provides consistency with how .NET Framework events are documented, which will be familiar to most other developers.
-
-```C#
-/// <summary> 
-/// Occurs when the progress of the file download has been changed. 
-/// </summary> 
-public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
-```
-
-As you can clearly see, documentation can easily become quite a large subject to discuss. However, I have covered enough to give you a good foundation to start documenting your classes well, adding that extra layer of quality. You will find that other developers reading your code will not have a difficult time, and the even better news is that neither will you two weeks from now when you have to go back and read it again.
-
-* ✔️ DO: Use the tag to document private implementation details for other developers to understand.
-* ✔️ DO: Favor the tag over the tag if there is a good probability of using documentation generation in the future.
-* ✔️ DO: Be extremely consistent in your documentation while being as articulate and precise as possible.
-* ❌ DO NOT: Document private fields, unless there is a very good reason to do so.
-* ❌ DO NOT: Use normal code comments for documentation. These are included in compiled source code and create code bloat. Xml documentation comments are stripped from the source code when it is compiled, and are not included in the final output assembly.
