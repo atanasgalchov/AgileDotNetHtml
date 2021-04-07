@@ -19,9 +19,9 @@ C# Developer Guidelines (C# Coding Conventions)
 	* [Naming Method Parameters](#naming-method-parameters)
 * [Documenting Code](#documenting-code)
 	* [Documenting Classes](#documenting-classes)
-	* [Documenting Constructor](#documenting-constructor)
+	* [Documenting Constructors](#documenting-constructors)
 	* [Documenting Events](#documenting-events)
-	* [Documenting Peroperties](#documenting-peroperties)
+	* [Documenting Properties](#documenting-properties)
 	* [Documenting Methods](#documenting-methods)
 	
 # Introduction
