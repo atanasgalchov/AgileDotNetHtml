@@ -7,22 +7,21 @@ Robert C. Martin
 C# Developer Guidelines (C# Coding Conventions)
 
 * [Introduction](#Introduction)
-* Class Structure
-* Naming Conventions
-	* Naming Conventions
-	* Classes
-	* Fields
-	* Constructor Parameters
-	* Events
-	* Properties
-	* Methods
-	* Method Parameters
-* Documenting Code
-	* Constructor
-	* peroperties
-	* Methods
-	* Fields and Constants
-	* Events
+* [Class Structure](#ClassStructure)
+* [Naming Conventions](#NamingConventions)
+	* [Classes](#Classes)
+	* [Fields](#Fields)
+	* [Constructor Parameters](#ConstructorParameters)
+	* [Events](#Events)
+	* [Properties](#Properties)
+	* [Methods](#Methods)
+	* [Method Parameters](#MethodParameters)
+* [Documenting Code](#DocumentingCode)
+	* [Constructor](#Constructor)
+	* [Peroperties](#Peroperties)
+	* [Methods](#Methods)
+	* [Fields and Constants](#FieldsandConstants)
+	* [Events](#Events)
 	
 # Introduction
 
