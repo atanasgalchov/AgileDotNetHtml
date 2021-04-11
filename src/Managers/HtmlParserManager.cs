@@ -187,10 +187,6 @@ namespace AgileDotNetHtml.Factories
 
 		public Dictionary<int, string> ParseText(int startIndex, int endIndex)
 		{
-			if (startIndex == 5) 
-			{
-			
-			}
 			// init result dict
 			Dictionary<int, string> texts = new Dictionary<int, string>();
 
