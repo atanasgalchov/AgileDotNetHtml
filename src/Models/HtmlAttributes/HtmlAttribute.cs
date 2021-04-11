@@ -1,6 +1,6 @@
 ﻿using AgileDotNetHtml.Interfaces;
 
-namespace AgileDotNetHtml.Models
+namespace AgileDotNetHtml.Models.HtmlAttributes
 {
 	public class HtmlAttribute : IHtmlAttribute
 	{

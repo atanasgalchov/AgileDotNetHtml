@@ -1,5 +1,6 @@
 ﻿using AgileDotNetHtml.Interfaces;
 using AgileDotNetHtml.Models;
+using AgileDotNetHtml.Models.HtmlElements;
 using Xunit;
 
 namespace AgileDotNetHtml.Test
@@ -11,10 +12,10 @@ namespace AgileDotNetHtml.Test
         {
 
             // Arrange          
-            HtmlElement element = new HtmlElement("div");
+            HtmlNodeElement element = new HtmlNodeElement("div");
 
             // Act
-            element.Append(new HtmlElement("div"));
+            element.Append(new HtmlNodeElement("div"));
 
             // Assert
             Assert.NotNull(element.Children);
@@ -26,7 +27,7 @@ namespace AgileDotNetHtml.Test
         {
 
             // Arrange          
-            HtmlElement element = new HtmlElement("div");
+            HtmlNodeElement element = new HtmlNodeElement("div");
             HtmlElementsCollection htmlElementsCollection = new HtmlElementsCollection();
             htmlElementsCollection.Add(new HtmlElement("div"));
             htmlElementsCollection.Add(new HtmlElement("span"));

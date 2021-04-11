@@ -1,8 +1,8 @@
 ﻿using AgileDotNetHtml.Interfaces;
 
-namespace AgileDotNetHtml.Models
+namespace AgileDotNetHtml.Models.HtmlElements
 {
-	public class HtmlDocument : HtmlElement
+	public class HtmlDocument : HtmlNodeElement
 	{
 		public HtmlDocument() : base("html")
 		{

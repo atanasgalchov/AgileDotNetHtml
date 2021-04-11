@@ -1,5 +1,6 @@
 ﻿using AgileDotNetHtml.Interfaces;
 using AgileDotNetHtml.Models;
+using AgileDotNetHtml.Models.HtmlElements;
 using Moq;
 using Moq.Protected;
 using System;
@@ -100,7 +101,7 @@ namespace AgileDotNetHtml.Test
             // Arrange          
 
             // Act
-            IHtmlElement element = htmlParser.ParseString(html).FirstOrDefault();
+            HtmlNodeElement element = (HtmlNodeElement)htmlParser.ParseString(html).FirstOrDefault();
 
             // Assert
             Assert.NotEmpty(element.Texts());
@@ -114,7 +115,7 @@ namespace AgileDotNetHtml.Test
             // Arrange          
 
             // Act
-            IHtmlElement element = htmlParser.ParseString(html).FirstOrDefault();
+            HtmlNodeElement element = (HtmlNodeElement)htmlParser.ParseString(html).FirstOrDefault();
 
             // Assert
             Assert.NotEmpty(element.Texts());
@@ -128,7 +129,7 @@ namespace AgileDotNetHtml.Test
             // Arrange          
 
             // Act
-            IHtmlElement element = htmlParser.ParseString(html).FirstOrDefault();
+            HtmlNodeElement element = (HtmlNodeElement)htmlParser.ParseString(html).FirstOrDefault();
 
             // Assert
             Assert.Single(element.Texts());
@@ -142,7 +143,7 @@ namespace AgileDotNetHtml.Test
             // Arrange          
 
             // Act
-            IHtmlElement element = htmlParser.ParseString(html).FirstOrDefault();
+            HtmlNodeElement element = (HtmlNodeElement)htmlParser.ParseString(html).FirstOrDefault();
 
             // Assert
             Assert.Equal(3, element.Texts().Length);
@@ -158,7 +159,7 @@ namespace AgileDotNetHtml.Test
             // Arrange          
 
             // Act
-            IHtmlElement element = htmlParser.ParseString(html).FirstOrDefault();
+            HtmlPairTagsElement element = (HtmlPairTagsElement)htmlParser.ParseString(html).FirstOrDefault();
 
             // Assert
             Assert.NotNull(element);

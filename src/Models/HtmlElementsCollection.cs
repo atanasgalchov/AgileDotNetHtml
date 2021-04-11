@@ -95,11 +95,14 @@ namespace AgileDotNetHtml.Models
 
             foreach (var element in List)
             {
-                htmlElement = element.Children?.Get(uid);
-                if (htmlElement != null)
-                    break;
+                if (element is IHtmlNodeElement)
+                {
+                    htmlElement = ((IHtmlNodeElement)element).Children?.Get(uid);
+                    if (htmlElement != null)
+                        break;
+                }
             }
-
+           
             return htmlElement;
         }
         public void Remove(string uid)

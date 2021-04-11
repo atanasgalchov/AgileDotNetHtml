@@ -1,5 +1,4 @@
-﻿
-namespace AgileDotNetHtml.Interfaces
+﻿namespace AgileDotNetHtml.Interfaces
 {
     public interface IHtmlAttribute
     {

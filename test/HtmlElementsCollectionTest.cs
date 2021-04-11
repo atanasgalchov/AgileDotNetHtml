@@ -1,5 +1,6 @@
 ﻿using AgileDotNetHtml.Interfaces;
 using AgileDotNetHtml.Models;
+using AgileDotNetHtml.Models.HtmlElements;
 using Xunit;
 
 namespace AgileDotNetHtml.Test
@@ -30,7 +31,7 @@ namespace AgileDotNetHtml.Test
 
             // Arrange          
 
-            htmlElementsCollection = new HtmlElementsCollection() { new HtmlElement("div"), new HtmlElement("div") };
+            htmlElementsCollection = new HtmlElementsCollection() { new HtmlPairTagsElement("div"), new HtmlPairTagsElement("div") };
 
             // Act
             IHtmlElement result = htmlElementsCollection.Get("1");
@@ -45,8 +46,8 @@ namespace AgileDotNetHtml.Test
             // Arrange          
 
             htmlElementsCollection = new HtmlElementsCollection() {
-                new HtmlElement("div") {  Children = new HtmlElementsCollection { new HtmlElement("span") } },
-                new HtmlElement("div") {  Children = new HtmlElementsCollection { new HtmlElement("span") } }
+                new HtmlNodeElement("div") {  Children = new HtmlElementsCollection { new HtmlElement("span") } },
+                new HtmlNodeElement("div") {  Children = new HtmlElementsCollection { new HtmlElement("span") } }
             };
 
             // Act
@@ -61,10 +62,10 @@ namespace AgileDotNetHtml.Test
 
             // Arrange
 
-            var searchedElement = new HtmlElement("div") { Children = new HtmlElementsCollection { new HtmlElement("span") } };
+            var searchedElement = new HtmlNodeElement("div") { Children = new HtmlElementsCollection { new HtmlElement("span") } };
             htmlElementsCollection = new HtmlElementsCollection() {
                     searchedElement,
-                    new HtmlElement("div") {  Children = new HtmlElementsCollection { new HtmlElement("span") } }
+                    new HtmlNodeElement("div") {  Children = new HtmlElementsCollection { new HtmlElement("span") } }
                 };
 
             // Act
@@ -78,17 +79,17 @@ namespace AgileDotNetHtml.Test
         {
             // Arrange          
 
-            var searchedElement = new HtmlElement("div") { Children = new HtmlElementsCollection { new HtmlElement("span") } };
+            var searchedElement = new HtmlNodeElement("div") { Children = new HtmlElementsCollection { new HtmlElement("span") } };
             htmlElementsCollection = new HtmlElementsCollection() {
-                new HtmlElement("div")
+                new HtmlNodeElement("div")
                 {
                     Children = new HtmlElementsCollection
                     {
-                        new HtmlElement("span")
+                        new HtmlNodeElement("span")
                         {
                             Children = new HtmlElementsCollection
                             {
-                                new HtmlElement("span")
+                                new HtmlNodeElement("span")
                                 {
                                     Children = new HtmlElementsCollection { searchedElement }
                                 }
@@ -96,7 +97,7 @@ namespace AgileDotNetHtml.Test
                         }
                     }
                 },
-                new HtmlElement("div")
+                new HtmlNodeElement("div")
                 {
                     Children = new HtmlElementsCollection { new HtmlElement("span") }
                 }

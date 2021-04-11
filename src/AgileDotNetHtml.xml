@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AgileDotNetHtml</name>
+    </assembly>
+    <members>
+        <!-- Badly formed XML comment ignored for member "M:AgileDotNetHtml.Helpers.HtmlHelper.ExtractTagNameFromStartTag(System.String)" -->
+        <member name="M:AgileDotNetHtml.HtmlBuilder.#ctor">
+            <summary>
+            Initialize a new instance of AgileDotNetHtml.HtmlBuilder class.
+            </summary>
+        </member>
+        <member name="M:AgileDotNetHtml.HtmlBuilder.#ctor(System.String[])">
+            <summary>
+            Initialize a new instance of AgileDotNetHtml.HtmlBuilder class with specific self closing html tags names.
+            </summary>
+            <param name="selfClosingHtmlTagsNames">The names of selfclosing tags.</param>
+        </member>
+        <member name="M:AgileDotNetHtml.HtmlBuilder.CreateStartTag(System.String)">
+            <summary>
+            Create html start tag string.
+            </summary>
+            <param name="tagName">The name of html tag.</param>
+            <returns>String represet given start html tag.</returns>
+        </member>
+        <member name="M:AgileDotNetHtml.HtmlBuilder.CreateStartSelfClosingTag(System.String)">
+            <summary>
+            Create html start self closing tag string.
+            </summary>
+            <param name="tagName">The name of html tag.</param>
+            <returns>String represet given html tag.</returns>
+        </member>
+        <member name="M:AgileDotNetHtml.HtmlBuilder.CreateEndTag(System.String)">
+            <summary>
+            Create html end tag string.
+            </summary>
+            <param name="tagName">The name of html tag.</param>
+            <returns>String represet given html end tag.</returns>
+        </member>
+        <member name="M:AgileDotNetHtml.HtmlBuilder.CreateHtmlContent(AgileDotNetHtml.Interfaces.IHtmlElementsCollection)">
+            <summary>
+            Create html content.
+            </summary>
+            <param name="htmlElements">Collection of type IHtmlElement, for convert to HTML content.</param>
+            <returns>Html content repsresent specified elements collection.</returns>
+        </member>
+        <member name="M:AgileDotNetHtml.HtmlBuilder.CreateHtmlContent(AgileDotNetHtml.Interfaces.IHtmlElement)">
+            <summary>
+            Create html content.
+            </summary>
+            <param name="htmlElement">Object of type IHtmlElement, for convert to standart HTML content.</param>
+            <returns>Html content repsresent specified tag.</returns>
+        </member>
+        <member name="M:AgileDotNetHtml.HtmlBuilder.CreateHtmlContent(AgileDotNetHtml.Models.HtmlDocument)">
+            <summary>
+            Create html content.
+            </summary>
+            <param name="htmlDocument">Object of type HtmlDocument, for convert to standart HTML document content.</param>
+            <returns>Html content repsresent specified document.</returns>
+        </member>
+        <member name="M:AgileDotNetHtml.HtmlBuilder.CreateAtribute(AgileDotNetHtml.Interfaces.IHtmlAttribute)">
+            <summary>
+            Create html attribute string.
+            </summary>
+            <param name="attribute">Object of type IHtmlAttribute, for convert to html attribute string.</param>
+            <returns>String represent specified atribute.</returns>
+        </member>
+        <member name="M:AgileDotNetHtml.HtmlBuilder._CreateHtmlContent(AgileDotNetHtml.Interfaces.IHtmlElement)">
+            <summary>
+            Create HtmlContent from object of type IHtmlElement recursively.
+            </summary>
+        </member>
+        <member name="M:AgileDotNetHtml.HtmlParser.#ctor">
+            <summary>
+            Initialize a new instance of AgileDotNetHtml.HtmlParser class.
+            </summary>
+        </member>
+        <member name="M:AgileDotNetHtml.HtmlParser.#ctor(System.Net.Http.IHttpClientFactory)">
+            <summary>
+            Initialize a new instance of AgileDotNetHtml.HtmlParser class.
+            </summary>
+            <param name="httpClientFactory">Instance of IHttpClientFactory for create http client.</param>
+        </member>
+        <member name="M:AgileDotNetHtml.HtmlParser.ParsePage(System.String)">
+            <summary>
+            Convert html document string to HtmlDocument.
+            </summary>
+            <param name="html">Valid html document string.</param>
+            <returns cref="T:AgileDotNetHtml.Models.HtmlDocument">HtmlDocument instance represent given html string.</returns>
+        </member>
+        <member name="M:AgileDotNetHtml.HtmlParser.TryParseString(System.String,AgileDotNetHtml.Interfaces.IHtmlElementsCollection@)">
+            <summary>
+            Try convert html string to IHtmlElementsCollection.
+            </summary>
+            <param name="html">Valid html string.</param>
+            <param name="htmlElements">When the given string is parsed successfully, IHtmlElementsCollection instance represent given html string, otherwise null.</param>
+            <returns>True, if the given string is parsed successfully, otherwise false.</returns>
+        </member>
+        <member name="M:AgileDotNetHtml.HtmlParser.ParseString(System.String)">
+            <summary>
+            Convert html string to IHtmlElementsCollection.
+            </summary>
+            <param name="html">Valid html string.</param>
+            <returns cref="T:AgileDotNetHtml.Interfaces.IHtmlElementsCollection">IHtmlElementsCollection instance represent given html string.</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:AgileDotNetHtml.HtmlParser.CreateHtmlElementFromStartTag(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:AgileDotNetHtml.HtmlParser.ExtractAttributesFromStartTagString(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:AgileDotNetHtml.HtmlParser.ExtractTagNameFromStartTagString(System.String)" -->
+        <member name="M:AgileDotNetHtml.HtmlParser._ParseString(System.String)">
+            <summary>
+            Parse html string recursively.
+            </summary>
+        </member>
+    </members>
+</doc>

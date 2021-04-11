@@ -1,4 +1,5 @@
 ﻿using AgileDotNetHtml.Models;
+using AgileDotNetHtml.Models.HtmlElements;
 using Microsoft.AspNetCore.Html;
 using Xunit;
 
@@ -16,7 +17,7 @@ namespace AgileDotNetHtml.Test
             // Arrange          
             htmlBuilder = new HtmlBuilder();
 
-            HtmlElement htmlTag = new HtmlElement("div");
+            HtmlNodeElement htmlTag = new HtmlNodeElement("div");
 
             // Act
             IHtmlContent result = htmlBuilder.CreateHtmlContent(htmlTag);
@@ -32,7 +33,7 @@ namespace AgileDotNetHtml.Test
             // Arrange          
             htmlBuilder = new HtmlBuilder();
 
-            HtmlElement htmlTag = new HtmlElement("div", "Text");
+            HtmlElement htmlTag = new HtmlPairTagsElement("div", "Text");
 
             // Act
             IHtmlContent result = htmlBuilder.CreateHtmlContent(htmlTag);
@@ -47,8 +48,8 @@ namespace AgileDotNetHtml.Test
             // Arrange          
             htmlBuilder = new HtmlBuilder();
 
-            HtmlElement htmlTag = new HtmlElement("div");
-            htmlTag.Children.Add(new HtmlElement("span"));
+            HtmlNodeElement htmlTag = new HtmlNodeElement("div");
+            htmlTag.Children.Add(new HtmlNodeElement("span"));
             htmlTag.Text("Text", htmlTag.Children.LastOrDefault().UId);
 
             // Act
@@ -64,8 +65,8 @@ namespace AgileDotNetHtml.Test
             // Arrange          
             htmlBuilder = new HtmlBuilder();
 
-            HtmlElement htmlTag = new HtmlElement("div", "Text");
-            htmlTag.Children.Add(new HtmlElement("span"));
+            HtmlNodeElement htmlTag = new HtmlNodeElement("div", "Text");
+            htmlTag.Children.Add(new HtmlNodeElement("span"));
 
             // Act
             IHtmlContent result = htmlBuilder.CreateHtmlContent(htmlTag);
@@ -80,14 +81,14 @@ namespace AgileDotNetHtml.Test
             // Arrange          
             htmlBuilder = new HtmlBuilder();
 
-            HtmlElement htmlTag = new HtmlElement("div");
-            HtmlElement span = new HtmlElement("span");
+            HtmlNodeElement htmlTag = new HtmlNodeElement("div");
+            HtmlNodeElement span = new HtmlNodeElement("span");
             htmlTag.Children.Add(span);
             htmlTag.Text("Text", span.UId);
-            HtmlElement span1 = new HtmlElement("span");
+            HtmlNodeElement span1 = new HtmlNodeElement("span");
             htmlTag.Children.Add(span1);
             htmlTag.Text("Text1", span1.UId);
-            HtmlElement span2 = new HtmlElement("span");
+            HtmlNodeElement span2 = new HtmlNodeElement("span");
             htmlTag.Children.Add(span2);
             htmlTag.Text("Text2", span2.UId);
 

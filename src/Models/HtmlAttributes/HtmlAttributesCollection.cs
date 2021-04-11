@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace AgileDotNetHtml.Models
+namespace AgileDotNetHtml.Models.HtmlAttributes
 {
 	public class HtmlAttributesCollection : IEnumerable<IHtmlAttribute>
 	{

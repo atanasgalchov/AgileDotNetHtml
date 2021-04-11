@@ -1,5 +1,6 @@
 ﻿using AgileDotNetHtml.Interfaces;
 using AgileDotNetHtml.Models;
+using AgileDotNetHtml.Models.HtmlElements;
 using Microsoft.AspNetCore.Html;
 using Moq;
 using Moq.Protected;
