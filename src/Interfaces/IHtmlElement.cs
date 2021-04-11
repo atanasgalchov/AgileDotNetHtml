@@ -7,11 +7,12 @@
         IHtmlElementsCollection Parents { get; }
         IHtmlAttribute[] Attributes { get; set; }
         void AddAttribute(IHtmlAttribute attribute);
-        void AddAttributeValue(string Name, string Value);
-        bool HasAttribute(string Name);
-        IHtmlAttribute GetAttribute(string Name);
-        void ReplaceAttributeValue(string Name, string Value);
-        void RemoveAttribute(string Name);
-        void AddRangeAttributes(IHtmlAttribute[] Attributes);
+        void AddAttribute(string name);
+        void AddAttributeValue(string name, string value);
+        bool HasAttribute(string name);
+        IHtmlAttribute GetAttribute(string name);
+        void ReplaceAttributeValue(string name, string value);
+        void RemoveAttribute(string name);
+        void AddRangeAttributes(IHtmlAttribute[] attributes);
     }
 }

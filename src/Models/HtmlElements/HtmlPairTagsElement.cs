@@ -22,13 +22,19 @@ namespace AgileDotNetHtml.Models.HtmlElements
         {
             return _text;
         }
-        public void Text(string html)
+        public void Text(string html, bool decode = false)
         {
-            _text = new HtmlString(HttpUtility.HtmlDecode(html));
+            if (decode)
+                html = HttpUtility.HtmlDecode(html);
+
+            _text = new HtmlString(html);
         }
-        public void Text(HtmlString html)
+        public void Text(HtmlString html, bool decode = false)
         {
-            _text = new HtmlString(HttpUtility.HtmlDecode(html.Value));
+            if (decode)
+                _text = new HtmlString(HttpUtility.HtmlDecode(html.Value));
+            else
+                _text = html;
         }
     }
 }

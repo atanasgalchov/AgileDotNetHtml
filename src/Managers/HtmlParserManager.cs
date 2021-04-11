@@ -15,17 +15,17 @@ namespace AgileDotNetHtml.Factories
 {
 	public class HtmlParserManager
 	{
-		private const string startTagRegex = "(<[!]?[a-zA-Z\\d]+)(>|.*?[^?]>)";
-		private const string selfClosingTagEnds = "[/][\\s]*>";
-		private const string endTagRegex = "((<[\\s]*\\/)[\\s]*\\w+([\\s]*>))";
-		private const string wholeTagRegex = "(<[!]?[a-zA-Z]+)(>|.*?[^?]>).*((<[\\s]*/)[\\s]*\\w+([\\s]*>))";
-		private const string keyValueAttributeEqualSymbolSpacingRegex = "[\\s]+=[\\s]+";
-		private const string commentRegex = "<!--[\\s\\S]*?-->";
-		private const string keyValueAttributeRegex = "(\\S+)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|[>\"']))+.)[\"']?";
+		internal const string startTagRegex = "(<[!]?[a-zA-Z\\d]+)(>|.*?[^?]>)";
+		internal const string selfClosingTagEnds = "[/][\\s]*>";
+		internal const string endTagRegex = "((<[\\s]*\\/)[\\s]*\\w+([\\s]*>))";
+		internal const string wholeTagRegex = "(<[!]?[a-zA-Z]+)(>|.*?[^?]>).*((<[\\s]*/)[\\s]*\\w+([\\s]*>))";
+		internal const string keyValueAttributeEqualSymbolSpacingRegex = "[\\s]+=[\\s]+";
+		internal const string commentRegex = "<!--[\\s\\S]*?-->";
+		internal const string keyValueAttributeRegex = "(\\S+)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|[>\"']))+.)[\"']?";
 		private HtmlHelper _htmlHelper;
 		private string _html;
 		private List<Match> _startTagsMathes;
-		private List<Match> _pairTagsMathes;
+		private List<Match> _pairStartTagsMathes;
 		private List<Match> _endTagsMathes;
 
 		public HtmlParserManager(string html)
@@ -42,13 +42,42 @@ namespace AgileDotNetHtml.Factories
 			// ensure tags which is can be self closing and can have closing tag
 			_html = EnsurSelfClosingTags(_html);
 
-			_startTagsMathes = Regex.Matches(_html, startTagRegex)
+			_startTagsMathes = Regex.Matches(_html, startTagRegex, RegexOptions.Singleline)
 				.ToList();
-			_pairTagsMathes = _startTagsMathes
+			_pairStartTagsMathes = _startTagsMathes
 				.Where(x => !_htmlHelper.IsSelfClosingHtmlTag(_htmlHelper.ExtractTagNameFromStartTag(x.Value)))
 				.ToList();
 			_endTagsMathes = Regex.Matches(_html, endTagRegex)
-				.ToList(); ;
+				.ToList();
+
+			if (_pairStartTagsMathes.Count != _endTagsMathes.Count) 
+			{
+				var startTags = _pairStartTagsMathes.Select(x => _htmlHelper.ExtractTagNameFromStartTag(x.Value)).ToArray().Distinct();
+				var endTags = _endTagsMathes.Select(x => _htmlHelper.ExtractTagNameFromEndTag(x.Value)).ToArray().Distinct();
+				var groupedStartTags = startTags.GroupBy(st => st, (key, g) => new { TagName = key, Count = g.Count() });
+				var groupedEndTags = endTags.GroupBy(st => st, (key, g) => new { TagName = key, Count = g.Count() });
+
+				string message = "";
+				if (startTags.Count() > endTags.Count())
+				{			
+					var invalidTags = groupedStartTags
+					   .Where(x => !endTags.Any(e => e == x.TagName) || x.Count != groupedEndTags.FirstOrDefault(ge => ge.TagName == x.TagName).Count)
+					   .Select(x => x.TagName)
+					   .ToList();
+					message = String.Format("Invalid HTML string, the count of open tags is greater  than closed tags. Invalid tags: {0}", String.Join(",", invalidTags));
+				}
+				else 
+				{
+				
+					var invalidTags = groupedEndTags
+					   .Where(x => !startTags.Any(e => e == x.TagName) || x.Count != groupedStartTags.FirstOrDefault(ge => ge.TagName == x.TagName).Count)
+					   .Select(x => x.TagName)
+					   .ToList();
+					message = String.Format("Invalid HTML  string, the count of open tags is less than closed tags. Invalid tags: {0}", String.Join(",", invalidTags));
+				}
+
+				throw new ArgumentException(message, "html");
+			}
 		}
 
 		public IHtmlElementsCollection Parse() 
@@ -61,7 +90,7 @@ namespace AgileDotNetHtml.Factories
 
 			// get all matches in current range
 			List<Match> startTagMatchesInCurrentRange = _startTagsMathes.Where(x => x.Index >= startIndex && x.Index < endIndex).ToList();
-			List<Match> pairStartTagMatchesInCurrentRange = _pairTagsMathes.Where(x => x.Index >= startIndex && x.Index < endIndex).ToList();
+			List<Match> pairStartTagMatchesInCurrentRange = _pairStartTagsMathes.Where(x => x.Index >= startIndex && x.Index < endIndex).ToList();
 			List<Match> endTagMatchesInCurrentRange = _endTagsMathes.Where(x => x.Index > startIndex && x.Index < endIndex).ToList();
 			
 			// get root start tags in current range
@@ -127,6 +156,9 @@ namespace AgileDotNetHtml.Factories
 						case "style":
 							htmlElementsFactory = new HtmlStyleElementFactory();
 							break;
+						case "code":
+							htmlElementsFactory = new HtmlCodeElementFactory();
+							break;
 						default:
 							htmlElementsFactory = new HtmlNodeElementFactory(tagName);
 							break;
@@ -164,7 +196,7 @@ namespace AgileDotNetHtml.Factories
 
 			// get all matches in current range
 			List<Match> startTagMatchesInCurrentRange = _startTagsMathes.Where(x => x.Index >= startIndex && x.Index < endIndex).ToList();
-			List<Match> pairStartTagMatchesInCurrentRange = _pairTagsMathes.Where(x => x.Index >= startIndex && x.Index < endIndex).ToList();
+			List<Match> pairStartTagMatchesInCurrentRange = _pairStartTagsMathes.Where(x => x.Index >= startIndex && x.Index < endIndex).ToList();
 			List<Match> endTagMatchesInCurrentRange = _endTagsMathes.Where(x => x.Index > startIndex && x.Index < endIndex).ToList();
 
 			// get root start tags in current range
@@ -288,25 +320,26 @@ namespace AgileDotNetHtml.Factories
 				if (Regex.IsMatch(html, _htmlHelper.GetRegexForStartTag(tagName)))
 				{
 					int offset = 0;
-					Match startScriptTag = Regex.Match(html, _htmlHelper.GetRegexForStartTag(tagName));
-					Match endScriptTag = Regex.Match(html, _htmlHelper.GetRegexForEndTag(tagName));
-					while (startScriptTag.Value.IsNotNullNorEmpty())
+					List<Match> startTagMatches = Regex.Matches(html, _htmlHelper.GetRegexForStartTag(tagName)).ToList();
+					List<Match> endTagmatches = Regex.Matches(html, _htmlHelper.GetRegexForEndTag(tagName)).ToList();
+					foreach (Match startTagMatch in startTagMatches)
 					{
-						int startScriptContentIndex = (startScriptTag.Index + startScriptTag.Value.Length) + offset;
-						int endScriptContentIndex = endScriptTag.Index + offset;
+						Match endTagMatch = endTagmatches.FirstOrDefault(x => x.Index > startTagMatch.Index);
+						if (endTagMatch.Value != null)
+						{
+							int startScriptContentIndex = (startTagMatch.Index + startTagMatch.Value.Length) + offset;
+							int endScriptContentIndex = endTagMatch.Index + offset;
 
-						string content = html.SubStringToIndex(startScriptContentIndex, endScriptContentIndex - 1);
-						string encodedContent = HttpUtility.HtmlEncode(content);
+							string content = html.SubStringToIndex(startScriptContentIndex, endScriptContentIndex - 1);
+							string encodedContent = HttpUtility.HtmlEncode(content);
 
-						int noEncodedLength = html.Length;
+							int noEncodedLength = html.Length;
 
-						html = html.Remove(startScriptContentIndex, endScriptContentIndex - startScriptContentIndex);
-						html = html.Insert(startScriptContentIndex, encodedContent);
+							html = html.Remove(startScriptContentIndex, endScriptContentIndex - startScriptContentIndex);
+							html = html.Insert(startScriptContentIndex, encodedContent);
 
-						offset += html.Length - noEncodedLength;
-
-						startScriptTag = startScriptTag.NextMatch();
-						endScriptTag = endScriptTag.NextMatch();
+							offset += html.Length - noEncodedLength;
+						}						
 					}
 				}
 			}
@@ -400,7 +433,17 @@ namespace AgileDotNetHtml.Factories
 						string endTag = $"</{tagName}>";
 						int lengthBeforeInsert = html.Length;
 						html = html.Insert(startTagMatch.Index + startTagMatch.Value.Length + offset, endTag);
-						offset = html.Length - lengthBeforeInsert;
+						offset += html.Length - lengthBeforeInsert;
+					}
+					else if (_htmlHelper.IsSelfClosingHtmlTag(tagName))
+					{					
+						Match selfClosingEndTagMatch = Regex.Match(html, _htmlHelper.GetRegexForEndTag(tagName));
+						if (selfClosingEndTagMatch.Success && selfClosingEndTagMatch.Index > startTagMatch.Index && selfClosingEndTagMatch.Index < startTagMatch.NextMatch().Index) 
+						{
+							int lengthBeforeInsert = html.Length;
+							html = html.Remove(selfClosingEndTagMatch.Index, selfClosingEndTagMatch.Value.Length);
+							offset -= lengthBeforeInsert - html.Length;
+						}
 					}
 
 					startTagMatch = startTagMatch.NextMatch();

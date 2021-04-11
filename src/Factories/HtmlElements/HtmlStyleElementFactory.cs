@@ -15,7 +15,7 @@ namespace AgileDotNetHtml.Factories.HtmlElements
 		{
 			HtmlStyleElement element = new HtmlStyleElement();
 			element.Attributes = attributes;
-			element.Text(html.SubStringToIndex(startContentIndex, endContentIndex - 1));
+			element.Text(html.SubStringToIndex(startContentIndex, endContentIndex - 1), true);
 			return element;
 		}
 	}

@@ -3,6 +3,8 @@ using AgileDotNetHtml.Models.HtmlAttributes;
 using AgileDotNetHtml.Models.HtmlElements;
 using Microsoft.AspNetCore.Html;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Web;
 
 namespace AgileDotNetHtml.Factories.HtmlElements
 {
@@ -22,11 +24,16 @@ namespace AgileDotNetHtml.Factories.HtmlElements
 				element.Children = htmlParserManager.Parse(startContentIndex, endContentIndex);
 				Dictionary<int, string> texts = htmlParserManager.ParseText(startContentIndex, endContentIndex);
 				foreach (var text in texts) 
-				{
-					if(text.Key >= 0)
-						element.Text(new HtmlString(text.Value), element.Children[text.Key].UId);
+				{				
+					string decodedText = HttpUtility.HtmlDecode(text.Value);
+					string value = text.Value;
+					if (Regex.IsMatch(decodedText, HtmlParserManager.commentRegex))
+						value = decodedText;
+
+					if (text.Key >= 0)
+						element.Text(new HtmlString(value), element.Children[text.Key].UId);
 					else
-						element.Text(new HtmlString(text.Value));
+						element.Text(new HtmlString(value));
 				}					
 			}
 				

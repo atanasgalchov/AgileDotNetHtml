@@ -111,10 +111,11 @@ namespace AgileDotNetHtml.Models.HtmlElements
         {
             return _children.Remove(item);
         }
-        public void Text(HtmlElementText[] texts)
+        public void Text(HtmlElementText[] texts, bool decode = false)
         {
-			foreach (var text in texts)			
-                text.HtmlString = new HtmlString(HttpUtility.HtmlDecode(text.HtmlString.Value));
+            if(decode)
+			    foreach (var text in texts)			
+                  text.HtmlString = new HtmlString(HttpUtility.HtmlDecode(text.HtmlString.Value));
 			
             _textsBetweenChildren = texts.ToList();
         }
@@ -129,13 +130,18 @@ namespace AgileDotNetHtml.Models.HtmlElements
         {
             return new HtmlString(String.Join("", Texts().Select(x => x.HtmlString)));
         }
-        public void Text(string html, string afterElementUId)
+        public void Text(string html, string afterElementUId, bool decode = false)
         {
-            _textsBetweenChildren.Add(new HtmlElementText(new HtmlString(HttpUtility.HtmlDecode(html)), afterElementUId));
+            if (decode)           
+                html = HttpUtility.HtmlDecode(html);
+            
+            _textsBetweenChildren.Add(new HtmlElementText(new HtmlString(html), afterElementUId));
         }
-        public void Text(HtmlString html, string afterElementUId)
+        public void Text(HtmlString html, string afterElementUId, bool decode = false)
         {
-            html = new HtmlString(HttpUtility.HtmlDecode(html.Value));
+            if(decode)
+                html = new HtmlString(HttpUtility.HtmlDecode(html.Value));
+
             _textsBetweenChildren.Add(new HtmlElementText(html, afterElementUId));
         }
         private void SetElementParent(IHtmlElement element)

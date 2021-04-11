@@ -70,9 +70,7 @@ namespace AgileDotNetHtml.Helpers
 		internal string ExtractTagNameFromEndTag(string startTag)
 		{
 			// remove start char
-			startTag = startTag.Trim().TrimStart('<');
-			// get tag name
-			return startTag.Split(new char[] { ' ', '/', '>' }).FirstOrDefault();
+			return startTag.Trim().TrimStart('<').TrimStart().TrimStart('/').TrimEnd('>').Trim();
 		}
 		internal string GetRegexForEndTag(string tagName)
 		{
