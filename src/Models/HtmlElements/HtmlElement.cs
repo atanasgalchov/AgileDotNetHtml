@@ -71,15 +71,47 @@ namespace AgileDotNetHtml.Models.HtmlElements
         }
         public void MergeAttributes(IHtmlAttribute[] Attributes)
         {
-            throw new NotImplementedException();
+			foreach (var newAttribute in Attributes)
+			{
+                IHtmlAttribute existingAttribute = _attributes.FirstOrDefault(x => x.Name == newAttribute.Name);
+                if (existingAttribute != null)
+                    existingAttribute.Value = $"{existingAttribute.Value ?? ""} {newAttribute.Value}";
+            }
         }
         public void RemoveAttribute(string Name)
         {
-            throw new NotImplementedException();
+            IHtmlAttribute attribute = _attributes.FirstOrDefault(x => x.Name == Name);
+            if (attribute != null)
+                _attributes.Remove(attribute);
         }
         public void ReplaceAttributeValue(string Name, string Value)
         {
-            throw new NotImplementedException();
+            IHtmlAttribute attribute = _attributes.FirstOrDefault(x => x.Name == Name);
+            if (attribute != null)
+                attribute.Value = Value;
+        }
+        public void AddClass(string className) 
+        {
+            IHtmlAttribute classAttribute = _attributes.FirstOrDefault(x => x.Name == "class");
+            if (classAttribute != null)
+                classAttribute.Value = $"{classAttribute.Value ?? ""} {className}";
+
+            _attributes.Add(new ClassHtmlAttribute(className));
+        }
+        public void RemoveClass(string className)
+        {
+            IHtmlAttribute classAttribute = _attributes.FirstOrDefault(x => x.Name == "class");
+            if (classAttribute != null)
+                _attributes.Remove(classAttribute);
+        }
+
+        public void ToogleClass(string className)
+        {
+            IHtmlAttribute classAttribute = _attributes.FirstOrDefault(x => x.Name == "class");
+            if (classAttribute != null)
+                RemoveClass(className);
+            else
+                AddClass(className);
         }
     }
 }

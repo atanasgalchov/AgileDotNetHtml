@@ -1,8 +1,10 @@
-﻿namespace AgileDotNetHtml.Factories
+﻿using AgileDotNetHtml.Interfaces;
+
+namespace AgileDotNetHtml.Factories
 {
 	internal class HtmlParserManagerFactory
 	{
-		internal HtmlParserManager Create(string htmlString)
+		internal IHtmlParserManager Create(string htmlString)
 		{
 			return new HtmlParserManager(htmlString);
 		}

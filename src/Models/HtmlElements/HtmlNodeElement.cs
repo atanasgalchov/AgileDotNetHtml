@@ -10,7 +10,7 @@ namespace AgileDotNetHtml.Models.HtmlElements
 	public class HtmlNodeElement : HtmlPairTagsElement, IHtmlNodeElement
 	{
         private IHtmlElementsCollection _children { get; set; } = new HtmlElementsCollection();
-        private List<HtmlElementText> _textsBetweenChildren = new List<HtmlElementText>();
+        private List<HtmlNodeElementText> _textsBetweenChildren = new List<HtmlNodeElementText>();
         public HtmlNodeElement(string tagName) : base(tagName)
 		{
 		}
@@ -111,7 +111,7 @@ namespace AgileDotNetHtml.Models.HtmlElements
         {
             return _children.Remove(item);
         }
-        public void Text(HtmlElementText[] texts, bool decode = false)
+        public void Text(HtmlNodeElementText[] texts, bool decode = false)
         {
             if(decode)
 			    foreach (var text in texts)			
@@ -119,10 +119,10 @@ namespace AgileDotNetHtml.Models.HtmlElements
 			
             _textsBetweenChildren = texts.ToList();
         }
-        public HtmlElementText[] Texts()
+        public HtmlNodeElementText[] Texts()
         {
             if (_text != null)
-                return _textsBetweenChildren.Prepend(new HtmlElementText(_text, null)).ToArray();
+                return _textsBetweenChildren.Prepend(new HtmlNodeElementText(_text, null)).ToArray();
 
             return _textsBetweenChildren.ToArray();
         }
@@ -135,14 +135,14 @@ namespace AgileDotNetHtml.Models.HtmlElements
             if (decode)           
                 html = HttpUtility.HtmlDecode(html);
             
-            _textsBetweenChildren.Add(new HtmlElementText(new HtmlString(html), afterElementUId));
+            _textsBetweenChildren.Add(new HtmlNodeElementText(new HtmlString(html), afterElementUId));
         }
         public void Text(HtmlString html, string afterElementUId, bool decode = false)
         {
             if(decode)
                 html = new HtmlString(HttpUtility.HtmlDecode(html.Value));
 
-            _textsBetweenChildren.Add(new HtmlElementText(html, afterElementUId));
+            _textsBetweenChildren.Add(new HtmlNodeElementText(html, afterElementUId));
         }
         private void SetElementParent(IHtmlElement element)
         {

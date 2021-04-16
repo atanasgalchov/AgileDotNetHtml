@@ -118,7 +118,7 @@ namespace AgileDotNetHtml
                         .Insert((htmlElement.TagName.Length + 1), htmlElement.Attributes.IsNullOrEmpty() ? "" : $" {String.Join(" ", htmlElement.Attributes.Select(x => CreateAtribute(x)))}"));
 
             List<IHtmlContent> childContents = new List<IHtmlContent>();
-            List<HtmlElementText> knownPossitionedTexts = new List<HtmlElementText>();
+            List<HtmlNodeElementText> knownPossitionedTexts = new List<HtmlNodeElementText>();
             foreach (var text in htmlElement.Texts())
             {
                 if (text.AfterElementUId == null || !htmlElement.Children.Any(x => x.UId == text.AfterElementUId))

@@ -1,22 +1,38 @@
 ﻿using AgileDotNetHtml.Interfaces;
 using AgileDotNetHtml.Models.HtmlAttributes;
 using AgileDotNetHtml.Models.HtmlElements;
+using System;
+using System.Linq;
+using System.Reflection;
 
 namespace AgileDotNetHtml.Factories.HtmlElements
 {
-	public class HtmlSelfClosingTagElementFactory : IHtmlSelfClosingTagElementFactory
+	internal class HtmlSelfClosingTagElementFactory : IHtmlSelfClosingTagElementFactory
 	{
 		protected string _tagName;
-		public HtmlSelfClosingTagElementFactory(string tagName)
+		internal HtmlSelfClosingTagElementFactory(string tagName)
 		{
 			_tagName = tagName;
 		}
 
-		public virtual IHtmlElement Create(HtmlAttributesCollection attributes, string html, HtmlParserManager htmlParserManager)
+		protected virtual Type TypeForCreate { get { return typeof(HtmlSelfClosingTagElement); } }
+
+		public virtual IHtmlElement Create(HtmlAttributesCollection attributes, string html, IHtmlParserManager htmlParserManager)
 		{
-			IHtmlElement element = new HtmlSelfClosingTagElement(_tagName);
+			IHtmlElement element = (HtmlSelfClosingTagElement)CreateInstance();
 			element.Attributes = attributes;
 			return element;
+		}
+		protected virtual IHtmlElement CreateInstance()
+		{
+			Type specificType = Assembly.GetCallingAssembly()
+				.GetTypes()
+				.FirstOrDefault(t => t.Name.ToLower() == $"Html{_tagName}Element".ToLower());
+
+			if (specificType != null)
+				return (IHtmlElement)Activator.CreateInstance(specificType);
+
+			return (IHtmlElement)Activator.CreateInstance(TypeForCreate, new object[] { _tagName });
 		}
 	}
 }

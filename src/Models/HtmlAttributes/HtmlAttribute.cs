@@ -58,5 +58,4 @@ namespace AgileDotNetHtml.Models.HtmlAttributes
 		{
 		}
 	}
-
 }

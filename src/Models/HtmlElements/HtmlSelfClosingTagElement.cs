@@ -6,7 +6,6 @@ namespace AgileDotNetHtml.Models.HtmlElements
 	{
 		public HtmlSelfClosingTagElement(string tagName) : base(tagName)
 		{
-
 		}
     }
 }

@@ -1,19 +1,10 @@
 ﻿using AgileDotNetHtml.Factories;
-using AgileDotNetHtml.Factories.HtmlAttributes;
-using AgileDotNetHtml.Factories.HtmlElements;
-using AgileDotNetHtml.Helpers;
 using AgileDotNetHtml.Helpers.Extensions;
 using AgileDotNetHtml.Interfaces;
-using AgileDotNetHtml.Models;
-using AgileDotNetHtml.Models.HtmlAttributes;
 using AgileDotNetHtml.Models.HtmlElements;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace AgileDotNetHtml
 {
@@ -66,7 +57,7 @@ namespace AgileDotNetHtml
 			HtmlDocument document = new HtmlDocument();
 			document.Children = element.Children;
 			document.Text(element.Texts());
-			document.Doctype = (HtmlDoctypeElement)elements.FirstOrDefault(x => x.TagName.IsEqualIgnoreCase("!DOCTYPE"));
+			document.Doctype = (HtmlDocTypeElement)elements.FirstOrDefault(x => x.TagName.IsEqualIgnoreCase("!DOCTYPE"));
 					
 			return document;
 		}
@@ -99,7 +90,7 @@ namespace AgileDotNetHtml
 			if(html.IsNullOrEmpty())
 				throw new ArgumentNullException("html");
 
-			HtmlParserManager parserManger = _parserManagerFactory.Create(html);
+			IHtmlParserManager parserManger = _parserManagerFactory.Create(html);
 			return parserManger.Parse();
 		}
 	}

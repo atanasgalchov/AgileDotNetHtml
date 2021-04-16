@@ -2,9 +2,9 @@
 
 namespace AgileDotNetHtml.Factories.HtmlAttributes
 {
-	public class HtmlStyleAttributeFactory : HtmlAttributeFactory
+	internal class HtmlStyleAttributeFactory : HtmlAttributeFactory
 	{
-		public HtmlStyleAttributeFactory() : base("style")
+		internal HtmlStyleAttributeFactory() : base("style")
 		{
 		}
 

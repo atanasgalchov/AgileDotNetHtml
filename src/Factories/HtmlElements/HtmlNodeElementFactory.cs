@@ -2,21 +2,24 @@
 using AgileDotNetHtml.Models.HtmlAttributes;
 using AgileDotNetHtml.Models.HtmlElements;
 using Microsoft.AspNetCore.Html;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Web;
 
 namespace AgileDotNetHtml.Factories.HtmlElements
 {
-	public class HtmlNodeElementFactory : HtmlPairTagsElementFactory
+	internal class HtmlNodeElementFactory : HtmlPairTagsElementFactory
 	{
-		public HtmlNodeElementFactory(string tagName) : base(tagName)
+		internal HtmlNodeElementFactory(string tagName) : base(tagName)
 		{
 		}
 
-		public override IHtmlElement Create(HtmlAttributesCollection attributes, string html, int startContentIndex, int endContentIndex, HtmlParserManager htmlParserManager)
+		protected override Type TypeForCreate { get { return typeof(HtmlNodeElement); } }
+
+		public override IHtmlElement Create(HtmlAttributesCollection attributes, string html, int startContentIndex, int endContentIndex, IHtmlParserManager htmlParserManager)
 		{
-			HtmlNodeElement element = new HtmlNodeElement(_tagName);
+			HtmlNodeElement element = (HtmlNodeElement)CreateInstance();
 			
 			// add children and texts
 			if (endContentIndex - startContentIndex > 0) 

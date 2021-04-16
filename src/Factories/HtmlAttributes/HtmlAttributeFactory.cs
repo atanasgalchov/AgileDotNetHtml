@@ -1,17 +1,16 @@
 ﻿using AgileDotNetHtml.Helpers;
 using AgileDotNetHtml.Interfaces;
-using AgileDotNetHtml.Models;
 using AgileDotNetHtml.Models.HtmlAttributes;
 using System.Text.RegularExpressions;
 
 namespace AgileDotNetHtml.Factories.HtmlAttributes
 {
-	public class HtmlAttributeFactory : IHtmlAttributeFactory
+	internal class HtmlAttributeFactory : IHtmlAttributeFactory
 	{
 		private string _name;
 		private HtmlHelper _htmlHelper;
 
-		public HtmlAttributeFactory(string name)
+		internal HtmlAttributeFactory(string name)
 		{
 			_htmlHelper = new HtmlHelper();
 			_name = name;

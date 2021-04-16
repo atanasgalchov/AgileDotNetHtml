@@ -9,7 +9,7 @@ namespace AgileDotNetHtml.Interfaces
         IHtmlElementsCollection Children { get; }
         void Text(string html, string afterElementUId, bool decode = false);
         void Text(HtmlString html, string afterElementUId, bool decode = false);
-        HtmlElementText[] Texts();
+        HtmlNodeElementText[] Texts();
         IHtmlElement Find(Func<IHtmlElement, bool> predicate);
     }
 }

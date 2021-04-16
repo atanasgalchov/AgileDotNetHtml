@@ -21,5 +21,6 @@ namespace AgileDotNetHtml.Models.HtmlElements
 		public IHtmlElement Head => Find(x => x.TagName == "head");
 		public IHtmlElement Title => Find(x => x.TagName == "title");
 		public IHtmlElement Body => Find(x => x.TagName == "body");
+		
 	}
 }

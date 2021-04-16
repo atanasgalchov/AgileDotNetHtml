@@ -5,6 +5,6 @@ namespace AgileDotNetHtml.Interfaces
 {
 	public interface IHtmlSelfClosingTagElementFactory
 	{
-		IHtmlElement Create(HtmlAttributesCollection attributes, string html, HtmlParserManager htmlParserManager);
+		IHtmlElement Create(HtmlAttributesCollection attributes, string html, IHtmlParserManager htmlParserManager);
 	}
 }

@@ -11,7 +11,7 @@ namespace AgileDotNetHtml.Models
         private List<IHtmlElement> _list = new List<IHtmlElement>();
         protected List<IHtmlElement> List { get { return _list; } }
 		public int Count =>_list.Count;
-		public bool IsReadOnly => throw new NotImplementedException();
+		public bool IsReadOnly => true;
 
 		public HtmlElementsCollection()
 		{
