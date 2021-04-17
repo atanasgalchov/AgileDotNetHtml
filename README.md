@@ -1,6 +1,6 @@
 # AgileDotNetHtml
 
-Open and view the Project using the `.zip` file provided or at my [https://github.com/atanasgalchov/AgileDotNetHtml]
+Open and view the Project using the `.zip` file provided or at my https://github.com/atanasgalchov/AgileDotNetHtml
 
 ## Table of Contents
 - [Getting Started](#getting-started)
