@@ -1,8 +1,10 @@
-# AgileDotNetHtml
+# Agile Dot Net Html
 
 Open and view the Project using the `.zip` file provided or at my https://github.com/atanasgalchov/AgileDotNetHtml
 
 ## Table of Contents
+
+- [Introduction](#introduction)
 - [Getting Started](#getting-started)
 	- [Installation](#installation)
   - [Running the App](#running-the-app)
@@ -10,6 +12,10 @@ Open and view the Project using the `.zip` file provided or at my https://github
 - [Versioning](#versioning)
 - [Authors](#authors)
 - [License](#license)
+
+## Introduction
+
+I believe that HtmlAgilityPack is a great library for working whit HTML in C#, but here is a good alternative. Agile Dot Net Html is a library that gives features as parsing and building HTML. Agile Dot Net Html allow you convert HTML to C# objects represent this HTML and Build these object to HTML string again. There is a rich set of C# object which represent HTML elements and their attributes by w3 school HTML 5 standard. The idea of this project is to give you a good alternative on HtmlAgilityPack and allow you fast and easy create/ edit composite HTML structures.
 
 ## Getting Started
 
