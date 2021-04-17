@@ -1,7 +1,5 @@
 # Agile Dot Net Html
 
-Open and view the Project using the `.zip` file provided or at my https://github.com/atanasgalchov/AgileDotNetHtml
-
 ## Table of Contents
 
 - [Introduction](#introduction)
