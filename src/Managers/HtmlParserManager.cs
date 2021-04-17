@@ -13,7 +13,7 @@ using System.Web;
 
 namespace AgileDotNetHtml.Factories
 {
-	public class HtmlParserManager : IHtmlParserManager
+	internal class HtmlParserManager : IHtmlParserManager
 	{
 		internal const string startTagRegex = "(<[!]?[a-zA-Z\\d]+)(>|.*?[^?]>)";
 		internal const string selfClosingTagEnds = "[/][\\s]*>";
@@ -29,8 +29,8 @@ namespace AgileDotNetHtml.Factories
 		private List<Match> _endTagsMathes;		
 		private List<Match> _pairTagsWhitoutEndTagMatches = new List<Match>();
 		private List<Match> _endTagWhitoutStartTagMatches = new List<Match>();
-		
-		public HtmlParserManager(string html)
+
+		internal HtmlParserManager(string html)
 		{
 			_htmlHelper = new HtmlHelper();
 			_html = html;
