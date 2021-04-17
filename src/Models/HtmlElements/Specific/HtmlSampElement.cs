@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("samp")]
 	public class HtmlSampElement : HtmlNodeElement
 	{
 		/// <summary>

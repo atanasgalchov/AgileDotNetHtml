@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("title")]
 	public class HtmlTitleElement : HtmlNodeElement
 	{
 		/// <summary>

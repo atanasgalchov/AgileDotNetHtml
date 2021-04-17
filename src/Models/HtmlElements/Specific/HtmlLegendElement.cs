@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("legend")]
 	public class HtmlLegendElement : HtmlNodeElement
 	{
 		/// <summary>

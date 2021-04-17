@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("strike")]
 	public class HtmlStrikeElement : HtmlNodeElement
 	{
 		/// <summary>

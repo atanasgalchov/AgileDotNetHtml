@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("dialog")]
 	public class HtmlDialogElement : HtmlNodeElement
 	{
 		/// <summary>

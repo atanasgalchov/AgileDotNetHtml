@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("picture")]
 	public class HtmlPictureElement : HtmlNodeElement
 	{
 		/// <summary>

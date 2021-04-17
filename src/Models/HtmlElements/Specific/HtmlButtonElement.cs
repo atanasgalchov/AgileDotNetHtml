@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("button")]
 	public class HtmlButtonElement : HtmlNodeElement
 	{
 		/// <summary>

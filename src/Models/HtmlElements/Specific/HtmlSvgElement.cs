@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("svg")]
 	public class HtmlSvgElement : HtmlNodeElement
 	{
 		/// <summary>

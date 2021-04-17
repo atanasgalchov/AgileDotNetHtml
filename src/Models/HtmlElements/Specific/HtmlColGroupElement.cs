@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("colgroup")]
 	public class HtmlColGroupElement : HtmlNodeElement
 	{
 		/// <summary>

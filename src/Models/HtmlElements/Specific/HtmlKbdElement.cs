@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("kbd")]
 	public class HtmlKbdElement : HtmlNodeElement
 	{
 		/// <summary>

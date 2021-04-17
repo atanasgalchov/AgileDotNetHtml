@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("cite")]
 	public class HtmlCiteElement : HtmlNodeElement
 	{
 		/// <summary>

@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("aside")]
 	public class HtmlAsideElement : HtmlNodeElement
 	{
 		/// <summary>

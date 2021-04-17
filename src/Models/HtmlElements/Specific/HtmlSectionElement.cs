@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("section")]
 	public class HtmlSectionElement : HtmlNodeElement
 	{
 		/// <summary>

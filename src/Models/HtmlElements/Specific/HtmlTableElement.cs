@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("table")]
 	public class HtmlTableElement : HtmlNodeElement
 	{
 		/// <summary>

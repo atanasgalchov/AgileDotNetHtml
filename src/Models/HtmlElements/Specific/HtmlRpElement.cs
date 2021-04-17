@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("rp")]
 	public class HtmlRpElement : HtmlSelfClosingTagElement
 	{
 		/// <summary>

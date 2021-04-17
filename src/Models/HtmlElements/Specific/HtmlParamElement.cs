@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("param")]
 	public class HtmlParamElement : HtmlSelfClosingTagElement
 	{
 		/// <summary>

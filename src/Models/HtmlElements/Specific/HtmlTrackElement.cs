@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("track")]
 	public class HtmlTrackElement : HtmlSelfClosingTagElement
 	{
 		/// <summary>

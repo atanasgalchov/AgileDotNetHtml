@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("footer")]
 	public class HtmlFooterElement : HtmlNodeElement
 	{
 		/// <summary>

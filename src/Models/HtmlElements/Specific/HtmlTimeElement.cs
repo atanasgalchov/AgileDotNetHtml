@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("time")]
 	public class HtmlTimeElement : HtmlNodeElement
 	{
 		/// <summary>

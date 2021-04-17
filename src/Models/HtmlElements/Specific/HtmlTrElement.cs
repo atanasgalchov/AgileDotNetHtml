@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("tr")]
 	public class HtmlTrElement : HtmlNodeElement
 	{
 		/// <summary>

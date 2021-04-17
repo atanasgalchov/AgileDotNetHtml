@@ -1,5 +1,8 @@
-﻿namespace AgileDotNetHtml.Models.HtmlElements
+﻿using AgileDotNetHtml.Attributes;
+
+namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("!DOCTYPE")]
 	public class HtmlDocTypeElement : HtmlSelfClosingTagElement
 	{
 		/// <summary>

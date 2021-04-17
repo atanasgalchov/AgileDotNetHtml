@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("optgroup")]
 	public class HtmlOptGroupElement : HtmlNodeElement
 	{
 		/// <summary>

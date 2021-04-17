@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("meta")]
 	public class HtmlMetaElement : HtmlSelfClosingTagElement
 	{
 		/// <summary>

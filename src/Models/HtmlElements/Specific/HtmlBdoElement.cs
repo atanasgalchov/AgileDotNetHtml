@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("bdo")]
 	public class HtmlBdoElement : HtmlNodeElement
 	{
 		/// <summary>

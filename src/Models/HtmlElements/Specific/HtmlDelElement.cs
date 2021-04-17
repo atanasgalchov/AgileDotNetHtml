@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("del")]
 	public class HtmlDelElement : HtmlNodeElement
 	{
 		/// <summary>

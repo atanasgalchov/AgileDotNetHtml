@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("fieldset")]
 	public class HtmlFieldsetElement : HtmlNodeElement
 	{
 		/// <summary>

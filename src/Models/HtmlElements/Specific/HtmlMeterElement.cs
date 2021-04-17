@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("meter")]
 	public class HtmlMeterElement : HtmlNodeElement
 	{
 		/// <summary>
