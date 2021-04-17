@@ -220,7 +220,7 @@ namespace AgileDotNetHtml.Test
             Assert.Equal("checked", element.Attributes[3].Name);
             Assert.Null(element.Attributes[3].Value);
             Assert.Equal("type", element.Attributes[4].Name);
-            Assert.Equal("text", element.Attributes[4].Value);
+            Assert.Equal(" text ", element.Attributes[4].Value);
         }
     }
 }

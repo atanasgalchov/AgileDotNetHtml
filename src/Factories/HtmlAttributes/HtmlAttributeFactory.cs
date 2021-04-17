@@ -1,7 +1,11 @@
-﻿using AgileDotNetHtml.Helpers;
+﻿using AgileDotNetHtml.Attributes;
+using AgileDotNetHtml.Helpers;
 using AgileDotNetHtml.Helpers.Extensions;
 using AgileDotNetHtml.Interfaces;
 using AgileDotNetHtml.Models.HtmlAttributes;
+using System;
+using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace AgileDotNetHtml.Factories.HtmlAttributes
@@ -16,6 +20,8 @@ namespace AgileDotNetHtml.Factories.HtmlAttributes
 			_htmlHelper = new HtmlHelper();
 			_name = name;
 		}
+
+		protected virtual Type DefaultTypeForCreate { get { return typeof(HtmlAttribute); } }
 
 		public virtual IHtmlAttribute Create(string nameValueAttributesString) 
 		{
@@ -41,10 +47,24 @@ namespace AgileDotNetHtml.Factories.HtmlAttributes
 					value = nameValueAttributesString.Substring(match.Groups[2].Index + 1, (closingQuoteIndex - match.Groups[2].Index) - 1);
 				}
 			}
-			IHtmlAttribute attribute = new HtmlAttribute(_name, value);
+			IHtmlAttribute attribute = CreateInstance();
+			attribute.Value = value;
 			attribute.WrapValueQuote = openQuote;
 
 			return attribute;
+		}
+
+		protected virtual IHtmlAttribute CreateInstance()
+		{
+			Type specificType = Assembly.GetCallingAssembly()
+				.GetTypes()
+				.Where(t => t.GetCustomAttribute<HtmlAttributeClassAttribute>() != null)
+				.FirstOrDefault(t => t.GetCustomAttribute<HtmlAttributeClassAttribute>().AttributeName == _name);
+
+			if (specificType != null)
+				return (IHtmlAttribute)Activator.CreateInstance(specificType, new object[] { null });
+
+			return (IHtmlAttribute)Activator.CreateInstance(DefaultTypeForCreate, new object[] { _name });
 		}
 	}
 }

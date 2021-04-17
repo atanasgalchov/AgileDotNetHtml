@@ -96,7 +96,7 @@ namespace AgileDotNetHtml.Models.HtmlElements
             if (classAttribute != null)
                 classAttribute.Value = $"{classAttribute.Value ?? ""} {className}";
 
-            _attributes.Add(new ClassHtmlAttribute(className));
+            _attributes.Add(new HtmlClassAttribute(className));
         }
         public void RemoveClass(string className)
         {
