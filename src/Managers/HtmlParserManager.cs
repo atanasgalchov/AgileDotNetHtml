@@ -27,8 +27,8 @@ namespace AgileDotNetHtml.Factories
 		private List<Match> _startTagsMathes;
 		private List<Match> _pairStartTagsMathes;
 		private List<Match> _endTagsMathes;		
-		private List<Match> _pairTagsWhitoutEndTagMatches;
-		private List<Match> _endTagWhitoutStartTagMatches;
+		private List<Match> _pairTagsWhitoutEndTagMatches = new List<Match>();
+		private List<Match> _endTagWhitoutStartTagMatches = new List<Match>();
 		
 		public HtmlParserManager(string html)
 		{
@@ -49,7 +49,7 @@ namespace AgileDotNetHtml.Factories
 			_pairStartTagsMathes = _startTagsMathes
 				.Where(x => !_htmlHelper.IsSelfClosingHtmlTag(_htmlHelper.ExtractTagNameFromStartTag(x.Value)))
 				.ToList();
-			_endTagsMathes = Regex.Matches(_html, endTagRegex)
+			_endTagsMathes = Regex.Matches(_html, endTagRegex, RegexOptions.Singleline)
 				.ToList();
 
 			// try fix errors
@@ -79,7 +79,7 @@ namespace AgileDotNetHtml.Factories
 
 					foreach (var potentialInvalidPairTagMatch in potentialInvalidPairStartTagMatches)
 					{
-						if (potentialInvalidPairStartTagMatches.Count(x => x.Value == potentialInvalidPairTagMatch.Value) == 1)
+						if (potentialInvalidPairStartTagMatches.Count(x => x.Value == potentialInvalidPairTagMatch.Value) == 1 || invalidEndTagOnPairTagsMatches.Count == 0)
 						{
 							_pairStartTagsMathes.Remove(potentialInvalidPairTagMatch);
 							_pairTagsWhitoutEndTagMatches.Add(potentialInvalidPairTagMatch);
@@ -261,7 +261,7 @@ namespace AgileDotNetHtml.Factories
 
 			// get root self closing tags in current range
 			List<Match> rootSelfClosingTagMatches = rootStartTagMatches
-				.Where(x => _htmlHelper.IsSelfClosingHtmlTag(_htmlHelper.ExtractTagNameFromStartTag(x.Value)))
+				.Where(x => _htmlHelper.IsSelfClosingHtmlTag(_htmlHelper.ExtractTagNameFromStartTag(x.Value)) || _pairTagsWhitoutEndTagMatches.Any(p => p.Index == x.Index))
 				.ToList();
 
 			// get root end tags in current range
@@ -271,8 +271,6 @@ namespace AgileDotNetHtml.Factories
 						.Count(startTag => startTag.Index < currentEndTag.Index) == endTagMatchesInCurrentRange.Count(endTag2 => endTag2.Index <= currentEndTag.Index)
 				)
 				.ToList();
-
-
 
 			// add text between start index and first tag, whit index zero
 			string textBeforeFirstStartTag = _html.SubStringToIndex(startIndex, rootStartTagMatches.FirstOrDefault().Index - 1);
@@ -435,12 +433,28 @@ namespace AgileDotNetHtml.Factories
 
 						// if before closing bracket have odd number of quotes this mean that is end tag index is incorrect
 						// find first closing bracked which have even number of quotes
-						if (startTagMatch.Value.ToList().Count(x => x == '"' || x == '\'') % 2 != 0)
+						char lastQuote = char.MinValue;
+						if (startTagMatch.Value.LastIndexOf("'") > -1 && startTagMatch.Value.LastIndexOf("\"") == -1)
+						{
+							lastQuote = startTagMatch.Value[startTagMatch.Value.LastIndexOf("'")];
+						}
+						else if (startTagMatch.Value.LastIndexOf("'") == -1 && startTagMatch.Value.LastIndexOf("\"") > -1)
+						{
+							lastQuote = startTagMatch.Value[startTagMatch.Value.LastIndexOf("\"")];
+						}
+						else if(startTagMatch.Value.LastIndexOf("'") > -1 && startTagMatch.Value.LastIndexOf("\"") > -1)
+						{
+							lastQuote = startTagMatch.Value.LastIndexOf("'") > startTagMatch.Value.LastIndexOf("\"")
+								? startTagMatch.Value[startTagMatch.Value.LastIndexOf("'")]
+								: startTagMatch.Value[startTagMatch.Value.LastIndexOf("\"")];
+						}
+					
+						if (lastQuote != char.MinValue && startTagMatch.Value.ToList().Count(x => x == lastQuote) % 2 != 0)
 						{
 							bool foundEndTagIndex = false;
 							while (foundEndTagIndex == false)
 							{
-								if (html[endAttributesIndex + 1] == '>' && html.SubStringToIndex(startTagMatch.Index, endAttributesIndex).Count(x => x == '"' || x == '\'') % 2 == 0)
+								if (html[endAttributesIndex + 1] == '>' && html.SubStringToIndex(startTagMatch.Index, endAttributesIndex).Count(x => x == lastQuote) % 2 == 0)
 									foundEndTagIndex = true;
 								else
 									endAttributesIndex += 1;

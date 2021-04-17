@@ -44,10 +44,10 @@ namespace AgileDotNetHtml
             }
             else
             {
-                if ((attribute.Value.StartsWith("'") && attribute.Value.EndsWith("'")) || (attribute.Value.StartsWith("\"") && attribute.Value.EndsWith("\"")))
+                if ((attribute.Value.StartsWith("'") && attribute.Value.EndsWith("'")) || (attribute.Value.StartsWith("\"") && attribute.Value.EndsWith("\"")) || attribute.WrapValueQuote == null)
                     attributesString += $"{attribute.Name}={attribute.Value} ";
                 else
-                    attributesString += $"{attribute.Name}=\"{attribute.Value}\" ";
+                    attributesString += $"{attribute.Name}={attribute.WrapValueQuote}{attribute.Value}{attribute.WrapValueQuote} ";
             }
 
             return attributesString.TrimEnd().TrimStart();

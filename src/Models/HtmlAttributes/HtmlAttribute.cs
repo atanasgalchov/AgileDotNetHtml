@@ -15,6 +15,8 @@ namespace AgileDotNetHtml.Models.HtmlAttributes
 
 		public string Name { get; set; }
 		public string Value { get; set; }
+
+		public string WrapValueQuote { get; set; }
 	}
 	public class ClassHtmlAttribute : HtmlAttribute
 	{

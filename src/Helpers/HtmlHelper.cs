@@ -81,7 +81,7 @@ namespace AgileDotNetHtml.Helpers
 		}
 		internal string GetNameValueAttributeRegex(string name)
 		{
-			return "(" + name + "[\\s]*=[\\s]*)(['\"])";
+			return "(" + name + "[\\s]*=[\\s]*)(['\"])?";
 		}
 		internal string GetEmptyValueAttributeRegex(string name)
 		{
