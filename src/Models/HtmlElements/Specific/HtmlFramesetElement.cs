@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("frameset")]
 	public class HtmlFramesetElement : HtmlNodeElement
 	{
 		/// <summary>

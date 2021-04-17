@@ -1,4 +1,5 @@
-﻿using AgileDotNetHtml.Helpers.Extensions;
+﻿using AgileDotNetHtml.Attributes;
+using AgileDotNetHtml.Helpers.Extensions;
 using AgileDotNetHtml.Interfaces;
 using AgileDotNetHtml.Models.HtmlAttributes;
 using AgileDotNetHtml.Models.HtmlElements;
@@ -17,7 +18,7 @@ namespace AgileDotNetHtml.Factories.HtmlElements
 			_tagName = tagName;
 		}
 
-		protected virtual Type TypeForCreate { get { return typeof(HtmlPairTagsElement); } }
+		protected virtual Type DefaultTypeForCreate { get { return typeof(HtmlPairTagsElement); } }
 
 		public virtual IHtmlElement Create(HtmlAttributesCollection attributes, string html, int startContentIndex, int endContentIndex, IHtmlParserManager htmlParserManager)
 		{
@@ -30,12 +31,13 @@ namespace AgileDotNetHtml.Factories.HtmlElements
 		{
 			Type specificType = Assembly.GetCallingAssembly()
 				.GetTypes()
-				.FirstOrDefault(t => t.Name.ToLower() == $"Html{_tagName}Element".ToLower());
+				.Where(t => t.GetCustomAttribute<HtmlElementClassAttribute>() != null)
+				.FirstOrDefault(t => t.GetCustomAttribute<HtmlElementClassAttribute>().TagName == _tagName);
 
 			if (specificType != null)			
 				return (IHtmlElement)Activator.CreateInstance(specificType);
 						
-			return (IHtmlElement)Activator.CreateInstance(TypeForCreate, new object[] { _tagName });
+			return (IHtmlElement)Activator.CreateInstance(DefaultTypeForCreate, new object[] { _tagName });
 		}
 	}
 }

@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("dir")]
 	public class HtmlDirElement : HtmlNodeElement
 	{
 		/// <summary>

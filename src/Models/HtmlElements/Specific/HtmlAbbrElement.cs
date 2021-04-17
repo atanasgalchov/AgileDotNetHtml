@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements 
 {
+	[HtmlElementClass("abbr")]
 	public class HtmlAbbrElement : HtmlNodeElement
 	{
 		/// <summary>

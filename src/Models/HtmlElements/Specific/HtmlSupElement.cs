@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("sup")]
 	public class HtmlSupElement : HtmlNodeElement
 	{
 		/// <summary>

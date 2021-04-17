@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("link")]
 	public class HtmlLinkElement : HtmlSelfClosingTagElement
 	{
 		/// <summary>

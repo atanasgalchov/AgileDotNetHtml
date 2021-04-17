@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("video")]
 	public class HtmlVideoElement : HtmlNodeElement
 	{
 		/// <summary>

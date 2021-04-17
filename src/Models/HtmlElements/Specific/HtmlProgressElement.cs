@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("progress")]
 	public class HtmlProgressElement : HtmlNodeElement
 	{
 		/// <summary>

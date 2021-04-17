@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("br")]
 	public class HtmlBrElement : HtmlSelfClosingTagElement
 	{
 		/// <summary>

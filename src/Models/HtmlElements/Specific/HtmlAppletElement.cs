@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("applet")]
 	public class HtmlAppletElement : HtmlNodeElement
 	{
 		/// <summary>

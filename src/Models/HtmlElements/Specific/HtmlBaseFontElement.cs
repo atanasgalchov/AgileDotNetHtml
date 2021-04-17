@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("basefont")]
 	public class HtmlBaseFontElement : HtmlNodeElement
 	{
 		/// <summary>

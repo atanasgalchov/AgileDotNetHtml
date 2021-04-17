@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("pre")]
 	public class HtmlPreElement : HtmlNodeElement
 	{
 		/// <summary>

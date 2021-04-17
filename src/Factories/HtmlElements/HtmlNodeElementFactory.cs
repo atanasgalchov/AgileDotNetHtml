@@ -15,7 +15,7 @@ namespace AgileDotNetHtml.Factories.HtmlElements
 		{
 		}
 
-		protected override Type TypeForCreate { get { return typeof(HtmlNodeElement); } }
+		protected override Type DefaultTypeForCreate { get { return typeof(HtmlNodeElement); } }
 
 		public override IHtmlElement Create(HtmlAttributesCollection attributes, string html, int startContentIndex, int endContentIndex, IHtmlParserManager htmlParserManager)
 		{

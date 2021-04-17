@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("ol")]
 	public class HtmlOlElement : HtmlNodeElement
 	{
 		/// <summary>

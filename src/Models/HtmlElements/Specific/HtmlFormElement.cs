@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("form")]
 	public class HtmlFormElement : HtmlNodeElement
 	{
 		/// <summary>

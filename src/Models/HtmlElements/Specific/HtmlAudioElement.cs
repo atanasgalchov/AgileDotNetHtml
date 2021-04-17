@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("audio")]
 	public class HtmlAudioElement : HtmlNodeElement
 	{
 		/// <summary>

@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("label")]
 	public class HtmlLabelElement : HtmlNodeElement
 	{
 		/// <summary>

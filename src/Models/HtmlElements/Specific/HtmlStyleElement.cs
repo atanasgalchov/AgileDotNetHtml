@@ -1,5 +1,8 @@
-﻿namespace AgileDotNetHtml.Models.HtmlElements
+﻿using AgileDotNetHtml.Attributes;
+
+namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("style")]
 	public class HtmlStyleElement: HtmlPairTagsElement
 	{
 		/// <summary>

@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("ruby")]
 	public class HtmlRubyElement : HtmlNodeElement
 	{
 		/// <summary>

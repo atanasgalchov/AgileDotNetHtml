@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("address")]
 	public class HtmlAddressElement : HtmlNodeElement
 	{
 		/// <summary>

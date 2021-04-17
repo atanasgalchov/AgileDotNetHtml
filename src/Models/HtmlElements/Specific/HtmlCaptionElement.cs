@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("caption")]
 	public class HtmlCaptionElement : HtmlNodeElement
 	{
 		/// <summary>

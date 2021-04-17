@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("canvas")]
 	public class HtmlCanvasElement : HtmlNodeElement
 	{
 		/// <summary>

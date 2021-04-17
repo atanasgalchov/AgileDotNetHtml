@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("ins")]
 	public class HtmlInsElement : HtmlNodeElement
 	{
 		/// <summary>

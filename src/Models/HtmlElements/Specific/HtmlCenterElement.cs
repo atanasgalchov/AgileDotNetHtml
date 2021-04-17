@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("center")]
 	public class HtmlCenterElement : HtmlNodeElement
 	{
 		/// <summary>

@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("acronym")]
 	public class HtmlAcronymElement : HtmlNodeElement
 	{
 		/// <summary>

@@ -1,5 +1,8 @@
+using AgileDotNetHtml.Attributes;
+
 namespace AgileDotNetHtml.Models.HtmlElements
 {
+	[HtmlElementClass("li")]
 	public class HtmlLiElement : HtmlNodeElement
 	{
 		/// <summary>
