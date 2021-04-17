@@ -6,7 +6,7 @@ namespace AgileDotNetHtml.Factories
 	{
 		internal IHtmlParserManager Create(string htmlString)
 		{
-			return new HtmlParserManager(htmlString);
+			return new HtmlRegexParserManager(htmlString);
 		}
 	}
 }

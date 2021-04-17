@@ -13,7 +13,7 @@ using System.Web;
 
 namespace AgileDotNetHtml.Factories
 {
-	internal class HtmlParserManager : IHtmlParserManager
+	internal class HtmlRegexParserManager : IHtmlParserManager
 	{
 		internal const string startTagRegex = "(<[!]?[a-zA-Z\\d]+)(>|.*?[^?]>)";
 		internal const string selfClosingTagEnds = "[/][\\s]*>";
@@ -30,7 +30,7 @@ namespace AgileDotNetHtml.Factories
 		private List<Match> _pairTagsWhitoutEndTagMatches = new List<Match>();
 		private List<Match> _endTagWhitoutStartTagMatches = new List<Match>();
 
-		internal HtmlParserManager(string html)
+		internal HtmlRegexParserManager(string html)
 		{
 			_htmlHelper = new HtmlHelper();
 			_html = html;
@@ -52,7 +52,7 @@ namespace AgileDotNetHtml.Factories
 			_endTagsMathes = Regex.Matches(_html, endTagRegex, RegexOptions.Singleline)
 				.ToList();
 
-			// try fix errors
+			// try fix invalid defined tags
 			if (_pairStartTagsMathes.Count != _endTagsMathes.Count)
 			{
 				List<string> startTags = _pairStartTagsMathes.Select(x => _htmlHelper.ExtractTagNameFromStartTag(x.Value)).ToArray().Distinct().ToList();
@@ -61,7 +61,6 @@ namespace AgileDotNetHtml.Factories
 				var groupedStartTags = startTags.GroupBy(st => st, (key, g) => new { TagName = key, Count = g.Count() });
 				var groupedEndTags = endTags.GroupBy(st => st, (key, g) => new { TagName = key, Count = g.Count() });
 
-				//string message = "";
 				if (startTags.Count() > endTags.Count())
 				{
 					List<string> invalidTags = groupedStartTags
@@ -92,7 +91,6 @@ namespace AgileDotNetHtml.Factories
 						}
 					}
 
-					//message = String.Format("Invalid HTML string, the count of open tags is greater  than closed tags. Invalid tags: {0}", String.Join(",", invalidTags));
 				}
 				else
 				{
@@ -124,11 +122,7 @@ namespace AgileDotNetHtml.Factories
 							_endTagsMathes.Remove(invalidEndTag);
 						}
 					}
-
-					//	message = String.Format("Invalid HTML  string, the count of open tags is less than closed tags. Invalid tags: {0}", String.Join(",", invalidTags));
 				}
-
-				//throw new ArgumentException(message, "html");
 			}
 		}
 
@@ -160,7 +154,7 @@ namespace AgileDotNetHtml.Factories
 				)
 				.ToList();
 
-			// create IHtmlElement for every start tag and add to collection
+			// create IHtmlElement for every start tag match and add to collection
 			foreach (Match startTagMatch in rootStartTagMatches)
 			{
 				// get tag name
@@ -218,7 +212,7 @@ namespace AgileDotNetHtml.Factories
 
 					// find cloing tang on current star tag
 					Match endTagMatch = rootEndTagMatches.FirstOrDefault(x => x.Index > startTagMatch.Index);
-					// in html may have tags whit not defined end tag, in this case just skip him as set end index to be end index on start tag
+					// in html may have tags which should have end tag but he is not defined, in this case just skip him as set end index to be end index on current start tag
 					int endContentIndex = startTagMatch.Index + startTagMatch.Value.Length;
 					if (endTagMatch != null)
 						endContentIndex = endTagMatch.Index;

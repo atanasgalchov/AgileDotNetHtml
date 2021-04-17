@@ -35,7 +35,7 @@ namespace AgileDotNetHtml
         /// </summary>
         /// <param name="attribute">Object of type IHtmlAttribute, for convert to html attribute string.</param>
         /// <returns>String represent specified atribute.</returns>
-        public string CreateAtribute(IHtmlAttribute attribute)
+        private string CreateAtribute(IHtmlAttribute attribute)
         {
             string attributesString = String.Empty;
             if (attribute.Value == null)
@@ -57,19 +57,19 @@ namespace AgileDotNetHtml
         /// </summary>
         /// <param name="tagName">The name of html tag.</param>
         /// <returns>String represet given start html tag.</returns>
-        public string CreateStartTag(string tagName) => _htmlHelper.IsSelfClosingHtmlTag(tagName) ? CreateStartSelfClosingTag(tagName) : $"<{_htmlHelper.TrimHtmlTag(tagName)}>";
+        private string CreateStartTag(string tagName) => _htmlHelper.IsSelfClosingHtmlTag(tagName) ? CreateStartSelfClosingTag(tagName) : $"<{_htmlHelper.TrimHtmlTag(tagName)}>";
         /// <summary>
         /// Create html start self closing tag string.
         /// </summary>
         /// <param name="tagName">The name of html tag.</param>
         /// <returns>String represet given html tag.</returns>
-        public string CreateStartSelfClosingTag(string tagName) => $"<{_htmlHelper.TrimHtmlTag(tagName)}>";
+        private string CreateStartSelfClosingTag(string tagName) => $"<{_htmlHelper.TrimHtmlTag(tagName)}>";
         /// <summary>
         /// Create html end tag string.
         /// </summary>
         /// <param name="tagName">The name of html tag.</param>
         /// <returns>String represet given html end tag.</returns>
-        public string CreateEndTag(string tagName) => _htmlHelper.IsSelfClosingHtmlTag(tagName) ? String.Empty : $"</{_htmlHelper.TrimHtmlTag(tagName)}>";
+        private string CreateEndTag(string tagName) => _htmlHelper.IsSelfClosingHtmlTag(tagName) ? String.Empty : $"</{_htmlHelper.TrimHtmlTag(tagName)}>";
         /// <summary>
         /// Create html content.
         /// </summary>

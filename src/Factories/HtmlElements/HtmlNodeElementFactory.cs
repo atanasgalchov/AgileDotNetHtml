@@ -30,7 +30,7 @@ namespace AgileDotNetHtml.Factories.HtmlElements
 				{				
 					string decodedText = HttpUtility.HtmlDecode(text.Value);
 					string value = text.Value;
-					if (Regex.IsMatch(decodedText, HtmlParserManager.commentRegex))
+					if (Regex.IsMatch(decodedText, HtmlRegexParserManager.commentRegex))
 						value = decodedText;
 
 					if (text.Key >= 0)

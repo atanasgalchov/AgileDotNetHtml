@@ -10,6 +10,8 @@ namespace AgileDotNetHtml.Interfaces
         void Text(string html, string afterElementUId, bool decode = false);
         void Text(HtmlString html, string afterElementUId, bool decode = false);
         HtmlNodeElementText[] Texts();
-        IHtmlElement Find(Func<IHtmlElement, bool> predicate);
+        IHtmlElement FindFirst(Func<IHtmlElement, bool> predicate);
+        IHtmlElement FindLast(Func<IHtmlElement, bool> predicate);
+        IHtmlElementsCollection FindAll(Func<IHtmlElement, bool> predicate);
     }
 }

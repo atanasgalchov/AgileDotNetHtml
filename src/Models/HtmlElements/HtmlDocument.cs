@@ -18,9 +18,9 @@ namespace AgileDotNetHtml.Models.HtmlElements
 		}
 
 		public IHtmlElement Doctype { get; set; }
-		public IHtmlElement Head => Find(x => x.TagName == "head");
-		public IHtmlElement Title => Find(x => x.TagName == "title");
-		public IHtmlElement Body => Find(x => x.TagName == "body");
+		public IHtmlElement Head => FindFirst(x => x.TagName == "head");
+		public IHtmlElement Title => FindFirst(x => x.TagName == "title");
+		public IHtmlElement Body => FindFirst(x => x.TagName == "body");
 		
 	}
 }

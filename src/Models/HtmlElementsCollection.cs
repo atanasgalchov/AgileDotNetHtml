@@ -35,6 +35,22 @@ namespace AgileDotNetHtml.Models
             }
         }
 
+        public IHtmlElementsCollection FindAll(Func<IHtmlElement, bool> predicate) 
+        {
+            IHtmlElementsCollection elements = new HtmlElementsCollection();
+
+			foreach (var element in List)
+			{
+                if (predicate(element))              
+                    elements.Add(element);
+
+                if (element is IHtmlNodeElement)
+                    elements.AddRange(((IHtmlNodeElement)element).Children.FindAll(predicate));
+            }
+
+            return elements;
+        }
+
         public IHtmlElement FirstOrDefault() 
         {
             return _list.FirstOrDefault();

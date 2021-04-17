@@ -6,6 +6,7 @@ namespace AgileDotNetHtml.Interfaces
     public interface IHtmlElementsCollection : IList<IHtmlElement>
     {
         IHtmlElement Get(string uid);
+        IHtmlElementsCollection FindAll(Func<IHtmlElement, bool> predicate);
         IHtmlElement FirstOrDefault();
         IHtmlElement FirstOrDefault(Func<IHtmlElement, bool> predicate);
         IHtmlElement LastOrDefault();

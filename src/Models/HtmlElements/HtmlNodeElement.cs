@@ -33,7 +33,7 @@ namespace AgileDotNetHtml.Models.HtmlElements
             }
         }
 
-        public IHtmlElement Find(Func<IHtmlElement, bool> predicate)
+        public IHtmlElement FindFirst(Func<IHtmlElement, bool> predicate)
         {
             IHtmlElement htmlElement = Children.FirstOrDefault(predicate);
             if (htmlElement != null)
@@ -41,13 +41,36 @@ namespace AgileDotNetHtml.Models.HtmlElements
       
             foreach (var element in Children.Where(x => x is IHtmlNodeElement))
             {
-                htmlElement = ((IHtmlNodeElement)element).Find(predicate);
+                htmlElement = ((IHtmlNodeElement)element).FindFirst(predicate);
                 if (htmlElement != null)
                     break;
             }
 
             return htmlElement;
         }
+        public IHtmlElement FindLast(Func<IHtmlElement, bool> predicate)
+        {
+            IHtmlNodeElement htmlElement = (IHtmlNodeElement)Children.Where(x => x is IHtmlNodeElement).LastOrDefault(predicate);
+            if (htmlElement == null) 
+            {
+                return Children.LastOrDefault();
+            }               
+            else 
+            {
+                foreach (IHtmlElement element in Children)
+                {
+
+                    htmlElement = (IHtmlNodeElement)((IHtmlNodeElement)element).FindLast(predicate);
+                }
+            }
+       
+            return (IHtmlElement)htmlElement;
+        }
+        public IHtmlElementsCollection FindAll(Func<IHtmlElement, bool> predicate)
+        {
+            return Children.FindAll(predicate);
+        }
+
         public void Append(IHtmlElement element)
         {
             SetElementParent(element);
