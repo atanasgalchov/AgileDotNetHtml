@@ -4,10 +4,6 @@
 
 - [Introduction](#introduction)
 - [Getting Started](#getting-started)
-	- [Installation](#installation)
-  - [Running the App](#running-the-app)
-- [Contributing](#contributing)
-- [Versioning](#versioning)
 - [Authors](#authors)
 - [License](#license)
 
@@ -33,7 +29,7 @@ I believe that HtmlAgilityPack is a great library for working whit HTML in C#, b
 
 ## License
 
-`Project Title` is open source software [licensed as MIT]: https://github.com/atanasgalchov/AgileDotNetHtml/blob/master/LICENSE.
+`AgileDotNetHtml` is open source software [licensed as MIT] https://github.com/atanasgalchov/AgileDotNetHtml/blob/master/LICENSE.
 
 [//]: # (HyperLinks)
 
