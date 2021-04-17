@@ -9,9 +9,12 @@
 
 ## Introduction
 
-I believe that HtmlAgilityPack is a great library for working whit HTML in C#, but here is a good alternative. Agile Dot Net Html is a library that gives features as parsing and building HTML. Agile Dot Net Html allow you convert HTML to C# objects represent this HTML and Build these object to HTML string again. There is a rich set of C# object which represent HTML elements and their attributes by w3 school HTML 5 standard. The idea of this project is to give you a good alternative on HtmlAgilityPack and allow you fast and easy create and edit composite HTML structures.
+I believe that have many great libraries for working whit HTML in C#, but here is a good alternative. AgileDotNetHtml is a library that gives features as parsing and building HTML. The library allow you convert HTML to C# objects represent this HTML and Build these object to HTML string again. There is a rich set of C# object which represent HTML elements and their attributes by w3 school HTML 5 standard. The idea of this project is to allow you fast and easy create and edit composite HTML structures.
 
 ## Getting Started
+
+### Parse Page
+* Load and parse page from specific url.
 
 ```C#
 	HtmlParser parser = new HtmlParser();
@@ -20,6 +23,20 @@ I believe that HtmlAgilityPack is a great library for working whit HTML in C#, b
 	HtmlBuilder builder = new HtmlBuilder();
 	IHtmlContent html = builder.CreateHtmlContent(documnet);
 ```
+
+### Parse String
+* Parse specific HTML string
+
+```C#
+	string htmlString = "<div class='some element'><ul class='ul'><li></li><li></li></ul></div>";
+	HtmlParser parser = new HtmlParser();		
+	IHtmlElementsCollection elements =  parser.ParseString(htmlString);
+	IHtmlElementsCollection liElements = elements.FindAll(x => x.TagName == "li");
+
+	HtmlBuilder builder = new HtmlBuilder();
+	IHtmlContent htmlContent = builder.CreateHtmlContent(liElements);
+```
+
 
 ## Authors
 
