@@ -14,15 +14,20 @@ I believe that have many great libraries for working whit HTML in C#, but here i
 ## Getting Started
 
 ### Parse Page
-* Load and parse page from specific url.
+* Load and parse page from specific url.Remove 'test-class' from all elements.
 
 ```C#
 	HtmlParser parser = new HtmlParser();
-	HtmlDocument documnet = parser.ParsePageFromUrl("http://some-patch");
+	HtmlDocument documnet = parser.ParsePageFromUrl(path);
+	IHtmlElementsCollection elements = documnet.FindAll(x => x.HasAttributeWhitValue("calss", "test-class"));
+	foreach (HtmlElement element in elements)
+		element.RemoveClass("test-class");
 	
 	HtmlBuilder builder = new HtmlBuilder();
 	IHtmlContent html = builder.CreateHtmlContent(documnet);
 ```
+#### Result: HTML content whit removed class 'text-class'.
+
 
 ### Parse String
 * Parse specific HTML string
@@ -32,11 +37,33 @@ I believe that have many great libraries for working whit HTML in C#, but here i
 	HtmlParser parser = new HtmlParser();		
 	IHtmlElementsCollection elements =  parser.ParseString(htmlString);
 	IHtmlElementsCollection liElements = elements.FindAll(x => x.TagName == "li");
-
-	HtmlBuilder builder = new HtmlBuilder();
-	IHtmlContent htmlContent = builder.CreateHtmlContent(liElements);
 ```
 
+### Build Html Content
+* Create HTML form element whit different kind of inputs.
+
+```C#
+	HtmlFormElement formElement = new HtmlFormElement();
+				
+	HtmlInputElement textInput = new HtmlInputElement("text");
+	textInput.Name = "TextInput";
+	textInput.Value = "Some value";
+				
+	HtmlInputElement radioInput = new HtmlInputElement("radio");
+	radioInput.Name = "RadioInput";
+	radioInput.Value = "Some value";
+
+	HtmlTextareaElement textArea = new HtmlTextareaElement();
+	textArea.Name = "TextArea";
+	textArea.Text("Some text...");
+
+	formElement.Append(radioInput);
+	formElement.Append(textInput);
+	formElement.Append(textArea);
+
+	HtmlBuilder builder = new HtmlBuilder();
+	IHtmlContent formHtmlContent = builder.CreateHtmlContent(formElement);
+```
 
 ## Authors
 
