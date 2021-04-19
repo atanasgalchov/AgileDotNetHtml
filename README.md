@@ -19,12 +19,6 @@ I believe that have many great libraries for working whit HTML in C#, but here i
 ```C#
 	HtmlParser parser = new HtmlParser();
 	HtmlDocument documnet = parser.ParsePageFromUrl(path);
-	IHtmlElementsCollection elements = documnet.FindAll(x => x.HasAttributeWhitValue("calss", "test-class"));
-	foreach (HtmlElement element in elements)
-		element.RemoveClass("test-class");
-	
-	HtmlBuilder builder = new HtmlBuilder();
-	IHtmlContent html = builder.CreateHtmlContent(documnet);
 ```
 
 ### Parse String
@@ -34,11 +28,10 @@ I believe that have many great libraries for working whit HTML in C#, but here i
 	string htmlString = "<div class='some element'><ul class='ul'><li></li><li></li></ul></div>";
 	HtmlParser parser = new HtmlParser();		
 	IHtmlElementsCollection elements =  parser.ParseString(htmlString);
-	IHtmlElementsCollection liElements = elements.FindAll(x => x.TagName == "li");
 ```
 
 ### Build Html Content
-* Create HTML form element whit different kind of inputs.
+* Create HTML content containing form elements whit different kinds of inputs.
 
 ```C#
 	HtmlFormElement formElement = new HtmlFormElement();
