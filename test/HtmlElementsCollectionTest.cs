@@ -46,8 +46,8 @@ namespace AgileDotNetHtml.Test
             // Arrange          
 
             htmlElementsCollection = new HtmlElementsCollection() {
-                new HtmlNodeElement("div") {  Children = new HtmlElementsCollection { new HtmlElement("span") } },
-                new HtmlNodeElement("div") {  Children = new HtmlElementsCollection { new HtmlElement("span") } }
+                new HtmlNodeElement("div") {  Children = new HtmlElementsCollection { new HtmlNodeElement("span") } },
+                new HtmlNodeElement("div") {  Children = new HtmlElementsCollection { new HtmlNodeElement("span") } }
             };
 
             // Act
@@ -62,10 +62,10 @@ namespace AgileDotNetHtml.Test
 
             // Arrange
 
-            var searchedElement = new HtmlNodeElement("div") { Children = new HtmlElementsCollection { new HtmlElement("span") } };
+            var searchedElement = new HtmlNodeElement("div") { Children = new HtmlElementsCollection { new HtmlNodeElement("span") } };
             htmlElementsCollection = new HtmlElementsCollection() {
                     searchedElement,
-                    new HtmlNodeElement("div") {  Children = new HtmlElementsCollection { new HtmlElement("span") } }
+                    new HtmlNodeElement("div") {  Children = new HtmlElementsCollection { new HtmlNodeElement("span") } }
                 };
 
             // Act
@@ -79,7 +79,7 @@ namespace AgileDotNetHtml.Test
         {
             // Arrange          
 
-            var searchedElement = new HtmlNodeElement("div") { Children = new HtmlElementsCollection { new HtmlElement("span") } };
+            var searchedElement = new HtmlNodeElement("div") { Children = new HtmlElementsCollection { new HtmlNodeElement("span") } };
             htmlElementsCollection = new HtmlElementsCollection() {
                 new HtmlNodeElement("div")
                 {
@@ -99,7 +99,7 @@ namespace AgileDotNetHtml.Test
                 },
                 new HtmlNodeElement("div")
                 {
-                    Children = new HtmlElementsCollection { new HtmlElement("span") }
+                    Children = new HtmlElementsCollection { new HtmlNodeElement("span") }
                 }
             };
 

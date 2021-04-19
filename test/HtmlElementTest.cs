@@ -29,12 +29,12 @@ namespace AgileDotNetHtml.Test
             // Arrange          
             HtmlNodeElement element = new HtmlNodeElement("div");
             HtmlElementsCollection htmlElementsCollection = new HtmlElementsCollection();
-            htmlElementsCollection.Add(new HtmlElement("div"));
-            htmlElementsCollection.Add(new HtmlElement("span"));
-            htmlElementsCollection.Add(new HtmlElement("input"));
-            htmlElementsCollection.Add(new HtmlElement("p"));
-            htmlElementsCollection.Add(new HtmlElement("h1"));
-            htmlElementsCollection.Add(new HtmlElement("h2"));
+            htmlElementsCollection.Add(new HtmlDivElement());
+            htmlElementsCollection.Add(new HtmlSpanElement());
+            htmlElementsCollection.Add(new HtmlInputElement());
+            htmlElementsCollection.Add(new HtmlPElement());
+            htmlElementsCollection.Add(new HtmlH1Element());
+            htmlElementsCollection.Add(new HtmlH2Element());
 
             // Act
             element.AppendRange(htmlElementsCollection);

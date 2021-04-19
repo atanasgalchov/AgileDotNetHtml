@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace AgileDotNetHtml.Models.HtmlElements
 {
-	public class HtmlElement : IHtmlElement
+	public abstract class HtmlElement : IHtmlElement
     {
         protected string _uid;
         protected string _tagName;
@@ -69,6 +69,10 @@ namespace AgileDotNetHtml.Models.HtmlElements
         {
             return _attributes.Any(x => x.Name == Name);
         }
+        public bool HasAttributeWhitValue(string Name, string value)
+        {
+            return _attributes.Any(x => x.Name == Name && x.Value == value);
+        }
         public void MergeAttributes(IHtmlAttribute[] Attributes)
         {
 			foreach (var newAttribute in Attributes)
@@ -104,7 +108,6 @@ namespace AgileDotNetHtml.Models.HtmlElements
             if (classAttribute != null)
                 _attributes.Remove(classAttribute);
         }
-
         public void ToogleClass(string className)
         {
             IHtmlAttribute classAttribute = _attributes.FirstOrDefault(x => x.Name == "class");

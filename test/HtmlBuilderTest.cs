@@ -17,7 +17,7 @@ namespace AgileDotNetHtml.Test
             // Arrange          
             htmlBuilder = new HtmlBuilder();
 
-            HtmlNodeElement htmlTag = new HtmlNodeElement("div");
+            HtmlDivElement htmlTag = new HtmlDivElement();
 
             // Act
             IHtmlContent result = htmlBuilder.CreateHtmlContent(htmlTag);
@@ -49,7 +49,7 @@ namespace AgileDotNetHtml.Test
             htmlBuilder = new HtmlBuilder();
 
             HtmlNodeElement htmlTag = new HtmlNodeElement("div");
-            htmlTag.Children.Add(new HtmlNodeElement("span"));
+            htmlTag.Children.Add(new HtmlSpanElement());
             htmlTag.Text("Text", htmlTag.Children.LastOrDefault().UId);
 
             // Act

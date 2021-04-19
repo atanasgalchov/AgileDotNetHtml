@@ -23,6 +23,7 @@ namespace AgileDotNetHtml.Factories
 		internal const string commentRegex = "<!--[\\s\\S]*?-->";
 		internal const string keyValueAttributeRegex = "(\\S+)=[\"']?((?:.(?![\"']?\\s+(?:\\S+)=|[>\"']))+.)[\"']?";
 		private HtmlHelper _htmlHelper;
+		private string _encodedHtml;
 		private string _html;
 		private List<Match> _startTagsMathes;
 		private List<Match> _pairStartTagsMathes;
@@ -33,104 +34,21 @@ namespace AgileDotNetHtml.Factories
 		internal HtmlRegexParserManager(string html)
 		{
 			_htmlHelper = new HtmlHelper();
-			_html = html;
-
-			// trim string
-			_html = _html.TrimStart().TrimEnd();
-			// encode all tags whit potantial tags inside which is not part of html tree sctrucure
-			_html = EncodeTagsContent(_htmlHelper.TagsWhitPotentialInvalidHtmlInside, _html);
-			_html = EncodeCommentsContent(_html);
-			_html = EncodeAttributesValue(_html);
-			// ensure tags which is can be self closing and can have closing tag
-			_html = EnsurSelfClosingTags(_html);
-
-			_startTagsMathes = Regex.Matches(_html, startTagRegex, RegexOptions.Singleline)
-				.ToList();
-			_pairStartTagsMathes = _startTagsMathes
-				.Where(x => !_htmlHelper.IsSelfClosingHtmlTag(_htmlHelper.ExtractTagNameFromStartTag(x.Value)))
-				.ToList();
-			_endTagsMathes = Regex.Matches(_html, endTagRegex, RegexOptions.Singleline)
-				.ToList();
-
-			// try fix invalid defined tags
-			if (_pairStartTagsMathes.Count != _endTagsMathes.Count)
-			{
-				List<string> startTags = _pairStartTagsMathes.Select(x => _htmlHelper.ExtractTagNameFromStartTag(x.Value)).ToArray().Distinct().ToList();
-				List<string> endTags = _endTagsMathes.Select(x => _htmlHelper.ExtractTagNameFromEndTag(x.Value)).ToArray().Distinct().ToList();
-
-				var groupedStartTags = startTags.GroupBy(st => st, (key, g) => new { TagName = key, Count = g.Count() });
-				var groupedEndTags = endTags.GroupBy(st => st, (key, g) => new { TagName = key, Count = g.Count() });
-
-				if (startTags.Count() > endTags.Count())
-				{
-					List<string> invalidTags = groupedStartTags
-					   .Where(x => !endTags.Any(e => e == x.TagName) || x.Count != groupedEndTags.FirstOrDefault(ge => ge.TagName == x.TagName).Count)
-					   .Select(x => x.TagName)
-					   .ToList();
-
-					List<Match> potentialInvalidPairStartTagMatches = _pairStartTagsMathes
-						.Where(p => invalidTags.Any(inv => inv == _htmlHelper.ExtractTagNameFromStartTag(p.Value)))
-						.ToList();
-
-					List<Match> invalidEndTagOnPairTagsMatches = _endTagsMathes
-						.Where(p => invalidTags.Any(inv => inv == _htmlHelper.ExtractTagNameFromEndTag(p.Value)))
-						.ToList();
-
-					foreach (var potentialInvalidPairTagMatch in potentialInvalidPairStartTagMatches)
-					{
-						if (potentialInvalidPairStartTagMatches.Count(x => x.Value == potentialInvalidPairTagMatch.Value) == 1 || invalidEndTagOnPairTagsMatches.Count == 0)
-						{
-							_pairStartTagsMathes.Remove(potentialInvalidPairTagMatch);
-							_pairTagsWhitoutEndTagMatches.Add(potentialInvalidPairTagMatch);
-						}
-						else if (potentialInvalidPairStartTagMatches.FirstOrDefault(x => x.Index < potentialInvalidPairTagMatch.Index).Index >
-							invalidEndTagOnPairTagsMatches.FirstOrDefault(x => x.Index < potentialInvalidPairTagMatch.Index).Index)
-						{
-							_pairStartTagsMathes.Remove(potentialInvalidPairTagMatch);
-							_endTagsMathes.Add(potentialInvalidPairTagMatch);
-						}
-					}
-
-				}
-				else
-				{
-					var invalidTags = groupedEndTags
-					   .Where(x => !startTags.Any(e => e == x.TagName) || x.Count != groupedStartTags.FirstOrDefault(ge => ge.TagName == x.TagName).Count)
-					   .Select(x => x.TagName)
-					   .ToList();
-
-					List<Match> invalidEndTagMatches = _endTagsMathes
-						.Where(p => invalidTags.Any(inv => inv == _htmlHelper.ExtractTagNameFromEndTag(p.Value)))
-						.ToList();
-
-					List<Match> pairStartTagOnInvalidEndTagMatches = _pairStartTagsMathes
-						.Where(p => invalidTags.Any(inv => inv == _htmlHelper.ExtractTagNameFromStartTag(p.Value)))
-						.ToList();
-
-					if (pairStartTagOnInvalidEndTagMatches.Count == 0)
-					{
-						foreach (var invalidEndTag in invalidEndTagMatches)
-							_endTagsMathes.Remove(invalidEndTag);
-					}
-					else
-					{
-						foreach (var invalidEndTag in invalidEndTagMatches)
-						{
-							if (_pairStartTagsMathes.Any(p => p.Index > invalidEndTag.Index))
-								_endTagWhitoutStartTagMatches.Add(invalidEndTag);
-
-							_endTagsMathes.Remove(invalidEndTag);
-						}
-					}
-				}
-			}
+			Initialize(html);
 		}
 
 		public IHtmlElementsCollection Parse()
 		{
-			return Parse(0, _html.Length);
+			return ParseElements(0, _encodedHtml.Length);
 		}
-		public IHtmlElementsCollection Parse(int startIndex, int endIndex)
+
+		public string Html 
+		{
+			get { return _html; } 
+			set { Initialize(value); } 
+		}
+
+		public IHtmlElementsCollection ParseElements(int startIndex, int endIndex)
 		{
 			IHtmlElementsCollection elements = new HtmlElementsCollection();
 
@@ -179,7 +97,7 @@ namespace AgileDotNetHtml.Factories
 					}
 
 					// create element
-					IHtmlElement element = htmlElementsFactory.Create(attributes, _html, this);
+					IHtmlElement element = htmlElementsFactory.Create(attributes, _encodedHtml, this);
 					// add
 					elements.Add(element);
 				}
@@ -218,7 +136,7 @@ namespace AgileDotNetHtml.Factories
 						endContentIndex = endTagMatch.Index;
 
 					// create element
-					IHtmlElement element = htmlElementsFactory.Create(attributes, _html, startContentIndex, endContentIndex, this);
+					IHtmlElement element = htmlElementsFactory.Create(attributes, _encodedHtml, startContentIndex, endContentIndex, this);
 
 					// add
 					elements.Add(element);
@@ -227,7 +145,6 @@ namespace AgileDotNetHtml.Factories
 
 			return elements;
 		}
-
 		public Dictionary<int, string> ParseText(int startIndex, int endIndex)
 		{
 			// init result dict
@@ -249,7 +166,7 @@ namespace AgileDotNetHtml.Factories
 			// if no tags add all content as text
 			if (rootStartTagMatches.Count == 0)
 			{
-				texts.Add(-1, _html.SubStringToIndex(startIndex, endIndex - 1));
+				texts.Add(-1, _encodedHtml.SubStringToIndex(startIndex, endIndex - 1));
 				return texts;
 			}
 
@@ -267,7 +184,7 @@ namespace AgileDotNetHtml.Factories
 				.ToList();
 
 			// add text between start index and first tag, whit index zero
-			string textBeforeFirstStartTag = _html.SubStringToIndex(startIndex, rootStartTagMatches.FirstOrDefault().Index - 1);
+			string textBeforeFirstStartTag = _encodedHtml.SubStringToIndex(startIndex, rootStartTagMatches.FirstOrDefault().Index - 1);
 			if (textBeforeFirstStartTag.Length > 0)
 				texts.Add(-1, textBeforeFirstStartTag);
 
@@ -278,7 +195,7 @@ namespace AgileDotNetHtml.Factories
 			foreach (var closingTag in rootClosingTagsMatches)
 			{
 				Match nextStartTag = rootStartTagMatches.FirstOrDefault(x => x.Index > closingTag.Index);
-				string text = _html.SubStringToIndex(
+				string text = _encodedHtml.SubStringToIndex(
 					closingTag.Index + closingTag.Value.Length, nextStartTag != null ? nextStartTag.Index - 1 : endIndex - 1
 				);
 				if (text.Length > 0)
@@ -287,7 +204,6 @@ namespace AgileDotNetHtml.Factories
 
 			return texts;
 		}
-
 		/// <summary>
 		/// Create attributes collection including in the start tag string.
 		/// </summary>
@@ -504,6 +420,173 @@ namespace AgileDotNetHtml.Factories
 			}
 
 			return html;
+		}
+		private void Initialize(string html) 
+		{
+			_encodedHtml = html;
+			_html = html;
+
+			// trim string
+			_encodedHtml = _encodedHtml.TrimStart().TrimEnd();
+			// encode all tags whit potantial tags inside which is not part of html tree sctrucure
+			_encodedHtml = EncodeTagsContent(_htmlHelper.TagsWhitPotentialInvalidHtmlInside, _encodedHtml);
+			_encodedHtml = EncodeCommentsContent(_encodedHtml);
+			_encodedHtml = EncodeAttributesValue(_encodedHtml);
+			// ensure tags which is can be self closing and can have closing tag
+			_encodedHtml = EnsurSelfClosingTags(_encodedHtml);
+
+			_startTagsMathes = Regex.Matches(_encodedHtml, startTagRegex, RegexOptions.Singleline)
+				.ToList();
+			_pairStartTagsMathes = _startTagsMathes
+				.Where(x => !_htmlHelper.IsSelfClosingHtmlTag(_htmlHelper.ExtractTagNameFromStartTag(x.Value)))
+				.ToList();
+			_endTagsMathes = Regex.Matches(_encodedHtml, endTagRegex, RegexOptions.Singleline)
+				.ToList();
+
+			// try fix invalid defined tags
+			if (_pairStartTagsMathes.Count != _endTagsMathes.Count)			
+				TryFixHtmlStructure();		
+		}
+		private void TryFixHtmlStructure() 
+		{
+			try
+			{
+				// get distinct tags
+				List<string> distinctStartTags = _pairStartTagsMathes.Select(x => _htmlHelper.ExtractTagNameFromStartTag(x.Value)).ToArray().Distinct().ToList();
+				List<string> distinctEndTags = _endTagsMathes.Select(x => _htmlHelper.ExtractTagNameFromEndTag(x.Value)).ToArray().Distinct().ToList();
+
+				var groupedStartTags = _pairStartTagsMathes
+					.Select(x => _htmlHelper.ExtractTagNameFromStartTag(x.Value))
+					.GroupBy(st => st, (key, g) => new { TagName = key, Count = g.Count() });
+				var groupedEndTags = _endTagsMathes
+					.Select(x => _htmlHelper.ExtractTagNameFromEndTag(x.Value))
+					.GroupBy(st => st, (key, g) => new { TagName = key, Count = g.Count() });
+
+				// when start tags is greater than end tags, try find the remainder and set them to be in list whit paired tags without closing tag
+				if (distinctStartTags.Count() == distinctEndTags.Count())
+				{
+					// get reminders tags, we call them invalid tags
+					List<string> distinctInvalidTags = distinctStartTags
+						.Where(x => !distinctEndTags.Any(e => e == x) || groupedStartTags.FirstOrDefault(g => g.TagName == x).Count > groupedEndTags.FirstOrDefault(g => g.TagName == x).Count)
+						.ToList();
+
+					foreach (var invalidTag in distinctInvalidTags)
+					{
+						// get all start tags matches which have same name as invalid tags
+						List<Match> potentialInvalidPairStartTagMatches = _pairStartTagsMathes
+							.Where(p => invalidTag == _htmlHelper.ExtractTagNameFromStartTag(p.Value))
+							.ToList();
+
+						// get all end tags matches which have same name as invalid tags
+						List<Match> invalidEndTagOnPairTagsMatches = _endTagsMathes
+							.Where(p => invalidTag == _htmlHelper.ExtractTagNameFromEndTag(p.Value))
+							.ToList();
+
+						// when can not find closing tag on start tag just add to list whit paired tags without closing tag 
+						if (invalidEndTagOnPairTagsMatches.Count == 0)
+						{
+							foreach (var potentialInvalidPairTagMatch in potentialInvalidPairStartTagMatches)
+							{
+								_pairStartTagsMathes.Remove(potentialInvalidPairTagMatch);
+								_pairTagsWhitoutEndTagMatches.Add(potentialInvalidPairTagMatch);
+							}
+						}
+						else
+						{
+							int countOnInvalidTags = groupedStartTags.FirstOrDefault(x => x.TagName == invalidTag).Count - groupedEndTags.FirstOrDefault(x => x.TagName == invalidTag).Count;
+
+							// try find two consistent start tags, and made second to be closing on first
+							foreach (var potentialInvalidPairTagMatch in potentialInvalidPairStartTagMatches)
+							{
+								if (countOnInvalidTags == 0)
+									break;
+
+								int indexOnCurrentStartTag = potentialInvalidPairTagMatch.Index;
+								int? indexOfNextStartTag = potentialInvalidPairStartTagMatches.FirstOrDefault(x => x.Index > indexOnCurrentStartTag)?.Index;
+								if (!indexOfNextStartTag.HasValue)
+									continue;
+
+								int? indexOfNextEndTag = invalidEndTagOnPairTagsMatches.FirstOrDefault(x => x.Index > indexOnCurrentStartTag)?.Index;
+								if (!indexOfNextEndTag.HasValue || indexOfNextEndTag > indexOfNextStartTag) 
+								{
+									_pairStartTagsMathes.Remove(potentialInvalidPairStartTagMatches.FirstOrDefault(x => x.Index > indexOnCurrentStartTag));
+									countOnInvalidTags--;
+								}									
+							}
+						}
+					}
+				}
+				else if (distinctStartTags.Count() > distinctEndTags.Count())
+				{
+					List<string> invalidTags = groupedStartTags
+						.Where(x => !distinctEndTags.Any(e => e == x.TagName) || x.Count != groupedEndTags.FirstOrDefault(ge => ge.TagName == x.TagName).Count)
+						.Select(x => x.TagName)
+						.ToList();
+
+					List<Match> potentialInvalidPairStartTagMatches = _pairStartTagsMathes
+						.Where(p => invalidTags.Any(inv => inv == _htmlHelper.ExtractTagNameFromStartTag(p.Value)))
+						.ToList();
+
+					List<Match> invalidEndTagOnPairTagsMatches = _endTagsMathes
+						.Where(p => invalidTags.Any(inv => inv == _htmlHelper.ExtractTagNameFromEndTag(p.Value)))
+						.ToList();
+
+					foreach (var potentialInvalidPairTagMatch in potentialInvalidPairStartTagMatches)
+					{
+						if (potentialInvalidPairStartTagMatches.Count(x => x.Value == potentialInvalidPairTagMatch.Value) == 1 || invalidEndTagOnPairTagsMatches.Count == 0)
+						{
+							_pairStartTagsMathes.Remove(potentialInvalidPairTagMatch);
+							_pairTagsWhitoutEndTagMatches.Add(potentialInvalidPairTagMatch);
+						}
+						else if (potentialInvalidPairStartTagMatches.FirstOrDefault(x => x.Index < potentialInvalidPairTagMatch.Index).Index >
+							invalidEndTagOnPairTagsMatches.FirstOrDefault(x => x.Index < potentialInvalidPairTagMatch.Index).Index)
+						{
+							_pairStartTagsMathes.Remove(potentialInvalidPairTagMatch);
+							_endTagsMathes.Add(potentialInvalidPairTagMatch);
+						}
+					}
+
+				}
+				// when end tags is greater than start tags, try find the remainder and set them to be in list whit paired tags without start tag
+				// end remove from end tags
+				else if (distinctStartTags.Count() < distinctEndTags.Count())
+				{
+					var invalidTags = distinctEndTags
+						.Where(x => !distinctStartTags.Any(e => e == x) || groupedEndTags.FirstOrDefault(g => g.TagName == x).Count > groupedStartTags.FirstOrDefault(g => g.TagName == x).Count)
+						.ToList();
+
+					List<Match> invalidEndTagMatches = _endTagsMathes
+						.Where(p => invalidTags.Any(inv => inv == _htmlHelper.ExtractTagNameFromEndTag(p.Value)))
+						.ToList();
+
+					List<Match> pairStartTagOnInvalidEndTagMatches = _pairStartTagsMathes
+						.Where(p => invalidTags.Any(inv => inv == _htmlHelper.ExtractTagNameFromStartTag(p.Value)))
+						.ToList();
+
+					if (pairStartTagOnInvalidEndTagMatches.Count == 0)
+					{
+						foreach (var invalidEndTag in invalidEndTagMatches)
+							_endTagsMathes.Remove(invalidEndTag);
+					}
+					else
+					{
+						foreach (var invalidEndTag in invalidEndTagMatches)
+						{
+							if (_pairStartTagsMathes.Any(p => p.Index > invalidEndTag.Index))
+								_endTagWhitoutStartTagMatches.Add(invalidEndTag);
+
+							_endTagsMathes.Remove(invalidEndTag);
+						}
+					}
+				}
+
+				if (_pairStartTagsMathes.Count != _endTagsMathes.Count)
+					throw new ArgumentException();
+			}
+			catch (Exception ex)
+			{
+				throw new ArgumentException("The HTML has to many errors and can not be parsed.");
+			}		
 		}
 	}
 }

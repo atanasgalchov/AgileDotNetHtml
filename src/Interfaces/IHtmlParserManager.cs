@@ -4,8 +4,9 @@ namespace AgileDotNetHtml.Interfaces
 {
 	public interface IHtmlParserManager
 	{
+		string Html { get; set; }
 		IHtmlElementsCollection Parse();
-		IHtmlElementsCollection Parse(int startIndex, int endIndex);
+		IHtmlElementsCollection ParseElements(int startIndex, int endIndex);
 		Dictionary<int, string> ParseText(int startIndex, int endIndex);
 	}
 }

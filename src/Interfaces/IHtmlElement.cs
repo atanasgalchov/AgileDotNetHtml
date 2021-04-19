@@ -10,6 +10,7 @@
         void AddAttribute(string name);
         void AddAttributeValue(string name, string value);
         bool HasAttribute(string name);
+        bool HasAttributeWhitValue(string name, string value);
         IHtmlAttribute GetAttribute(string name);
         void ReplaceAttributeValue(string name, string value);
         void RemoveAttribute(string name);

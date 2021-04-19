@@ -24,7 +24,7 @@ namespace AgileDotNetHtml.Factories.HtmlElements
 			// add children and texts
 			if (endContentIndex - startContentIndex > 0) 
 			{
-				element.Children = htmlParserManager.Parse(startContentIndex, endContentIndex);
+				element.Children = htmlParserManager.ParseElements(startContentIndex, endContentIndex);
 				Dictionary<int, string> texts = htmlParserManager.ParseText(startContentIndex, endContentIndex);
 				foreach (var text in texts) 
 				{				

@@ -11,6 +11,7 @@ namespace AgileDotNetHtml.Models.HtmlElements
 	{
         private IHtmlElementsCollection _children { get; set; } = new HtmlElementsCollection();
         private List<HtmlNodeElementText> _textsBetweenChildren = new List<HtmlNodeElementText>();
+        
         public HtmlNodeElement(string tagName) : base(tagName)
 		{
 		}
