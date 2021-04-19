@@ -14,7 +14,7 @@ I believe that have many great libraries for working whit HTML in C#, but here i
 ## Getting Started
 
 ### Parse Page
-* Load and parse page from specific url.Remove 'test-class' from all elements.
+* Load and parse page from specific url.
 
 ```C#
 	HtmlParser parser = new HtmlParser();
@@ -26,8 +26,6 @@ I believe that have many great libraries for working whit HTML in C#, but here i
 	HtmlBuilder builder = new HtmlBuilder();
 	IHtmlContent html = builder.CreateHtmlContent(documnet);
 ```
-#### Result: HTML content whit removed class 'text-class'.
-
 
 ### Parse String
 * Parse specific HTML string
