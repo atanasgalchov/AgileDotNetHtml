@@ -17,7 +17,7 @@ namespace AgileDotNetHtml.Factories
 	{
 		internal const string startTagRegex = "(<[!]?[a-zA-Z\\d]+)(>|.*?[^?]>)";
 		internal const string selfClosingTagEnds = "[/][\\s]*>";
-		internal const string endTagRegex = "((<[\\s]*\\/)[\\s]*\\w+([\\s]*>))";
+		internal const string endTagRegex = "((<[\\s]*\\/)[\\s]*[\\w]+([-]*[\\w]+)?([\\s]*>))";
 		internal const string wholeTagRegex = "(<[!]?[a-zA-Z]+)(>|.*?[^?]>).*((<[\\s]*/)[\\s]*\\w+([\\s]*>))";
 		internal const string keyValueAttributeEqualSymbolSpacingRegex = "[\\s]+=[\\s]+";
 		internal const string commentRegex = "<!--[\\s\\S]*?-->";
@@ -221,8 +221,13 @@ namespace AgileDotNetHtml.Factories
 
 			// match tag name
 			Match startTagMatch = new Regex(startTagRegex).Match(startTag);
+			
+			// return if dont have attributes
+			if (startTagMatch.Value.IndexOf(' ') < 0)
+				return attributes;
+
 			// remove tag name from string
-			startTag = startTag.Remove(0, startTagMatch.Groups[1].Value.Length);
+			startTag = startTag.Remove(0, startTagMatch.Value.IndexOf(' '));
 			// trim start
 			startTag = startTag.TrimEnd(new char[] { '>', '/' }).TrimEnd();
 
