@@ -3,7 +3,7 @@
 namespace AgileDotNetHtml.Attributes
 {
 	[AttributeUsage(AttributeTargets.Class)]
-	public class HtmlAttributeClassAttribute : Attribute
+	internal class HtmlAttributeClassAttribute : Attribute
 	{
 		public HtmlAttributeClassAttribute(string attributeName)
 		{

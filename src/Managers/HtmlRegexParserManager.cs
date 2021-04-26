@@ -15,7 +15,7 @@ namespace AgileDotNetHtml.Factories
 {
 	internal class HtmlRegexParserManager : IHtmlParserManager
 	{
-		internal const string startTagRegex = "(<[!]?[a-zA-Z\\d]+)(>|.*?[^?]>)";
+		internal const string startTagRegex = "(<[!]?[a-zA-Z\\d]+([-]*[a-zA-Z\\d]+)?)(>|.*?[^?]>)";
 		internal const string selfClosingTagEnds = "[/][\\s]*>";
 		internal const string endTagRegex = "((<[\\s]*\\/)[\\s]*[\\w]+([-]*[\\w]+)?([\\s]*>))";
 		internal const string wholeTagRegex = "(<[!]?[a-zA-Z]+)(>|.*?[^?]>).*((<[\\s]*/)[\\s]*\\w+([\\s]*>))";
@@ -57,90 +57,97 @@ namespace AgileDotNetHtml.Factories
 			List<Match> pairStartTagMatchesInCurrentRange = _pairStartTagsMathes.Where(x => x.Index >= startIndex && x.Index < endIndex).ToList();
 			List<Match> endTagMatchesInCurrentRange = _endTagsMathes.Where(x => x.Index > startIndex && x.Index < endIndex).ToList();
 
-			// get root start tags in current range
-			List<Match> rootStartTagMatches = startTagMatchesInCurrentRange
-				.Where(currentStartTag =>
-					pairStartTagMatchesInCurrentRange
-						.Count(startTag => startTag.Index < currentStartTag.Index) == endTagMatchesInCurrentRange.Count(endTag => endTag.Index <= currentStartTag.Index)
-				)
-				.ToList();
-			// get root end tags in current range
-			List<Match> rootEndTagMatches = endTagMatchesInCurrentRange
-				.Where(currentEndTag =>
-					pairStartTagMatchesInCurrentRange
-						.Count(startTag => startTag.Index < currentEndTag.Index) == endTagMatchesInCurrentRange.Count(endTag2 => endTag2.Index <= currentEndTag.Index)
-				)
-				.ToList();
-
-			// create IHtmlElement for every start tag match and add to collection
-			foreach (Match startTagMatch in rootStartTagMatches)
+			try
 			{
-				// get tag name
-				string tagName = _htmlHelper.ExtractTagNameFromStartTag(startTagMatch.Value);
+				// get root start tags in current range
+				List<Match> rootStartTagMatches = startTagMatchesInCurrentRange
+					.Where(currentStartTag =>
+						pairStartTagMatchesInCurrentRange
+							.Count(startTag => startTag.Index < currentStartTag.Index) == endTagMatchesInCurrentRange.Count(endTag => endTag.Index <= currentStartTag.Index)
+					)
+					.ToList();
+				// get root end tags in current range
+				List<Match> rootEndTagMatches = endTagMatchesInCurrentRange
+					.Where(currentEndTag =>
+						pairStartTagMatchesInCurrentRange
+							.Count(startTag => startTag.Index < currentEndTag.Index) == endTagMatchesInCurrentRange.Count(endTag2 => endTag2.Index <= currentEndTag.Index)
+					)
+					.ToList();
 
-				// parse attributes
-				HtmlAttributesCollection attributes = ParseAttributes(startTagMatch.Value);
-
-				// if tag is self closing
-				if (_htmlHelper.IsSelfClosingHtmlTag(tagName))
+				// create IHtmlElement for every start tag match and add to collection
+				foreach (Match startTagMatch in rootStartTagMatches)
 				{
-					// create elements factory
-					IHtmlSelfClosingTagElementFactory htmlElementsFactory;
-					switch (tagName.ToLower())
+					// get tag name
+					string tagName = _htmlHelper.ExtractTagNameFromStartTag(startTagMatch.Value);
+
+					// parse attributes
+					HtmlAttributesCollection attributes = ParseAttributes(startTagMatch.Value);
+
+					// if tag is self closing
+					if (_htmlHelper.IsSelfClosingHtmlTag(tagName))
 					{
-						case "!doctype":
-							htmlElementsFactory = new HtmlDoctypeElementFactory();
-							break;
-						default:
-							htmlElementsFactory = new HtmlSelfClosingTagElementFactory(tagName);
-							break;
-					}
+						// create elements factory
+						IHtmlSelfClosingTagElementFactory htmlElementsFactory;
+						switch (tagName.ToLower())
+						{
+							case "!doctype":
+								htmlElementsFactory = new HtmlDoctypeElementFactory();
+								break;
+							default:
+								htmlElementsFactory = new HtmlSelfClosingTagElementFactory(tagName);
+								break;
+						}
 
-					// create element
-					IHtmlElement element = htmlElementsFactory.Create(attributes, _encodedHtml, this);
-					// add
-					elements.Add(element);
-				}
-				// when tag have pair tags
-				else
-				{
-					// create elements factory
-					IHtmlPairTagsElementFactory htmlElementsFactory;
-					switch (tagName.ToLower())
+						// create element
+						IHtmlElement element = htmlElementsFactory.Create(attributes, _encodedHtml, this);
+						// add
+						elements.Add(element);
+					}
+					// when tag have pair tags
+					else
 					{
-						case "noscript":
-							htmlElementsFactory = new HtmlNoScriptElementFactory();
-							break;
-						case "script":
-							htmlElementsFactory = new HtmlScriptElementFactory();
-							break;
-						case "style":
-							htmlElementsFactory = new HtmlStyleElementFactory();
-							break;
-						case "code":
-							htmlElementsFactory = new HtmlCodeElementFactory();
-							break;
-						default:
-							htmlElementsFactory = new HtmlNodeElementFactory(tagName);
-							break;
+						// create elements factory
+						IHtmlPairTagsElementFactory htmlElementsFactory;
+						switch (tagName.ToLower())
+						{
+							case "noscript":
+								htmlElementsFactory = new HtmlNoScriptElementFactory();
+								break;
+							case "script":
+								htmlElementsFactory = new HtmlScriptElementFactory();
+								break;
+							case "style":
+								htmlElementsFactory = new HtmlStyleElementFactory();
+								break;
+							case "code":
+								htmlElementsFactory = new HtmlCodeElementFactory();
+								break;
+							default:
+								htmlElementsFactory = new HtmlNodeElementFactory(tagName);
+								break;
+						}
+
+						// find start content index			
+						int startContentIndex = startTagMatch.Index + startTagMatch.Value.Length;
+
+						// find cloing tang on current star tag
+						Match endTagMatch = rootEndTagMatches.FirstOrDefault(x => x.Index > startTagMatch.Index);
+						// in html may have tags which should have end tag but he is not defined, in this case just skip him as set end index to be end index on current start tag
+						int endContentIndex = startTagMatch.Index + startTagMatch.Value.Length;
+						if (endTagMatch != null)
+							endContentIndex = endTagMatch.Index;
+
+						// create element
+						IHtmlElement element = htmlElementsFactory.Create(attributes, _encodedHtml, startContentIndex, endContentIndex, this);
+
+						// add
+						elements.Add(element);
 					}
-
-					// find start content index			
-					int startContentIndex = startTagMatch.Index + startTagMatch.Value.Length;
-
-					// find cloing tang on current star tag
-					Match endTagMatch = rootEndTagMatches.FirstOrDefault(x => x.Index > startTagMatch.Index);
-					// in html may have tags which should have end tag but he is not defined, in this case just skip him as set end index to be end index on current start tag
-					int endContentIndex = startTagMatch.Index + startTagMatch.Value.Length;
-					if (endTagMatch != null)
-						endContentIndex = endTagMatch.Index;
-
-					// create element
-					IHtmlElement element = htmlElementsFactory.Create(attributes, _encodedHtml, startContentIndex, endContentIndex, this);
-
-					// add
-					elements.Add(element);
 				}
+			}
+			catch (Exception ex)
+			{
+				return elements;
 			}
 
 			return elements;
@@ -155,51 +162,58 @@ namespace AgileDotNetHtml.Factories
 			List<Match> pairStartTagMatchesInCurrentRange = _pairStartTagsMathes.Where(x => x.Index >= startIndex && x.Index < endIndex).ToList();
 			List<Match> endTagMatchesInCurrentRange = _endTagsMathes.Where(x => x.Index > startIndex && x.Index < endIndex).ToList();
 
-			// get root start tags in current range
-			List<Match> rootStartTagMatches = startTagMatchesInCurrentRange
-				.Where(currentStartTag =>
-					pairStartTagMatchesInCurrentRange
-						.Count(startTag => startTag.Index < currentStartTag.Index) == endTagMatchesInCurrentRange.Count(endTag => endTag.Index <= currentStartTag.Index)
-				)
-				.ToList();
-
-			// if no tags add all content as text
-			if (rootStartTagMatches.Count == 0)
+			try
 			{
-				texts.Add(-1, _encodedHtml.SubStringToIndex(startIndex, endIndex - 1));
-				return texts;
+				// get root start tags in current range
+				List<Match> rootStartTagMatches = startTagMatchesInCurrentRange
+					.Where(currentStartTag =>
+						pairStartTagMatchesInCurrentRange
+							.Count(startTag => startTag.Index < currentStartTag.Index) == endTagMatchesInCurrentRange.Count(endTag => endTag.Index <= currentStartTag.Index)
+					)
+					.ToList();
+
+				// if no tags add all content as text
+				if (rootStartTagMatches.Count == 0)
+				{
+					texts.Add(-1, _encodedHtml.SubStringToIndex(startIndex, endIndex - 1));
+					return texts;
+				}
+
+				// get root self closing tags in current range
+				List<Match> rootSelfClosingTagMatches = rootStartTagMatches
+					.Where(x => _htmlHelper.IsSelfClosingHtmlTag(_htmlHelper.ExtractTagNameFromStartTag(x.Value)) || _pairTagsWhitoutEndTagMatches.Any(p => p.Index == x.Index))
+					.ToList();
+
+				// get root end tags in current range
+				List<Match> rootEndTagMatches = endTagMatchesInCurrentRange
+					.Where(currentEndTag =>
+						pairStartTagMatchesInCurrentRange
+							.Count(startTag => startTag.Index < currentEndTag.Index) == endTagMatchesInCurrentRange.Count(endTag2 => endTag2.Index <= currentEndTag.Index)
+					)
+					.ToList();
+
+				// add text between start index and first tag, whit index zero
+				string textBeforeFirstStartTag = _encodedHtml.SubStringToIndex(startIndex, rootStartTagMatches.FirstOrDefault().Index - 1);
+				if (textBeforeFirstStartTag.Length > 0)
+					texts.Add(-1, textBeforeFirstStartTag);
+
+				// get all text between root tags
+				List<Match> rootClosingTagsMatches = rootEndTagMatches;
+				rootClosingTagsMatches.AddRange(rootSelfClosingTagMatches);
+				rootClosingTagsMatches = rootClosingTagsMatches.OrderBy(x => x.Index).ToList();
+				foreach (var closingTag in rootClosingTagsMatches)
+				{
+					Match nextStartTag = rootStartTagMatches.FirstOrDefault(x => x.Index > closingTag.Index);
+					string text = _encodedHtml.SubStringToIndex(
+						closingTag.Index + closingTag.Value.Length, nextStartTag != null ? nextStartTag.Index - 1 : endIndex - 1
+					);
+					if (text.Length > 0)
+						texts.Add(rootClosingTagsMatches.IndexOf(closingTag), text);
+				}
 			}
-
-			// get root self closing tags in current range
-			List<Match> rootSelfClosingTagMatches = rootStartTagMatches
-				.Where(x => _htmlHelper.IsSelfClosingHtmlTag(_htmlHelper.ExtractTagNameFromStartTag(x.Value)) || _pairTagsWhitoutEndTagMatches.Any(p => p.Index == x.Index))
-				.ToList();
-
-			// get root end tags in current range
-			List<Match> rootEndTagMatches = endTagMatchesInCurrentRange
-				.Where(currentEndTag =>
-					pairStartTagMatchesInCurrentRange
-						.Count(startTag => startTag.Index < currentEndTag.Index) == endTagMatchesInCurrentRange.Count(endTag2 => endTag2.Index <= currentEndTag.Index)
-				)
-				.ToList();
-
-			// add text between start index and first tag, whit index zero
-			string textBeforeFirstStartTag = _encodedHtml.SubStringToIndex(startIndex, rootStartTagMatches.FirstOrDefault().Index - 1);
-			if (textBeforeFirstStartTag.Length > 0)
-				texts.Add(-1, textBeforeFirstStartTag);
-
-			// get all text between root tags
-			List<Match> rootClosingTagsMatches = rootEndTagMatches;
-			rootClosingTagsMatches.AddRange(rootSelfClosingTagMatches);
-			rootClosingTagsMatches = rootClosingTagsMatches.OrderBy(x => x.Index).ToList();
-			foreach (var closingTag in rootClosingTagsMatches)
+			catch (Exception)
 			{
-				Match nextStartTag = rootStartTagMatches.FirstOrDefault(x => x.Index > closingTag.Index);
-				string text = _encodedHtml.SubStringToIndex(
-					closingTag.Index + closingTag.Value.Length, nextStartTag != null ? nextStartTag.Index - 1 : endIndex - 1
-				);
-				if (text.Length > 0)
-					texts.Add(rootClosingTagsMatches.IndexOf(closingTag), text);
+				return texts;
 			}
 
 			return texts;
@@ -219,56 +233,67 @@ namespace AgileDotNetHtml.Factories
 			// replace spacing between name-value
 			startTag = Regex.Replace(startTag, keyValueAttributeEqualSymbolSpacingRegex, "=");
 
-			// match tag name
-			Match startTagMatch = new Regex(startTagRegex).Match(startTag);
-			
 			// return if dont have attributes
-			if (startTagMatch.Value.IndexOf(' ') < 0)
+			int endTagNameIndex = startTag.IndexOf(' ');
+			if (startTag.IndexOf("\r\n") > 0)
+			{
+				if (startTag.IndexOf("\r\n") < endTagNameIndex || endTagNameIndex == -1)
+					endTagNameIndex = startTag.IndexOf("\r\n") + 2;
+			}
+
+			if (endTagNameIndex < 0)
 				return attributes;
 
 			// remove tag name from string
-			startTag = startTag.Remove(0, startTagMatch.Value.IndexOf(' '));
+			startTag = startTag.Remove(0, endTagNameIndex);
 			// trim start
 			startTag = startTag.TrimEnd(new char[] { '>', '/' }).TrimEnd();
 
-			while (startTag.IsNotNullNorEmpty())
+			try
 			{
-				startTag = startTag.TrimStart();
-				// create attribute name
-				string attributeName = "";
-				for (int i = 0; i < startTag.Length; i++)
+				while (startTag.IsNotNullNorEmpty())
 				{
-					if (startTag[i] == ' ' || startTag[i] == '=')
-						break;
+					startTag = startTag.TrimStart();
+					// create attribute name
+					string attributeName = "";
+					for (int i = 0; i < startTag.Length; i++)
+					{
+						if (startTag[i] == ' ' || startTag[i] == '=')
+							break;
 
-					attributeName += startTag[i];
+						attributeName += startTag[i];
+					}
+
+					// create attributes factory
+					IHtmlAttributeFactory htmlAttributeFactory;
+					switch (attributeName)
+					{
+						case "style":
+							htmlAttributeFactory = new HtmlStyleAttributeFactory();
+							break;
+						default:
+							htmlAttributeFactory = new HtmlAttributeFactory(attributeName);
+							break;
+					}
+
+					IHtmlAttribute attribute = htmlAttributeFactory.Create(startTag);
+					attributes.Add(attribute);
+
+					var endAttributeIndex = startTag.IndexOf(attribute.Name) + attribute.Name.Length;
+					if (attribute.Value.IsNotNullNorEmpty())
+						endAttributeIndex = startTag.IndexOf(attribute.Value, endAttributeIndex) + attribute.Value.Length;
+					else if (startTag.TrimStart().StarstWithPattern(_htmlHelper.GetEmptyValueAttributeRegex(attribute.Name)))
+						endAttributeIndex += 3;
+
+					startTag = startTag.Remove(0, endAttributeIndex);
+					startTag = startTag.TrimStart().TrimStart(new char[] { '"', '\'' });
 				}
-
-				// create attributes factory
-				IHtmlAttributeFactory htmlAttributeFactory;
-				switch (attributeName)
-				{
-					case "style":
-						htmlAttributeFactory = new HtmlStyleAttributeFactory();
-						break;
-					default:
-						htmlAttributeFactory = new HtmlAttributeFactory(attributeName);
-						break;
-				}
-
-				IHtmlAttribute attribute = htmlAttributeFactory.Create(startTag);
-				attributes.Add(attribute);
-
-				var endAttributeIndex = startTag.IndexOf(attribute.Name) + attribute.Name.Length;
-				if (attribute.Value.IsNotNullNorEmpty())
-					endAttributeIndex = startTag.IndexOf(attribute.Value, endAttributeIndex) + attribute.Value.Length;
-				else if (startTag.TrimStart().StarstWithPattern(_htmlHelper.GetEmptyValueAttributeRegex(attribute.Name)))
-					endAttributeIndex += 3;
-
-				startTag = startTag.Remove(0, endAttributeIndex);
-				startTag = startTag.TrimStart().TrimStart(new char[] { '"', '\'' });
 			}
-
+			catch (Exception)
+			{
+				return attributes;
+			}
+			
 			return attributes;
 		}
 		private string EncodeTagsContent(string[] tagNames, string html)
@@ -277,28 +302,36 @@ namespace AgileDotNetHtml.Factories
 			{
 				if (Regex.IsMatch(html, _htmlHelper.GetRegexForStartTag(tagName), RegexOptions.Singleline))
 				{
-					int offset = 0;
-					List<Match> startTagMatches = Regex.Matches(html, _htmlHelper.GetRegexForStartTag(tagName)).ToList();
-					List<Match> endTagmatches = Regex.Matches(html, _htmlHelper.GetRegexForEndTag(tagName)).ToList();
-					foreach (Match startTagMatch in startTagMatches)
+					try
 					{
-						Match endTagMatch = endTagmatches.FirstOrDefault(x => x.Index > startTagMatch.Index);
-						if (endTagMatch.Value != null)
+						int offset = 0;
+						List<Match> startTagMatches = Regex.Matches(html, _htmlHelper.GetRegexForStartTag(tagName)).ToList();
+						List<Match> endTagmatches = Regex.Matches(html, _htmlHelper.GetRegexForEndTag(tagName)).ToList();
+						foreach (Match startTagMatch in startTagMatches)
 						{
-							int startScriptContentIndex = (startTagMatch.Index + startTagMatch.Value.Length) + offset;
-							int endScriptContentIndex = endTagMatch.Index + offset;
+							Match endTagMatch = endTagmatches.FirstOrDefault(x => x.Index > startTagMatch.Index);
+							if (endTagMatch.Value != null)
+							{
+								int startScriptContentIndex = (startTagMatch.Index + startTagMatch.Value.Length) + offset;
+								int endScriptContentIndex = endTagMatch.Index + offset;
 
-							string content = html.SubStringToIndex(startScriptContentIndex, endScriptContentIndex - 1);
-							string encodedContent = HttpUtility.HtmlEncode(content);
+								string content = html.SubStringToIndex(startScriptContentIndex, endScriptContentIndex - 1);
+								string encodedContent = HttpUtility.HtmlEncode(content);
 
-							int noEncodedLength = html.Length;
+								int noEncodedLength = html.Length;
 
-							html = html.Remove(startScriptContentIndex, endScriptContentIndex - startScriptContentIndex);
-							html = html.Insert(startScriptContentIndex, encodedContent);
+								html = html.Remove(startScriptContentIndex, endScriptContentIndex - startScriptContentIndex);
+								html = html.Insert(startScriptContentIndex, encodedContent);
 
-							offset += html.Length - noEncodedLength;
+								offset += html.Length - noEncodedLength;
+							}
 						}
 					}
+					catch (Exception ex)
+					{
+						return html;
+					}
+
 				}
 			}
 
@@ -308,25 +341,32 @@ namespace AgileDotNetHtml.Factories
 		{
 			if (Regex.IsMatch(html, commentRegex, RegexOptions.Singleline))
 			{
-				int offset = 0;
-				Match commentMatch = Regex.Match(html, commentRegex, RegexOptions.Singleline);
-				while (commentMatch.Value.IsNotNullNorEmpty())
+				try
 				{
-					// get start and end comment content index, eg <!--{startCommentContentIndex}Comment...{endCommentContentIndex}-->
-					int startCommentContentIndex = (commentMatch.Index + 4) + offset;
-					int endCommentContentIndex = ((commentMatch.Index + commentMatch.Value.Length) - 3) + offset;
+					int offset = 0;
+					Match commentMatch = Regex.Match(html, commentRegex, RegexOptions.Singleline);
+					while (commentMatch.Value.IsNotNullNorEmpty())
+					{
+						// get start and end comment content index, eg <!--{startCommentContentIndex}Comment...{endCommentContentIndex}-->
+						int startCommentContentIndex = (commentMatch.Index + 4) + offset;
+						int endCommentContentIndex = ((commentMatch.Index + commentMatch.Value.Length) - 3) + offset;
 
-					string content = html.SubStringToIndex(startCommentContentIndex, endCommentContentIndex);
-					string encodedContent = HttpUtility.HtmlEncode(content);
+						string content = html.SubStringToIndex(startCommentContentIndex, endCommentContentIndex);
+						string encodedContent = HttpUtility.HtmlEncode(content);
 
-					int noEncodedLength = html.Length;
+						int noEncodedLength = html.Length;
 
-					html = html.Remove(startCommentContentIndex, (endCommentContentIndex - startCommentContentIndex) + 1);
-					html = html.Insert(startCommentContentIndex, encodedContent);
+						html = html.Remove(startCommentContentIndex, (endCommentContentIndex - startCommentContentIndex) + 1);
+						html = html.Insert(startCommentContentIndex, encodedContent);
 
-					offset += html.Length - noEncodedLength;
+						offset += html.Length - noEncodedLength;
 
-					commentMatch = commentMatch.NextMatch();
+						commentMatch = commentMatch.NextMatch();
+					}
+				}
+				catch (Exception)
+				{
+					return html;
 				}
 			}
 
@@ -336,58 +376,63 @@ namespace AgileDotNetHtml.Factories
 		{
 			if (Regex.IsMatch(html, startTagRegex, RegexOptions.Singleline))
 			{
-				int offset = 0;
-				Match startTagMatch = Regex.Match(html, startTagRegex, RegexOptions.Singleline);
-				while (startTagMatch.Value.IsNotNullNorEmpty())
+				try
 				{
-					if (startTagMatch.Value.IndexOf(' ') >= 0 && Regex.IsMatch(startTagMatch.Value, keyValueAttributeRegex))
+					int offset = 0;
+					Match startTagMatch = Regex.Match(html, startTagRegex, RegexOptions.Singleline);
+					while (startTagMatch.Value.IsNotNullNorEmpty())
 					{
-						// get start and end comment content index, eg <div{startAttributesIndex}Comment...{endCommentContentIndex}
-						int startAttributesIndex = (startTagMatch.Index + startTagMatch.Value.IndexOf(' ')) + offset;
-						int endAttributesIndex = ((startTagMatch.Index + startTagMatch.Value.Length) - 2) + offset;
+						int endTagNameIndex = startTagMatch.Value.IndexOf(' ');
+						if (startTagMatch.Value.IndexOf("\r\n") > 0)
+						{
+							if (startTagMatch.Value.IndexOf("\r\n") < endTagNameIndex || endTagNameIndex == -1)
+								endTagNameIndex = startTagMatch.Value.IndexOf("\r\n");
+						}
 
-						// if before closing bracket have odd number of quotes this mean that is end tag index is incorrect
-						// find first closing bracked which have even number of quotes
-						char lastQuote = char.MinValue;
-						if (startTagMatch.Value.LastIndexOf("'") > -1 && startTagMatch.Value.LastIndexOf("\"") == -1)
+						if (endTagNameIndex > -1)
 						{
-							lastQuote = startTagMatch.Value[startTagMatch.Value.LastIndexOf("'")];
-						}
-						else if (startTagMatch.Value.LastIndexOf("'") == -1 && startTagMatch.Value.LastIndexOf("\"") > -1)
-						{
-							lastQuote = startTagMatch.Value[startTagMatch.Value.LastIndexOf("\"")];
-						}
-						else if(startTagMatch.Value.LastIndexOf("'") > -1 && startTagMatch.Value.LastIndexOf("\"") > -1)
-						{
-							lastQuote = startTagMatch.Value.LastIndexOf("'") > startTagMatch.Value.LastIndexOf("\"")
-								? startTagMatch.Value[startTagMatch.Value.LastIndexOf("'")]
-								: startTagMatch.Value[startTagMatch.Value.LastIndexOf("\"")];
-						}
-					
-						if (lastQuote != char.MinValue && startTagMatch.Value.ToList().Count(x => x == lastQuote) % 2 != 0)
-						{
-							bool foundEndTagIndex = false;
-							while (foundEndTagIndex == false)
+							endTagNameIndex = endTagNameIndex + startTagMatch.Index;
+
+							// start attributes is index of first space
+							int startAttributesIndex = endTagNameIndex + offset;
+							// find closing attribute symbol
+							char openQuote = char.MinValue;
+							// start from start attributes index while find '>' symbol which not in attribute value
+							int endAttributesIndex = html.Length - 1;
+							for (int i = startAttributesIndex; i < html.Length; i++)
 							{
-								if (html[endAttributesIndex + 1] == '>' && html.SubStringToIndex(startTagMatch.Index, endAttributesIndex).Count(x => x == lastQuote) % 2 == 0)
-									foundEndTagIndex = true;
-								else
-									endAttributesIndex += 1;
+								char currentChar = html[i];
+								if (currentChar == '>' && openQuote == char.MinValue)
+									break;
+
+								if (currentChar == '\'' || currentChar == '"')
+								{
+									if (openQuote == char.MinValue)
+										openQuote = currentChar;
+									else if (openQuote == currentChar)
+										openQuote = char.MinValue;
+								}
+
+								endAttributesIndex = i;
 							}
+
+							string content = html.SubStringToIndex(startAttributesIndex, endAttributesIndex).Replace("\r\n", " ");
+							string encodedContent = HttpUtility.HtmlEncode(content);
+
+							int noEncodedLength = html.Length;
+
+							html = html.Remove(startAttributesIndex, (endAttributesIndex - startAttributesIndex) + 1);
+							html = html.Insert(startAttributesIndex, encodedContent);
+
+							offset += html.Length - noEncodedLength;
 						}
 
-						string content = html.SubStringToIndex(startAttributesIndex, endAttributesIndex);
-						string encodedContent = HttpUtility.HtmlEncode(content);
-
-						int noEncodedLength = html.Length;
-
-						html = html.Remove(startAttributesIndex, (endAttributesIndex - startAttributesIndex) + 1);
-						html = html.Insert(startAttributesIndex, encodedContent);
-
-						offset += html.Length - noEncodedLength;
+						startTagMatch = startTagMatch.NextMatch();
 					}
-
-					startTagMatch = startTagMatch.NextMatch();
+				}
+				catch (Exception)
+				{
+					return html;
 				}
 			}
 
@@ -397,42 +442,51 @@ namespace AgileDotNetHtml.Factories
 		{
 			if (Regex.IsMatch(html, startTagRegex, RegexOptions.Singleline))
 			{
-				int offset = 0;
-				Match startTagMatch = Regex.Match(html, startTagRegex, RegexOptions.Singleline);
-				while (startTagMatch.Value.IsNotNullNorEmpty())
+				try
 				{
-					string tagName = _htmlHelper.ExtractTagNameFromStartTag(startTagMatch.Value);
-					if (!_htmlHelper.IsSelfClosingHtmlTag(tagName) && startTagMatch.Value.EndstWithPattern(selfClosingTagEnds))
+					int offset = 0;
+					Match startTagMatch = Regex.Match(html, startTagRegex, RegexOptions.Singleline);
+					while (startTagMatch.Value.IsNotNullNorEmpty())
 					{
-						string endTag = $"</{tagName}>";
-						int lengthBeforeInsert = html.Length;
-						html = html.Insert(startTagMatch.Index + startTagMatch.Value.Length + offset, endTag);
-						offset += html.Length - lengthBeforeInsert;
-					}
-					else if (_htmlHelper.IsSelfClosingHtmlTag(tagName))
-					{
-						Match selfClosingEndTagMatch = Regex.Match(html, _htmlHelper.GetRegexForEndTag(tagName));
-						if (selfClosingEndTagMatch.Success && selfClosingEndTagMatch.Index > startTagMatch.Index && selfClosingEndTagMatch.Index < startTagMatch.NextMatch().Index)
+						string tagName = _htmlHelper.ExtractTagNameFromStartTag(startTagMatch.Value);
+						if (!_htmlHelper.IsSelfClosingHtmlTag(tagName) && startTagMatch.Value.EndstWithPattern(selfClosingTagEnds))
 						{
+							string endTag = $"</{tagName}>";
 							int lengthBeforeInsert = html.Length;
-							html = html.Remove(selfClosingEndTagMatch.Index, selfClosingEndTagMatch.Value.Length);
-							offset -= lengthBeforeInsert - html.Length;
+							html = html.Insert(startTagMatch.Index + startTagMatch.Value.Length + offset, endTag);
+							offset += html.Length - lengthBeforeInsert;
 						}
-					}
+						else if (_htmlHelper.IsSelfClosingHtmlTag(tagName))
+						{
+							Match selfClosingEndTagMatch = Regex.Match(html, _htmlHelper.GetRegexForEndTag(tagName));
+							if (selfClosingEndTagMatch.Success && selfClosingEndTagMatch.Index > startTagMatch.Index && selfClosingEndTagMatch.Index < startTagMatch.NextMatch().Index)
+							{
+								int lengthBeforeInsert = html.Length;
+								html = html.Remove(selfClosingEndTagMatch.Index, selfClosingEndTagMatch.Value.Length);
+								offset -= lengthBeforeInsert - html.Length;
+							}
+						}
 
-					startTagMatch = startTagMatch.NextMatch();
+						startTagMatch = startTagMatch.NextMatch();
+					}
+				}
+				catch (Exception)
+				{
+					return html;
 				}
 			}
 
 			return html;
 		}
 		private void Initialize(string html) 
-		{
-			_encodedHtml = html;
+		{			
 			_html = html;
+
+			_encodedHtml = _html;
 
 			// trim string
 			_encodedHtml = _encodedHtml.TrimStart().TrimEnd();
+
 			// encode all tags whit potantial tags inside which is not part of html tree sctrucure
 			_encodedHtml = EncodeTagsContent(_htmlHelper.TagsWhitPotentialInvalidHtmlInside, _encodedHtml);
 			_encodedHtml = EncodeCommentsContent(_encodedHtml);

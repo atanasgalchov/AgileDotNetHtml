@@ -55,6 +55,7 @@ namespace AgileDotNetHtml
 			IHtmlElementsCollection elements = ParseString(html);
 			HtmlNodeElement element = (HtmlNodeElement)elements.FirstOrDefault(x => x.TagName == "html");
 			HtmlDocument document = new HtmlDocument();
+			document.Attributes = element.Attributes;
 			document.Children = element.Children;
 			document.Text(element.Texts());
 			document.Doctype = (HtmlDocTypeElement)elements.FirstOrDefault(x => x.TagName.IsEqualIgnoreCase("!DOCTYPE"));

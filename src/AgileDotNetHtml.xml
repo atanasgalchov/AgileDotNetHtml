@@ -4,7 +4,7 @@
         <name>AgileDotNetHtml</name>
     </assembly>
     <members>
-        <!-- Badly formed XML comment ignored for member "M:AgileDotNetHtml.Factories.HtmlParserManager.ParseAttributes(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:AgileDotNetHtml.Factories.HtmlRegexParserManager.ParseAttributes(System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:AgileDotNetHtml.Helpers.HtmlHelper.ExtractTagNameFromStartTag(System.String)" -->
         <member name="M:AgileDotNetHtml.HtmlBuilder.#ctor">
             <summary>
@@ -1234,6 +1234,12 @@
             <summary>
             Initialize a new instance of AgileDotNetHtml.Models.HtmlElements.HtmlInputElement class represent HTML &lt;input&gt; tag.
             </summary>
+        </member>
+        <member name="M:AgileDotNetHtml.Models.HtmlElements.HtmlInputElement.#ctor(System.String)">
+            <summary>
+            Initialize a new instance of AgileDotNetHtml.Models.HtmlElements.HtmlInputElement class represent HTML &lt;input&gt; tag.
+            </summary>
+            <param name="inputType">Input type attribute.</param>
         </member>
         <member name="M:AgileDotNetHtml.Models.HtmlElements.HtmlInsElement.#ctor">
             <summary>
