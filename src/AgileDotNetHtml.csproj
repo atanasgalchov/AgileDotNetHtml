@@ -4,23 +4,26 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Authors>atanasgalchov</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Copyright>MIT License</Copyright>
     <RepositoryUrl>https://github.com/atanasgalchov/AgileDotNetHtml</RepositoryUrl>
     <Description>Tool to convert Html string to C# objects and vice versa.</Description>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/atanasgalchov/AgileDotNetHtml</PackageProjectUrl>
-    <RepositoryType>git</RepositoryType>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
-    <Version>1.0.1</Version>
+    <RepositoryType></RepositoryType>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
+    <Version>1.0.2</Version>
     <NeutralLanguage></NeutralLanguage>
+    <PackageTags>Html ConvertHtml ParseHtml C#Html GenerateHtml</PackageTags>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
-    <WarningLevel>5</WarningLevel>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<WarningLevel>2</WarningLevel>
+	<OutputPath></OutputPath>
+	<DocumentationFile>obj\Release\AgileDotNetHtml.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
