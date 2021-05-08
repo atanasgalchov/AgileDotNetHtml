@@ -17,6 +17,9 @@ namespace AgileDotNetHtml.Factories.HtmlAttributes
 
 		internal HtmlAttributeFactory(string name)
 		{
+			if (name.IsNullOrEmpty())
+				throw new ArgumentException("name");
+
 			_htmlHelper = new HtmlHelper();
 			_name = name;
 		}
