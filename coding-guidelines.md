@@ -1,9 +1,3 @@
-> ***"You should name a variable using the same care with which you name a first-born child."***
-
-Robert C. Martin
-
----
-
 C# Developer Guidelines (C# Coding Conventions)
 
 * [Introduction](#Introduction)
